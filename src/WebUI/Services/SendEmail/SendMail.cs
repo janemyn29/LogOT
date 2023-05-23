@@ -108,7 +108,7 @@ public class SendMail
         email.Bcc.Add(bccAdminAddress);
         foreach (var item in listMail)
         {
-            var bccAddress = new MailboxAddress(item.Fullname, item.Email);
+            var bccAddress = new MailboxAddress(item.UserName, item.Email);
 
             email.Bcc.Add(bccAddress);
         }

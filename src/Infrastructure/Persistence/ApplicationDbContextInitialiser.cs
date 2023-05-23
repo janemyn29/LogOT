@@ -75,7 +75,7 @@ public class ApplicationDbContextInitialiser
         }
 
         // admin users
-        var administrator = new ApplicationUser { UserName = "manager@localhost", Email = "manager@localhost", Fullname = "Manager", Address = "No", Image = "No" };
+        var administrator = new ApplicationUser { UserName = "manager@localhost", Email = "manager@localhost" };
 
         if (_userManager.Users.All(u => u.UserName != administrator.UserName))
         {
@@ -87,7 +87,7 @@ public class ApplicationDbContextInitialiser
         }
 
 
-        var staff = new ApplicationUser { UserName = "staff@localhost", Email = "staff@localhost", Fullname = "Staff", Address = "No", Image = "No" };
+        var staff = new ApplicationUser { UserName = "staff@localhost", Email = "staff@localhost" };
 
         if (_userManager.Users.All(u => u.UserName != staff.UserName))
         {

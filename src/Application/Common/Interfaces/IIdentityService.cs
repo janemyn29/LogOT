@@ -12,7 +12,7 @@ public interface IIdentityService
 
     Task<ClaimsPrincipal> AuthenticateAsync(string Email, string password);
 
-    Task<(Result Result, string UserId)> CreateUserAsync(string fullname, string username, string email, string password,string phone);
+    Task<(Result Result, string UserId)> CreateUserAsync( string username, string email, string password);
      Task<(Result Result, string UserId)> CreateAllUserAsync(string fullname, string username, string email, string password, string address, DateTime birthday, string phone, string avatar, string avatarurl);
     Task<(Result Result, string UserId)> ModifyAllUserAsync(string fullname, string username, string email, string password, string address, DateTime birthday, string phone, string avatar, string avatarurl);
 

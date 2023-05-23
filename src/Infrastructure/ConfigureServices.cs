@@ -152,8 +152,8 @@ public static class ConfigureServices
                 if (isUserExisted) return;
 
                 var user = new ApplicationUser();
-                user.Fullname = ctx.Principal.Claims.First(x => x.Type == ClaimTypes.Name).Value;
-                user.Email = user.UserName = email;
+                user.UserName = ctx.Principal.Claims.First(x => x.Type == ClaimTypes.Name).Value;
+                user.Email = email;
 
                 var result = await manager.CreateAsync(user);
                 if (!result.Succeeded)

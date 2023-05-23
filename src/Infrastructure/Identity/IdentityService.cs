@@ -88,12 +88,13 @@ public class IdentityService : IIdentityService
         }
     }
 
-    public async Task<(Result Result, string UserId)> CreateUserAsync(string fullname, string username, string email, string password, string phone)
+    public async Task<(Result Result, string UserId)> CreateUserAsync( string username, string email, string password)
 
     {
         var user = new ApplicationUser
         {
-            
+            UserName = username,
+            Email = email
 
         };
 
