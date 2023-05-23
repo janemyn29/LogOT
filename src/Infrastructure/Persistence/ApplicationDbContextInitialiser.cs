@@ -51,52 +51,51 @@ public class ApplicationDbContextInitialiser
     }
     public async Task TrySeedAsync()
     {
-        // Default roles
-        var administratorRole = new IdentityRole("Administrator");
+        var managerRole = new IdentityRole("Manager");
 
-        if (_roleManager.Roles.All(r => r.Name != administratorRole.Name))
+        if (_roleManager.Roles.All(r => r.Name != managerRole.Name))
         {
-            await _roleManager.CreateAsync(administratorRole);
+            await _roleManager.CreateAsync(managerRole);
         }
 
-        // Default users
-        var administrator = new ApplicationUser { UserName = "administrator@localhost", Email = "administrator@localhost" };
+        // staff roles
+        var staffRole = new IdentityRole("Staff");
+
+        if (_roleManager.Roles.All(r => r.Name != staffRole.Name))
+        {
+            await _roleManager.CreateAsync(staffRole);
+        }
+
+        // employee roles
+        var employeeRole = new IdentityRole("Employee");
+
+        if (_roleManager.Roles.All(r => r.Name != employeeRole.Name))
+        {
+            await _roleManager.CreateAsync(employeeRole);
+        }
+
+        // admin users
+        var administrator = new ApplicationUser { UserName = "manager@localhost", Email = "manager@localhost", Fullname = "Manager", Address = "No", Image = "No" };
 
         if (_userManager.Users.All(u => u.UserName != administrator.UserName))
         {
-            await _userManager.CreateAsync(administrator, "Administrator1!");
-            await _userManager.AddToRolesAsync(administrator, new [] { administratorRole.Name });
-        }
-        var memberRole = new IdentityRole("Member");
-
-        if (_roleManager.Roles.All(r => r.Name != memberRole.Name))
-        {
-            await _roleManager.CreateAsync(memberRole);
+            await _userManager.CreateAsync(administrator, "Manager1!");
+            if (!string.IsNullOrWhiteSpace(managerRole.Name))
+            {
+                await _userManager.AddToRolesAsync(administrator, new[] { managerRole.Name });
+            }
         }
 
-        // Default users
-        var member = new ApplicationUser { UserName = "member@localhost", Email = "member@localhost" };
 
-        if (_userManager.Users.All(u => u.UserName != member.UserName))
+        var staff = new ApplicationUser { UserName = "staff@localhost", Email = "staff@localhost", Fullname = "Staff", Address = "No", Image = "No" };
+
+        if (_userManager.Users.All(u => u.UserName != staff.UserName))
         {
-            await _userManager.CreateAsync(member, "Member1!");
-            await _userManager.AddToRolesAsync(member, new[] { memberRole.Name });
-        }
-
-        var mentorRole = new IdentityRole("Mentor");
-
-        if (_roleManager.Roles.All(r => r.Name != mentorRole.Name))
-        {
-            await _roleManager.CreateAsync(mentorRole);
-        }
-
-        // Default users
-        var mentor = new ApplicationUser { UserName = "mentor@localhost", Email = "mentor@localhost" };
-
-        if (_userManager.Users.All(u => u.UserName != member.UserName))
-        {
-            await _userManager.CreateAsync(member, "Mentor1!");
-            await _userManager.AddToRolesAsync(member, new[] { mentorRole.Name });
+            await _userManager.CreateAsync(staff, "StaffAccount1!");
+            if (!string.IsNullOrWhiteSpace(staffRole.Name))
+            {
+                await _userManager.AddToRolesAsync(staff, new[] { staffRole.Name });
+            }
         }
     }
 }
