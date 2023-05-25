@@ -23,5 +23,8 @@ public class EmployeeContract : BaseAuditableEntity
     public virtual Employee Employee { get; set; }
 
     public IList<PaySlip> PaySlips { get; private set; }
+
+    public IList<Allowance> Allowances { get; private set; }
+
 }
 

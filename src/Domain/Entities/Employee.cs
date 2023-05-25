@@ -28,6 +28,7 @@ public class Employee : BaseAuditableEntity
     public IList<OvertimeLog> OvertimeLogs { get; private set; }
     public IList<LeaveLog> LeaveLogs { get; private set; }
 
+    public IList<Position> Positions { get; private set; }
     public IList<EmployeeContract> EmployeeContracts { get; private set; }
     public IList<InterviewProcess> InterviewProcesses { get; private set; }
     public IList<SkillEmployee> SkillEmployees { get; private set; }
