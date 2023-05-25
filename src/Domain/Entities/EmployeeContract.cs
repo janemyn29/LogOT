@@ -24,7 +24,7 @@ public class EmployeeContract : BaseAuditableEntity
 
     public IList<PaySlip> PaySlips { get; private set; }
 
-    public IList<Allowance> Allowances { get; private set; }
+    public IList<AllowanceEmployee> AllowanceEmployees { get; private set; }
 
 }
 
