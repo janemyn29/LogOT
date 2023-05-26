@@ -4,12 +4,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using mentor_v1.Domain.Identity;
 
 namespace mentor_v1.Domain.Entities;
 public class EmployeeContract : BaseAuditableEntity
 {
-    [ForeignKey("Employee")]
-    public Guid EmployeeId { get; set; }
+    [ForeignKey("ApplicationUser")]
+    public string ApplicationUserId { get; set; }
     public string? File { get; set; }
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
@@ -20,7 +21,7 @@ public class EmployeeContract : BaseAuditableEntity
     public SalaryType SalaryType { get; set; }
     public ContractType ContractType { get; set; }
 
-    public virtual Employee Employee { get; set; }
+    public virtual ApplicationUser ApplicationUser { get; set; }
 
     public IList<PaySlip> PaySlips { get; private set; }
 

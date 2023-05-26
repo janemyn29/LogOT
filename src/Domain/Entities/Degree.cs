@@ -7,13 +7,16 @@ using System.Threading.Tasks;
 using mentor_v1.Domain.Identity;
 
 namespace mentor_v1.Domain.Entities;
-public class OvertimeLog : BaseAuditableEntity
+public class Degree : BaseAuditableEntity
 {
-    [ForeignKey("ApplicationUser")]
+    [ForeignKey("Employee")]
     public string ApplicationUserId { get; set; }
-    public DateTime Date { get; set; }
-    public int Hours { get; set; }
-    public string? CancelReason { get; set; }
-    public LogStatus Status { get; set; }
+    public string Name { get; set; }
+    public string? Description { get; set; }
+    public string Image { get; set; }
+
+    public DegreeType DegreeType { get; set; }
+
     public virtual ApplicationUser ApplicationUser { get; set; }
+
 }

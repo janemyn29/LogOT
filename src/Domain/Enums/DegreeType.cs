@@ -5,8 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace mentor_v1.Domain.Enums;
-public enum DefaultStatus
+public enum DegreeType
 {
-    ChangeRequest = 1,
-    NoRequest = 2,
+    HighSchoolDegree = 0,
+    UniversityDegree=1
+
 }

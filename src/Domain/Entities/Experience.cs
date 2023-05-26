@@ -10,7 +10,7 @@ namespace mentor_v1.Domain.Entities;
 public class Experience : BaseAuditableEntity
 {
     [ForeignKey("ApplicationUser")]
-    public string UserId { get; set; }
+    public string ApplicationUserId { get; set; }
     public string NameProject { get; set; }
     public int TeamSize { get; set; }
     public DateTime StartDate { get; set; }

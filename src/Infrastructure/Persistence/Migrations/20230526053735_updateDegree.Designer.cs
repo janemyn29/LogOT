@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using mentor_v1.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using mentor_v1.Infrastructure.Persistence;
 namespace mentorv1.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230526053735_updateDegree")]
+    partial class updateDegree
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -346,10 +349,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ApplicationUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
@@ -361,6 +360,9 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Image")
                         .IsRequired()
@@ -381,7 +383,7 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
+                    b.HasIndex("EmployeeId");
 
                     b.ToTable("Degree");
                 });
@@ -457,15 +459,87 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.ToTable("DetailTaxIncome");
                 });
 
-            modelBuilder.Entity("mentor_v1.Domain.Entities.EmployeeContract", b =>
+            modelBuilder.Entity("mentor_v1.Domain.Entities.Employee", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ApplicationUserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("BankAccountName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BankAccountNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BankName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("BirthDay")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("DepartmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Fullname")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IdentityNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId")
+                        .IsUnique();
+
+                    b.HasIndex("DepartmentId");
+
+                    b.ToTable("Employee");
+                });
+
+            modelBuilder.Entity("mentor_v1.Domain.Entities.EmployeeContract", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<double?>("BasicSalary")
                         .HasColumnType("float");
@@ -478,6 +552,9 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
@@ -511,7 +588,7 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
+                    b.HasIndex("EmployeeId");
 
                     b.ToTable("EmployeeContract");
                 });
@@ -522,10 +599,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ApplicationUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
@@ -535,6 +608,9 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
@@ -562,9 +638,15 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Experience");
                 });
@@ -616,10 +698,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ApplicationUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
@@ -629,6 +707,9 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<string>("DayTime")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("FeedBack")
                         .IsRequired()
@@ -663,7 +744,7 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
+                    b.HasIndex("EmployeeId");
 
                     b.HasIndex("JobDescriptionId");
 
@@ -725,10 +806,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ApplicationUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("CancelReason")
                         .HasColumnType("nvarchar(max)");
 
@@ -737,6 +814,9 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
@@ -765,7 +845,7 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
+                    b.HasIndex("EmployeeId");
 
                     b.ToTable("LeaveLog");
                 });
@@ -775,10 +855,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ApplicationUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CancelReason")
                         .HasColumnType("nvarchar(max)");
@@ -791,6 +867,9 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Hours")
                         .HasColumnType("int");
@@ -809,7 +888,7 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
+                    b.HasIndex("EmployeeId");
 
                     b.ToTable("OvertimeLog");
                 });
@@ -855,10 +934,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
 
                     b.Property<double?>("Bonus")
                         .HasColumnType("float");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
@@ -970,10 +1045,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ApplicationUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
@@ -981,6 +1052,9 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("DepartmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("EmployeeId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsDeleted")
@@ -1001,9 +1075,9 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
-
                     b.HasIndex("DepartmentId");
+
+                    b.HasIndex("EmployeeId");
 
                     b.ToTable("Position");
                 });
@@ -1014,24 +1088,9 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("ApplicationUserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("BankAccountName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BankAccountNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BankName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("BirthDay")
-                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
@@ -1042,17 +1101,8 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<string>("DenyReason")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Fullname")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IdentityNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Image")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid?>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -1061,9 +1111,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RequestDescription")
@@ -1080,6 +1127,8 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("EmployeeId");
 
                     b.ToTable("RequestChange");
                 });
@@ -1124,15 +1173,14 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ApplicationUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -1151,7 +1199,7 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
+                    b.HasIndex("EmployeeId");
 
                     b.HasIndex("SkillId");
 
@@ -1287,31 +1335,9 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BankAccountName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BankAccountNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BankName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("BirthDay")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("DepartmentId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -1319,18 +1345,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
-
-                    b.Property<string>("Fullname")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IdentityNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Image")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -1347,10 +1361,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
@@ -1370,8 +1380,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DepartmentId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -1467,13 +1475,13 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.Degree", b =>
                 {
-                    b.HasOne("mentor_v1.Domain.Identity.ApplicationUser", "ApplicationUser")
+                    b.HasOne("mentor_v1.Domain.Entities.Employee", "Employee")
                         .WithMany("Degrees")
-                        .HasForeignKey("ApplicationUserId")
+                        .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ApplicationUser");
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.DetailTaxIncome", b =>
@@ -1483,22 +1491,41 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                         .HasForeignKey("PaySlipId");
                 });
 
-            modelBuilder.Entity("mentor_v1.Domain.Entities.EmployeeContract", b =>
+            modelBuilder.Entity("mentor_v1.Domain.Entities.Employee", b =>
                 {
                     b.HasOne("mentor_v1.Domain.Identity.ApplicationUser", "ApplicationUser")
-                        .WithMany("EmployeeContracts")
-                        .HasForeignKey("ApplicationUserId")
+                        .WithOne("Employee")
+                        .HasForeignKey("mentor_v1.Domain.Entities.Employee", "ApplicationUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("mentor_v1.Domain.Entities.Department", null)
+                        .WithMany("Employees")
+                        .HasForeignKey("DepartmentId");
 
                     b.Navigation("ApplicationUser");
                 });
 
+            modelBuilder.Entity("mentor_v1.Domain.Entities.EmployeeContract", b =>
+                {
+                    b.HasOne("mentor_v1.Domain.Entities.Employee", "Employee")
+                        .WithMany("EmployeeContracts")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+                });
+
             modelBuilder.Entity("mentor_v1.Domain.Entities.Experience", b =>
                 {
-                    b.HasOne("mentor_v1.Domain.Identity.ApplicationUser", "ApplicationUser")
+                    b.HasOne("mentor_v1.Domain.Entities.Employee", null)
                         .WithMany("Experiences")
-                        .HasForeignKey("ApplicationUserId")
+                        .HasForeignKey("EmployeeId");
+
+                    b.HasOne("mentor_v1.Domain.Identity.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1518,9 +1545,9 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.InterviewProcess", b =>
                 {
-                    b.HasOne("mentor_v1.Domain.Identity.ApplicationUser", "ApplicationUser")
+                    b.HasOne("mentor_v1.Domain.Entities.Employee", "Employee")
                         .WithMany("InterviewProcesses")
-                        .HasForeignKey("ApplicationUserId")
+                        .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1530,7 +1557,7 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ApplicationUser");
+                    b.Navigation("Employee");
 
                     b.Navigation("JobDescription");
                 });
@@ -1548,24 +1575,24 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.LeaveLog", b =>
                 {
-                    b.HasOne("mentor_v1.Domain.Identity.ApplicationUser", "ApplicationUser")
+                    b.HasOne("mentor_v1.Domain.Entities.Employee", "Employee")
                         .WithMany("LeaveLogs")
-                        .HasForeignKey("ApplicationUserId")
+                        .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ApplicationUser");
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.OvertimeLog", b =>
                 {
-                    b.HasOne("mentor_v1.Domain.Identity.ApplicationUser", "ApplicationUser")
+                    b.HasOne("mentor_v1.Domain.Entities.Employee", "Employee")
                         .WithMany("OvertimeLogs")
-                        .HasForeignKey("ApplicationUserId")
+                        .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ApplicationUser");
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.PaySlip", b =>
@@ -1592,39 +1619,43 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.Position", b =>
                 {
-                    b.HasOne("mentor_v1.Domain.Identity.ApplicationUser", "ApplicationUser")
-                        .WithMany("Positions")
-                        .HasForeignKey("ApplicationUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("mentor_v1.Domain.Entities.Department", "Department")
                         .WithMany("Positions")
                         .HasForeignKey("DepartmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ApplicationUser");
+                    b.HasOne("mentor_v1.Domain.Entities.Employee", "Employee")
+                        .WithMany("Positions")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Department");
+
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.RequestChange", b =>
                 {
                     b.HasOne("mentor_v1.Domain.Identity.ApplicationUser", "ApplicationUser")
-                        .WithMany("RequestChanges")
+                        .WithMany()
                         .HasForeignKey("ApplicationUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("mentor_v1.Domain.Entities.Employee", null)
+                        .WithMany("RequestChanges")
+                        .HasForeignKey("EmployeeId");
 
                     b.Navigation("ApplicationUser");
                 });
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.SkillEmployee", b =>
                 {
-                    b.HasOne("mentor_v1.Domain.Identity.ApplicationUser", "ApplicationUser")
+                    b.HasOne("mentor_v1.Domain.Entities.Employee", "Employee")
                         .WithMany("SkillEmployees")
-                        .HasForeignKey("ApplicationUserId")
+                        .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1634,7 +1665,7 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ApplicationUser");
+                    b.Navigation("Employee");
 
                     b.Navigation("Skill");
                 });
@@ -1700,13 +1731,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("mentor_v1.Domain.Identity.ApplicationUser", b =>
-                {
-                    b.HasOne("mentor_v1.Domain.Entities.Department", null)
-                        .WithMany("ApplicationUsers")
-                        .HasForeignKey("DepartmentId");
-                });
-
             modelBuilder.Entity("mentor_v1.Domain.Entities.Allowance", b =>
                 {
                     b.Navigation("AllowanceEmployees");
@@ -1728,9 +1752,30 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.Department", b =>
                 {
-                    b.Navigation("ApplicationUsers");
+                    b.Navigation("Employees");
 
                     b.Navigation("Positions");
+                });
+
+            modelBuilder.Entity("mentor_v1.Domain.Entities.Employee", b =>
+                {
+                    b.Navigation("Degrees");
+
+                    b.Navigation("EmployeeContracts");
+
+                    b.Navigation("Experiences");
+
+                    b.Navigation("InterviewProcesses");
+
+                    b.Navigation("LeaveLogs");
+
+                    b.Navigation("OvertimeLogs");
+
+                    b.Navigation("Positions");
+
+                    b.Navigation("RequestChanges");
+
+                    b.Navigation("SkillEmployees");
                 });
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.EmployeeContract", b =>
@@ -1764,23 +1809,8 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("mentor_v1.Domain.Identity.ApplicationUser", b =>
                 {
-                    b.Navigation("Degrees");
-
-                    b.Navigation("EmployeeContracts");
-
-                    b.Navigation("Experiences");
-
-                    b.Navigation("InterviewProcesses");
-
-                    b.Navigation("LeaveLogs");
-
-                    b.Navigation("OvertimeLogs");
-
-                    b.Navigation("Positions");
-
-                    b.Navigation("RequestChanges");
-
-                    b.Navigation("SkillEmployees");
+                    b.Navigation("Employee")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

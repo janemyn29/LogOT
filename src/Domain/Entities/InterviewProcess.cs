@@ -4,13 +4,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using mentor_v1.Domain.Identity;
 
 namespace mentor_v1.Domain.Entities;
 public class InterviewProcess : BaseAuditableEntity
 {
 
     [ForeignKey("Employee")]
-    public Guid EmployeeId { get; set; }
+    public string ApplicationUserId { get; set; }
     [ForeignKey("JobDescription")]
     public Guid JobDescriptionId { get; set; }
     public string Info { get; set; }
@@ -24,5 +25,5 @@ public class InterviewProcess : BaseAuditableEntity
     public virtual JobDescription JobDescription { get; set; }
 
 
-    public virtual Employee Employee { get; set; }
+    public virtual ApplicationUser ApplicationUser { get; set; }
 }
