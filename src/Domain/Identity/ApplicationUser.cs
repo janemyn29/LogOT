@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
 
 namespace mentor_v1.Domain.Identity;
@@ -8,8 +9,6 @@ public class ApplicationUser : IdentityUser
     public string Fullname { get; set; }
     public string Address { get; set; }
     public string Image { get; set; }
-
-    public string Phone { get; set; }
     public string IdentityNumber { get; set; }
     public DateTime BirthDay { get; set; }
     public string BankAccountNumber { get; set; }

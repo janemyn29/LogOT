@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using mentor_v1.Application.ApplicationUser.Queries.GetUser;
 using mentor_v1.Application.Common.Interfaces;
 using mentor_v1.Application.Common.Models;
 using mentor_v1.Domain.Identity;
@@ -88,13 +89,22 @@ public class IdentityService : IIdentityService
         }
     }
 
-    public async Task<(Result Result, string UserId)> CreateUserAsync( string username, string email, string password)
+    public async Task<(Result Result, string UserId)> CreateUserAsync(string username, string email, string password, string fullname, string image, string address, string identityNumber, DateTime birthDay, string BankAccountNumber, string BankAccountName, string BankName)
 
     {
         var user = new ApplicationUser
         {
             UserName = username,
-            Email = email
+            Email = email,
+            Fullname= fullname,
+            Image = image,
+            Address = address,
+            IdentityNumber = identityNumber,
+            BirthDay = birthDay,
+            BankAccountName= BankAccountName,
+            BankName = BankName,
+            BankAccountNumber=BankAccountNumber,
+            
 
         };
 
@@ -103,6 +113,7 @@ public class IdentityService : IIdentityService
         return (result.ToApplicationResult(), user.Id);
     }
 
+   
     public async Task<(Result Result, string UserId)> CreateAllUserAsync(string fullname, string username, string email, string password , string address, DateTime birthday , string phone , string avatar, string avatarurl)
 
     {
