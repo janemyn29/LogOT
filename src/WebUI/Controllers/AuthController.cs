@@ -19,7 +19,8 @@ public class AuthController : ApiControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> SignIn(string email, string password)
+    [Route("/Login")]
+    public async Task<IActionResult> Login(string email, string password)
     {
         try
         {

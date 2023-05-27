@@ -34,6 +34,8 @@ public class EmployeeController : ApiControllerBase
 
     [Authorize(Roles = "Manager")]
     [HttpGet]  // lấy danh sách employee
+    [Route("/Employee")]
+
     public async Task<IActionResult> Index(int pg = 1)
     {
         var listEmployee = await Mediator.Send(new GetListUserRequest { Page=1, Size=20 });
@@ -42,7 +44,7 @@ public class EmployeeController : ApiControllerBase
 
     [Authorize(Roles = "Manager")]
     [HttpPost]
-    [Route("Create")]
+    [Route("/Employee/Create")]
     public async Task<IActionResult> Create(string role, [FromBody] UserViewModel model)
     {
         
