@@ -6,12 +6,15 @@ using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.Interfaces;
 using mentor_v1.Domain.Entities;
 using mentor_v1.Domain.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebUI.Models;
 
 namespace WebUI.Controllers;
+
+
 public class EmployeeController : ApiControllerBase
 {
     private readonly UserManager<ApplicationUser> _userManager;
@@ -29,7 +32,7 @@ public class EmployeeController : ApiControllerBase
     //Quản lý employee của staff
 
 
-
+    [Authorize(Roles = "Manager")]
     [HttpGet]  // lấy danh sách employee
     public async Task<IActionResult> Index(int pg = 1)
     {
@@ -37,8 +40,9 @@ public class EmployeeController : ApiControllerBase
         return Ok(listEmployee);
     }
 
+    [Authorize(Roles = "Manager")]
     [HttpPost]
-    [Route("Employee/Create")]
+    [Route("Create")]
     public async Task<IActionResult> Create(string role, [FromBody] UserViewModel model)
     {
         
@@ -49,29 +53,19 @@ public class EmployeeController : ApiControllerBase
         }
         var validator = new CreateUseCommandValidator(_context,_userManager);
         var valResult = await validator.ValidateAsync(model);
-        List<string> errors = new List<string>();
-        bool check = false;
+       
 
         var tempUser = await _userManager.Users.Where(x=>x.IdentityNumber.Equals(model.IdentityNumber)).FirstOrDefaultAsync();
-        if (tempUser != null)
-        {
-            errors.Add("Số cccd đã tồn tại");
-            check = true;
-        }
-
         if (valResult.Errors.Count != 0)
         {
-          
+
+            List<string> errors = new List<string>();
             foreach (var error in valResult.Errors)
             {
                 var item = error.ErrorMessage; errors.Add(item);
             }
-            check = true;
-
-        }
-        if (check)
-        {
             return BadRequest(errors);
+
         }
         
         var result = await _identityService.CreateUserAsync(model.Username, model.Email, "Employee1!", model.Fullname, model.Image, model.Address, model.IdentityNumber, model.BirthDay,model.BankAccountNumber, model.BankAccountName,model.BankName);

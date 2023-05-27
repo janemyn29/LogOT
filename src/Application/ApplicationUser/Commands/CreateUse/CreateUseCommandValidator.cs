@@ -33,7 +33,7 @@ public class CreateUseCommandValidator : AbstractValidator<UserViewModel>
         RuleFor(v => v.IdentityNumber)
             .NotEmpty().WithMessage("Số cccd không được để trống.")
             .MaximumLength(12).WithMessage("Số cccd không được quá 12 ký tự.")
-             /*.MustAsync(BeUniqueIdentity).WithMessage("Số cccd đã tồn tại!")*/; 
+             .MustAsync(BeUniqueIdentity).WithMessage("Số cccd đã tồn tại!"); 
         // Add validation for request
         RuleFor(v => v.BirthDay)
             .NotEmpty().WithMessage("Ngày sinh không được để trống.");
@@ -53,11 +53,11 @@ public class CreateUseCommandValidator : AbstractValidator<UserViewModel>
             .MaximumLength(70).WithMessage("Tên tài khoản ngân hàng không được quá 70 ký tự.");
     }
 
-   /* // Custom action to check with the database
+    // Custom action to check with the database
     public async Task<bool> BeUniqueIdentity(string identity, CancellationToken cancellationToken)
     {
-        var result = await _userManager.Users.FirstAsync(u => u.IdentityNumber == identity);
-        if(result == null)
+        var result = await _userManager.Users.Where(u => u.IdentityNumber == identity).FirstOrDefaultAsync(); 
+        if (result == null)
         {
             return true;
         }
@@ -65,5 +65,5 @@ public class CreateUseCommandValidator : AbstractValidator<UserViewModel>
         {
             return false;
         }
-    }*/
+    }
 }

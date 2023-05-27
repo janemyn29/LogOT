@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Text;
 using System.Text.Json.Serialization;
 using mentor_v1.Application.Common.Models;
 using mentor_v1.Domain.Identity;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Serilog;
@@ -18,7 +20,6 @@ using WebUI.Services.MomoServices;
 var builder = WebApplication.CreateBuilder(args);
 //builder.Environment.EnvironmentName = "Staging"; //for branch develop
 //builder.Environment.EnvironmentName = "Production"; //for branch domain bsmart
-
 builder.Configuration
     .AddJsonFile("appsettings.json", false, true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", false, true)
@@ -54,6 +55,25 @@ builder.Services.AddTransient(typeof(GoogleCaptchaService));
 builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
    opt.TokenLifespan = TimeSpan.FromMinutes(30));
 
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.SaveToken = true;
+    options.RequireHttpsMetadata = false;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidAudience = builder.Configuration["JWT:ValidAudience"],
+        ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecrectKey"]))
+
+    };
+});
 var app = builder.Build();
 
 app.UseCors(MyAllowSpecificOrigins);
