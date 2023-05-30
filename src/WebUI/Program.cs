@@ -55,7 +55,7 @@ builder.Services.AddTransient(typeof(GoogleCaptchaService));
 builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
    opt.TokenLifespan = TimeSpan.FromMinutes(30));
 
-builder.Services.AddAuthentication(options =>
+/*builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -73,7 +73,7 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecrectKey"]))
 
     };
-});
+});*/
 var app = builder.Build();
 
 app.UseCors(MyAllowSpecificOrigins);

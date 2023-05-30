@@ -1,4 +1,5 @@
-﻿using mentor_v1.Application.Common.Interfaces;
+﻿using mentor_v1.Application.Auth;
+using mentor_v1.Application.Common.Interfaces;
 using mentor_v1.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -18,24 +19,58 @@ public class AuthController : ApiControllerBase
         _context = context;
     }
 
+    [HttpPut]
+    public async Task<IActionResult> Login()
+    {
+        if (User.Identity.IsAuthenticated)
+        {
+            var response = new ObjectResult("Bạn đã đăng nhập. Vui lòng không đăng nhập thêm!")
+            {
+                StatusCode = 405
+            };
+            return await Task.FromResult<IActionResult>(response);
+        }
+        else
+        {
+
+            return RedirectToAction("/Login");
+        }
+
+    }
+
+
     [HttpPost]
     [Route("/Login")]
     public async Task<IActionResult> Login(string email, string password)
     {
-        try
+        if(User.Identity.IsAuthenticated)
         {
-            var result = await _identityService.AuthenticateAsync(email, password);
-            if (string.IsNullOrEmpty(result))
+            var response = new ObjectResult("Bạn đã đăng nhập. Vui lòng không đăng nhập thêm!")
             {
-                return BadRequest();
-
-            }
-            return Ok(result);
+                StatusCode = 405
+            };
+            return await Task.FromResult<IActionResult>(response);
         }
-        catch (Exception ex)
+        else
         {
-            return BadRequest(ex.Message);
+            try
+            {
+                //var result = await _identityService.AuthenticateAsync(email, password);
+                var user = await Mediator.Send(new Login { Username = email, Password = password });
+                if (string.IsNullOrEmpty(user))
+                {
+                    return BadRequest("Đăng nhập không thành công!");
+
+                }
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         
     }
+
+   
 }

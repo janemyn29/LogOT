@@ -180,10 +180,64 @@ public class IdentityService : IIdentityService
         return result.ToApplicationResult();
     }
 
-    public async Task<string> AuthenticateAsync(string username, string password)
+    /* public async Task<string> AuthenticateAsync(string username, string password)
+     {
+
+         var user = await _userManager.FindByNameAsync(username);
+
+         if (user == null)
+         {
+             user = await _userManager.FindByEmailAsync(username);
+             if (user == null)
+             {
+                 throw new KeyNotFoundException($"Không tìm thấy tên đăng nhập hoặc địa chỉ email '{username}'");
+             }
+         }
+         if (user.LockoutEnd != null && user.LockoutEnd.Value > DateTime.Now)
+         {
+             throw new KeyNotFoundException($"Tài khoản này hiện tại đang bị khóa. Vui lòng liên hệ quản trị viên để được hỗ trợ");
+         }
+         if (user.EmailConfirmed == false)
+         {
+             throw new KeyNotFoundException($"Email của tài khoản này chưa được xác nhận. Vui lòng nhấn quên mật khẩu!");
+
+         }
+
+         //sign in  
+         var signInResult = await _signInManager.PasswordSignInAsync(user, password, false, false);
+         if (signInResult.Succeeded)
+         {
+             var roles = await _userManager.GetRolesAsync(user);
+             List<Claim> authClaims = new List<Claim>();
+             authClaims.Add(new Claim(ClaimTypes.Email, user.Email));
+             authClaims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
+             foreach (var item in roles)
+             {
+                 authClaims.Add(new Claim(ClaimTypes.Role, item));
+             }
+
+             var authenKey = new SymmetricSecurityKey( Encoding.UTF8.GetBytes(_configuration["JWT:SecrectKey"]));
+
+             var token = new JwtSecurityToken(
+                 issuer: _configuration["JWT:ValidIssuer"],
+                 audience: _configuration["JWT:ValidAudience"],
+                 expires: DateTime.Now.AddDays(1),
+                 claims: authClaims,
+                 signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha512Signature)
+                 );
+             return new JwtSecurityTokenHandler().WriteToken(token);
+
+             //return await _userClaimsPrincipalFactory.CreateAsync(user) ?? throw new InvalidOperationException("Authenticated failed, please contact administrator!");
+         }
+
+         throw new InvalidOperationException("Sai mật khẩu. Vui lòng nhập lại!");
+     }*/
+
+
+    public async Task<ClaimsPrincipal> AuthenticateAsync(string username, string password)
     {
         var user = await _userManager.FindByNameAsync(username);
-
+        var a = user;
         if (user == null)
         {
             user = await _userManager.FindByEmailAsync(username);
@@ -206,27 +260,19 @@ public class IdentityService : IIdentityService
         var signInResult = await _signInManager.PasswordSignInAsync(user, password, false, false);
         if (signInResult.Succeeded)
         {
-            var roles = await _userManager.GetRolesAsync(user);
-            List<Claim> authClaims = new List<Claim>();
-            authClaims.Add(new Claim(ClaimTypes.Email, user.Email));
-            authClaims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
-            foreach (var item in roles)
-            {
-                authClaims.Add(new Claim(ClaimTypes.Role, item));
-            }
+            //var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:SecretKey"]));
+            //var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var authenKey = new SymmetricSecurityKey( Encoding.UTF8.GetBytes(_configuration["JWT:SecrectKey"]));
+            //var principal = await _signInManager.CreateUserPrincipalAsync(user);
+            //var token = new JwtSecurityToken(issuer: _configuration["JWT:ValidIssuer"]
+            //    , audience: _configuration["JWT:ValidAudience"],
+            //    claims: principal.Claims,
+            //    expires: DateTime.Now.AddHours(2),
+            //    signingCredentials: creds);
 
-            var token = new JwtSecurityToken(
-                issuer: _configuration["JWT:ValidIssuer"],
-                audience: _configuration["JWT:ValidAudience"],
-                expires: DateTime.Now.AddDays(1),
-                claims: authClaims,
-                signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha512Signature)
-                );
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            //return new JwtSecurityTokenHandler().WriteToken(token);
 
-            //return await _userClaimsPrincipalFactory.CreateAsync(user) ?? throw new InvalidOperationException("Authenticated failed, please contact administrator!");
+            return await _userClaimsPrincipalFactory.CreateAsync(user) ?? throw new InvalidOperationException("Authenticated failed, please contact administrator!");
         }
 
         throw new InvalidOperationException("Sai mật khẩu. Vui lòng nhập lại!");

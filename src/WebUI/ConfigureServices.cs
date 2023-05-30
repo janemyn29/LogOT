@@ -67,7 +67,7 @@ public static class ConfigureServices
         {
             var jwtSecurityScheme = new OpenApiSecurityScheme
             {
-                BearerFormat = "JWT",
+               /* BearerFormat = "JWT",
                 Name = "Authorization",
                 In = ParameterLocation.Header,
                 Scheme = JwtBearerDefaults.AuthenticationScheme,
@@ -77,15 +77,15 @@ public static class ConfigureServices
                 {
                     Type = ReferenceType.SecurityScheme,
                     Id = JwtBearerDefaults.AuthenticationScheme
-                },
+                },*/
             };
-            options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, jwtSecurityScheme);
+            
             options.AddSecurityRequirement(new OpenApiSecurityRequirement()
             {
-                {
+                /*{
                     jwtSecurityScheme,
                     new List<string>()
-                }
+                }*/
             });
         });
 
