@@ -15,7 +15,7 @@ public class Department : BaseAuditableEntity
 
     public IList<ApplicationUser> ApplicationUsers { get; set; }
 
-    public IList<Position> Positions { get; set; }
+    public IList<Level> Levels { get; set; }
 
     // Tổng nhân viên hiện có
     public int GetTotalEmployees()

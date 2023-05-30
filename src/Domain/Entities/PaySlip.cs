@@ -34,6 +34,4 @@ public class PaySlip : BaseAuditableEntity
     public string? BankAcountNumber { get; set; }
 
     public virtual EmployeeContract EmployeeContract { get; set; } = null!;
-
-    public IList<DetailTaxIncome> DetailTaxIncomes { get; set; }
 }

@@ -6,6 +6,8 @@ namespace mentor_v1.Domain.Identity;
 
 public class ApplicationUser : IdentityUser
 {
+    [ForeignKey("Department")]
+    public Guid DepartmentId { get; set; }
     public string Fullname { get; set; }
     public string Address { get; set; }
     public string Image { get; set; }
@@ -18,10 +20,11 @@ public class ApplicationUser : IdentityUser
     public IList<OvertimeLog> OvertimeLogs { get; private set; }
     public IList<LeaveLog> LeaveLogs { get; private set; }
 
-    public IList<Position> Positions { get; private set; }
     public IList<EmployeeContract> EmployeeContracts { get; private set; }
     public IList<InterviewProcess> InterviewProcesses { get; private set; }
     public IList<SkillEmployee> SkillEmployees { get; private set; }
     public IList<RequestChange> RequestChanges { get; private set; }
     public IList<Degree> Degrees { get; private set; }
+    public IList<Attendance> Attendances { get; private set; }
+
 }

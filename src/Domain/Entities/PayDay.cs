@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace mentor_v1.Domain.Entities;
-public class PaymentDay : BaseAuditableEntity
+public class PayDay : BaseAuditableEntity
 {
-    public DateTime PayDay { get; set; }
+    public DateTime PaymentDay { get; set; }
 }
