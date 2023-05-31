@@ -1,5 +1,7 @@
 ﻿using mentor_v1.Application.Auth;
+using mentor_v1.Application.Common;
 using mentor_v1.Application.Common.Interfaces;
+using mentor_v1.Application.Common.Models;
 using mentor_v1.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +21,7 @@ public class AuthController : ApiControllerBase
         _context = context;
     }
 
+
     [HttpPost]
     [Route("/Login")]
     public async Task<IActionResult> Login(string email, string password)
@@ -37,13 +40,37 @@ public class AuthController : ApiControllerBase
             try
             {
                 //var result = await _identityService.AuthenticateAsync(email, password);
-               /* string callbackUrl = Request.Scheme + "://" + Request.Host+ Url.Action("ConfirmEmail", "Auth", new {email= email, })*/
-                var user = await Mediator.Send(new Login { Username = email, Password = password });
-                if (string.IsNullOrEmpty(user))
+                string callbackUrl = "";
+               var user = await _userManager.FindByNameAsync(email);
+                if(user == null)
                 {
-                    return BadRequest("Đăng nhập không thành công!");
+                    user = await _userManager.FindByEmailAsync(email);
+                    if (user == null)
+                    {
+                        return BadRequest("Tài khoản này không tồn tại!");
+                    }
                 }
-                return Ok(user);
+                if(user.EmailConfirmed == false)
+                {
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    callbackUrl = Request.Scheme + "://" + Request.Host + Url.Action("ConfirmEmail", "Auth", new { userId = user.Id, code = code });
+                    var result = await Mediator.Send(new Login { Username = email, Password = password ,callbackUrl = callbackUrl});
+                    if (string.IsNullOrEmpty(result))
+                    {
+                        return BadRequest("Đăng nhập không thành công!");
+                    }
+                    return Ok(result);
+                }
+                else
+                {
+                    var result = await Mediator.Send(new Login { Username = email, Password = password });
+                    if (string.IsNullOrEmpty(result))
+                    {
+                        return BadRequest("Đăng nhập không thành công!");
+                    }
+                    return Ok(result);
+                }
+               
             }
             catch (Exception ex)
             {
