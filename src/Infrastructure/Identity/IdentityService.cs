@@ -254,7 +254,7 @@ public class IdentityService : IIdentityService
         }
         if (user.EmailConfirmed == false)
         {
-            throw new InvalidOperationException($"Email của tài khoản này chưa được xác nhận. Vui lòng nhấn quên mật khẩu!");
+            throw new KeyNotFoundException($"Email của tài khoản này chưa được xác nhận. Vui lòng nhấn quên mật khẩu!");
 
         }
 
@@ -274,9 +274,9 @@ public class IdentityService : IIdentityService
 
             //return new JwtSecurityTokenHandler().WriteToken(token);
 
-            return await _userClaimsPrincipalFactory.CreateAsync(user) ?? throw new KeyNotFoundException("Authenticated failed, please contact administrator!");
+            return await _userClaimsPrincipalFactory.CreateAsync(user) ?? throw new InvalidOperationException("Authenticated failed, please contact administrator!");
         }
 
-        throw new KeyNotFoundException("Sai mật khẩu. Vui lòng nhập lại!");
+        throw new InvalidOperationException("Sai mật khẩu. Vui lòng nhập lại!");
     }
 }
