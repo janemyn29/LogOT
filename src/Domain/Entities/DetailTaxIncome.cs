@@ -7,6 +7,6 @@ using System.Threading.Tasks;
 namespace mentor_v1.Domain.Entities;
 public class DetailTaxIncome : BaseAuditableEntity
 {
-    public string? Muc_chiu_thue { get; set; }
-    public int? Thue_suat { get; set; }
+    public double Muc_chiu_thue { get; set; }
+    public double Thue_suat { get; set; }
 }

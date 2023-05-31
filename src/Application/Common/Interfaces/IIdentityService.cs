@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using mentor_v1.Application.ApplicationUser.Queries.GetUser;
 using mentor_v1.Application.Common.Models;
+using mentor_v1.Domain.Enums;
 using mentor_v1.Domain.Identity;
 
 namespace mentor_v1.Application.Common.Interfaces;
@@ -14,7 +15,7 @@ public interface IIdentityService
     // Task<string> AuthenticateAsync(string Email, string password);
     Task<ClaimsPrincipal> AuthenticateAsync(string Email, string password);
 
-    Task<(Result Result, string UserId)> CreateUserAsync( string username, string email, string password , string fullname , string image, string address, string identityNumber , DateTime birthDay, string BankAccountNumber , string BankAccountName, string BankName );
+    Task<(Result Result, string UserId)> CreateUserAsync( string username, string email, string password , string fullname , string image, string address, string identityNumber , DateTime birthDay, string BankAccountNumber , string BankAccountName, string BankName,Guid PositionId, GenderType gender, bool IsMaternity );
 
     Task<(Result Result, string UserId)> CreateAllUserAsync(string fullname, string username, string email, string password, string address, DateTime birthday, string phone, string avatar, string avatarurl);
     Task<(Result Result, string UserId)> ModifyAllUserAsync(string fullname, string username, string email, string password, string address, DateTime birthday, string phone, string avatar, string avatarurl);

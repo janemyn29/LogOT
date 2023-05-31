@@ -4,6 +4,7 @@ using System.Text;
 using mentor_v1.Application.ApplicationUser.Queries.GetUser;
 using mentor_v1.Application.Common.Interfaces;
 using mentor_v1.Application.Common.Models;
+using mentor_v1.Domain.Enums;
 using mentor_v1.Domain.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -91,7 +92,7 @@ public class IdentityService : IIdentityService
         }
     }
 
-    public async Task<(Result Result, string UserId)> CreateUserAsync(string username, string email, string password, string fullname, string image, string address, string identityNumber, DateTime birthDay, string BankAccountNumber, string BankAccountName, string BankName)
+    public async Task<(Result Result, string UserId)> CreateUserAsync(string username, string email, string password, string fullname, string image, string address, string identityNumber, DateTime birthDay, string BankAccountNumber, string BankAccountName, string BankName, Guid PositionId, GenderType gender, bool IsMaternity)
 
     {
         var user = new ApplicationUser
@@ -106,7 +107,9 @@ public class IdentityService : IIdentityService
             BankAccountName= BankAccountName,
             BankName = BankName,
             BankAccountNumber=BankAccountNumber,
-            
+            PositionId=PositionId,
+            IsMaternity = IsMaternity,
+            GenderType = gender
 
         };
 
@@ -237,7 +240,6 @@ public class IdentityService : IIdentityService
     public async Task<ClaimsPrincipal> AuthenticateAsync(string username, string password)
     {
         var user = await _userManager.FindByNameAsync(username);
-        var a = user;
         if (user == null)
         {
             user = await _userManager.FindByEmailAsync(username);
@@ -252,7 +254,7 @@ public class IdentityService : IIdentityService
         }
         if (user.EmailConfirmed == false)
         {
-            throw new KeyNotFoundException($"Email của tài khoản này chưa được xác nhận. Vui lòng nhấn quên mật khẩu!");
+            throw new InvalidOperationException($"Email của tài khoản này chưa được xác nhận. Vui lòng nhấn quên mật khẩu!");
 
         }
 
@@ -272,9 +274,9 @@ public class IdentityService : IIdentityService
 
             //return new JwtSecurityTokenHandler().WriteToken(token);
 
-            return await _userClaimsPrincipalFactory.CreateAsync(user) ?? throw new InvalidOperationException("Authenticated failed, please contact administrator!");
+            return await _userClaimsPrincipalFactory.CreateAsync(user) ?? throw new KeyNotFoundException("Authenticated failed, please contact administrator!");
         }
 
-        throw new InvalidOperationException("Sai mật khẩu. Vui lòng nhập lại!");
+        throw new KeyNotFoundException("Sai mật khẩu. Vui lòng nhập lại!");
     }
 }

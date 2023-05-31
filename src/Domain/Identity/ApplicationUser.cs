@@ -6,9 +6,10 @@ namespace mentor_v1.Domain.Identity;
 
 public class ApplicationUser : IdentityUser
 {
-    [ForeignKey("Department")]
-    public Guid DepartmentId { get; set; }
+    [ForeignKey("Position")]
+    public Guid PositionId { get; set; }
     public string Fullname { get; set; }
+    public GenderType GenderType { get; set; }
     public string Address { get; set; }
     public string Image { get; set; }
     public string IdentityNumber { get; set; }
@@ -16,6 +17,7 @@ public class ApplicationUser : IdentityUser
     public string BankAccountNumber { get; set; }
     public string BankAccountName { get; set; }
     public string BankName { get; set; }
+    public bool IsMaternity { get; set; } = false;
     public IList<Experience> Experiences { get; private set; }
     public IList<OvertimeLog> OvertimeLogs { get; private set; }
     public IList<LeaveLog> LeaveLogs { get; private set; }
@@ -26,5 +28,9 @@ public class ApplicationUser : IdentityUser
     public IList<RequestChange> RequestChanges { get; private set; }
     public IList<Degree> Degrees { get; private set; }
     public IList<Attendance> Attendances { get; private set; }
+    public IList<MaternityEmployee> MaternityEmployees { get; private set; }
+
+
+    public virtual Position Position { get; set; }
 
 }

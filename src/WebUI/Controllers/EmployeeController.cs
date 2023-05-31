@@ -70,8 +70,8 @@ public class EmployeeController : ApiControllerBase
 
         }
         
-        var result = await _identityService.CreateUserAsync(model.Username, model.Email, "Employee1!", model.Fullname, model.Image, model.Address, model.IdentityNumber, model.BirthDay,model.BankAccountNumber, model.BankAccountName,model.BankName);
-
+        var result = await _identityService.CreateUserAsync(model.Username, model.Email, "Employee1!", model.Fullname, model.Image, model.Address, model.IdentityNumber, model.BirthDay,model.BankAccountNumber, model.BankAccountName,model.BankName,model.PositionId, model.GenderType,model.IsMaternity);
+        
         if (result.Result.Succeeded)
         {
             var user = await _identityService.FindUserByEmailAsync(model.Email);
@@ -79,7 +79,9 @@ public class EmployeeController : ApiControllerBase
             var addRoleResult = await _userManager.AddToRoleAsync(user, role);
             if (addRoleResult.Succeeded)
             {
+                //confirm email
                 return Ok(user);
+
             }
             else
             {

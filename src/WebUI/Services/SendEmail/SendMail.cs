@@ -21,9 +21,9 @@ public class SendMail
         }
         var email = new MimeMessage();
 
-        email.From.Add(MailboxAddress.Parse("admin@bsmart.edu.vn"));
+        email.From.Add(MailboxAddress.Parse("tramygeo@gmail.com"));
         email.To.Add(MailboxAddress.Parse(toMail));
-        var bccAddress = new MailboxAddress("admin", "admin@bsmart.edu.vn");
+        var bccAddress = new MailboxAddress("", "");
 
         email.Bcc.Add(bccAddress);
         email.Subject = subject;
@@ -38,7 +38,7 @@ public class SendMail
         email.Body = builder.ToMessageBody();
         using var smtp = new MailKit.Net.Smtp.SmtpClient();
         smtp.Connect("smtp.gmail.com", 587, MailKit.Security.SecureSocketOptions.StartTls);
-        smtp.Authenticate("admin@bsmart.edu.vn", "truongLONG!@#123");
+        smtp.Authenticate("", " ");
         try
         {
             smtp.Send(email);
@@ -60,25 +60,25 @@ public class SendMail
 
         if (_environment.IsDevelopment() || _environment.IsStaging())
         {
-            subject = "TEST EMAIL" + "'" + subject + "'";
+           
         }
         var email = new MimeMessage();
 
-        email.From.Add(MailboxAddress.Parse("admin@bsmart.edu.vn"));
+        email.From.Add(MailboxAddress.Parse("tramygeo@gmail.com"));
         email.To.Add(MailboxAddress.Parse(toMail));
         email.Subject = subject;
 
         var builder = new BodyBuilder();
 
-        builder.HtmlBody = confirmLink + "<div style=\"font-weight: bold;\">Trân trọng, <br>\r\n        <div style=\"color: #FF630E;\">Bộ phận hỗ trợ học viên BSMART</div>\r\n    </div>\r\n<br>    <img src=\"cid:image1\" alt=\"\" width=\"200px\">\r\n    <br>\r\n    <br>\r\n    <div>\r\n        Email liên hệ: admin@bsmart.edu.vn\r\n    </div>\r\n    <div>Số điện thoại: 028 9999 79 39</div>\r\n</div>";
+        builder.HtmlBody = confirmLink + "<div style=\"font-weight: bold;\">Trân trọng, <br>\r\n        <div style=\"color: #FF630E;\">Bộ phận Nhân sự TechGenius</div>\r\n    </div>\r\n<br>    <img src=\"cid:image1\" alt=\"\" width=\"200px\">\r\n    <br>\r\n    <br>\r\n    <div>\r\n        Email liên hệ: admin@bsmart.edu.vn\r\n    </div>\r\n    <div>Số điện thoại: 028 9999 79 39</div>\r\n</div>";
         // Khởi tạo phần đính kèm của email (ảnh)
         var attachment = builder.LinkedResources.Add("wwwroot/files/icon-logo-along.webp");
         attachment.ContentId = "image1"; // Thiết lập Content-ID cho phần đính kèm
 
         email.Body = builder.ToMessageBody();
         using var smtp = new MailKit.Net.Smtp.SmtpClient();
-        smtp.Connect("smtp.gmail.com", 587, MailKit.Security.SecureSocketOptions.StartTls);
-        smtp.Authenticate("admin@bsmart.edu.vn", "truongLONG!@#123");
+        smtp.Connect("smtp.gmail.com", 465, MailKit.Security.SecureSocketOptions.StartTls);
+        smtp.Authenticate("tramygeo@gmail.com", "shvmqyxqovhiapgh");
         try
         {
             smtp.Send(email);
@@ -102,8 +102,8 @@ public class SendMail
         }
         var email = new MimeMessage();
 
-        email.From.Add(MailboxAddress.Parse("admin@bsmart.edu.vn"));
-        var bccAdminAddress = new MailboxAddress("admin", "admin@bsmart.edu.vn");
+        email.From.Add(MailboxAddress.Parse(""));
+        var bccAdminAddress = new MailboxAddress("admin", "");
 
         email.Bcc.Add(bccAdminAddress);
         foreach (var item in listMail)
@@ -125,7 +125,7 @@ public class SendMail
         email.Body = builder.ToMessageBody();
         using var smtp = new MailKit.Net.Smtp.SmtpClient();
         smtp.Connect("smtp.gmail.com", 587, MailKit.Security.SecureSocketOptions.StartTls);
-        smtp.Authenticate("admin@bsmart.edu.vn", "truongLONG!@#123");
+        smtp.Authenticate("", "");
         try
         {
             smtp.Send(email);

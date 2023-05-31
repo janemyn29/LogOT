@@ -19,35 +19,16 @@ public class AuthController : ApiControllerBase
         _context = context;
     }
 
-    [HttpPut]
-    public async Task<IActionResult> Login()
-    {
-        if (User.Identity.IsAuthenticated)
-        {
-            var response = new ObjectResult("Bạn đã đăng nhập. Vui lòng không đăng nhập thêm!")
-            {
-                StatusCode = 405
-            };
-            return await Task.FromResult<IActionResult>(response);
-        }
-        else
-        {
-
-            return RedirectToAction("/Login");
-        }
-
-    }
-
-
     [HttpPost]
     [Route("/Login")]
     public async Task<IActionResult> Login(string email, string password)
     {
+        
         if(User.Identity.IsAuthenticated)
         {
             var response = new ObjectResult("Bạn đã đăng nhập. Vui lòng không đăng nhập thêm!")
             {
-                StatusCode = 405
+                StatusCode = 429
             };
             return await Task.FromResult<IActionResult>(response);
         }
@@ -56,11 +37,11 @@ public class AuthController : ApiControllerBase
             try
             {
                 //var result = await _identityService.AuthenticateAsync(email, password);
+               /* string callbackUrl = Request.Scheme + "://" + Request.Host+ Url.Action("ConfirmEmail", "Auth", new {email= email, })*/
                 var user = await Mediator.Send(new Login { Username = email, Password = password });
                 if (string.IsNullOrEmpty(user))
                 {
                     return BadRequest("Đăng nhập không thành công!");
-
                 }
                 return Ok(user);
             }

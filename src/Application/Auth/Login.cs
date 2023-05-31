@@ -5,6 +5,7 @@ using System.Security.Authentication;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Azure.Core;
 using MediatR;
 using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.Interfaces;
@@ -19,6 +20,7 @@ public class Login : IRequest<string>
 {
     public string Username { get; set; }
     public string Password { get; set; }
+    public string callbackUrl { get; set; }
 }
 
 public class LoginHandler : IRequestHandler<Login, string>
@@ -38,7 +40,7 @@ public class LoginHandler : IRequestHandler<Login, string>
 
     public async Task<string> Handle(Login request, CancellationToken cancellationToken)
     {
-        var result = await _identityService.AuthenticateAsync(request.Username.Trim(), request.Password.Trim());
+        var result = await _identityService.AuthenticateAsync(request.Username.Trim(), request.Password.Trim() );
 
         if (result.Identity.IsAuthenticated)
         {

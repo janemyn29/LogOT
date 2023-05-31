@@ -75,7 +75,7 @@ public class ApplicationDbContextInitialiser
         }
 
         // admin users
-        var administrator = new ApplicationUser { UserName = "manager@localhost", Email = "manager@localhost" , Fullname = "Manager" , Image="(null)", Address = "no" , IdentityNumber="0", BirthDay=DateTime.Parse("2000-01-01"), BankAccountNumber= "0", BankAccountName= "0", BankName = "0" };
+        var administrator = new ApplicationUser { UserName = "manager@localhost", Email = "manager@localhost" , Fullname = "Manager" , Image="(null)", Address = "no" , IdentityNumber="0", BirthDay=DateTime.Parse("2000-01-01"), BankAccountNumber= "0", BankAccountName= "0", BankName = "0", GenderType=Domain.Enums.GenderType.Women, PositionId =Guid.Parse( "2949e5bc-18c4-457b-b828-86d31c53b168" ), IsMaternity = false} ;
 
         if (_userManager.Users.All(u => u.UserName != administrator.UserName))
         {
@@ -87,7 +87,7 @@ public class ApplicationDbContextInitialiser
         }
 
 
-        var staff = new ApplicationUser { UserName = "staff@localhost", Email = "staff@localhost", Fullname = "Satff", Image = "(null)", Address = "no", IdentityNumber = "0", BirthDay = DateTime.Parse("2000-01-01"), BankAccountNumber = "0", BankAccountName = "0", BankName = "0" };
+        var staff = new ApplicationUser { UserName = "staff@localhost", Email = "staff@localhost", Fullname = "Satff", Image = "(null)", Address = "no", IdentityNumber = "0", BirthDay = DateTime.Parse("2000-01-01"), BankAccountNumber = "0", BankAccountName = "0", BankName = "0", GenderType = Domain.Enums.GenderType.Women, PositionId = Guid.Parse("2949e5bc-18c4-457b-b828-86d31c53b168"), IsMaternity = false };
 
         if (_userManager.Users.All(u => u.UserName != staff.UserName))
         {

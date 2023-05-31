@@ -13,7 +13,7 @@ public class Attendance: BaseAuditableEntity
     public DateTime Day { get; set; }
     public DateTime StartTime { get; set; }
     public DateTime? EndTime { get; set; }
-
+    public ShiftEnum ShiftEnum { get; set; }
 
 
 }

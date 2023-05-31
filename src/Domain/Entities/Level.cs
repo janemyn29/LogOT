@@ -10,12 +10,9 @@ using mentor_v1.Domain.Identity;
 namespace mentor_v1.Domain.Entities;
 public class Level : BaseAuditableEntity
 {
-    [ForeignKey("Department")]
-    public Guid DepartmentId { get; set; }
-
     public string Name { get; set; }
 
-    public string  Description { get; set; }
+    public string Description { get; set; }
 
-    public virtual Department Department { get; set; }
+    public IList<Position> Positions { get; set; }
 }
