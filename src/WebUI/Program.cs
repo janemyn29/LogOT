@@ -47,7 +47,12 @@ builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration, builder.Environment);
 builder.Services.AddWebUIServices();
 builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession();
+builder.Services.AddSession( 
+    opt =>{
+        opt.Cookie.HttpOnly = true; 
+        opt.Cookie.IsEssential = true;
+
+});
 builder.Services.Configure<GoogleCaptchaConfig>(builder.Configuration.GetSection("GoogleReCaptcha"));
 builder.Services.Configure<MomoServices>(builder.Configuration.GetSection("MomoServices"));
 

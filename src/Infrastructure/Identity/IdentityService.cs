@@ -287,7 +287,7 @@ public class IdentityService : IIdentityService
         throw new InvalidOperationException("Sai mật khẩu. Vui lòng nhập lại!");
     }
 
-    public async Task<bool> SendEmailConfirmAsync(string username, string password,string callbackUrl)
+    public async Task<bool> SendEmailConfirmAsync(string username,string callbackUrl)
     {
         var user = await _userManager.FindByNameAsync(username);
         if (user == null)

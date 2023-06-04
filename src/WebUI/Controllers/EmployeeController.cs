@@ -38,6 +38,7 @@ public class EmployeeController : ApiControllerBase
 
     public async Task<IActionResult> Index(int pg = 1)
     {
+        var name = User.Identity.Name;
         var listEmployee = await Mediator.Send(new GetListUserRequest { Page=1, Size=20 });
         return Ok(listEmployee);
     }

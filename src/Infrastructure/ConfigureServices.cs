@@ -70,7 +70,7 @@ public static class ConfigureServices
         })
             .AddCookie(options =>
             {
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+                options.ExpireTimeSpan = TimeSpan.FromHours(1);
                 options.SlidingExpiration = true;
                 options.AccessDeniedPath = "/Forbidden/";
                 options.LoginPath = "/Login";
