@@ -20,14 +20,14 @@ using Newtonsoft.Json;
 
 namespace mentor_v1.Application.Auth;
 
-public class Login : IRequest<bool>
+public class Login : IRequest<UserLogin>
 {
     public string Username { get; set; }
     public string Password { get; set; }
     public string? callbackUrl { get; set; }
 }
 
-public class LoginHandler : IRequestHandler<Login,bool>
+public class LoginHandler : IRequestHandler<Login, UserLogin>
 {
 
     private readonly IIdentityService _identityService;
@@ -42,7 +42,7 @@ public class LoginHandler : IRequestHandler<Login,bool>
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<bool> Handle(Login request, CancellationToken cancellationToken)
+    public async Task<UserLogin> Handle(Login request, CancellationToken cancellationToken)
     {
         if (request.callbackUrl!=null)
         {
@@ -65,7 +65,7 @@ public class LoginHandler : IRequestHandler<Login,bool>
         {
             var result = await _identityService.AuthenticateAsync(request.Username.Trim(), request.Password.Trim());
 
-            if (result.Identity.IsAuthenticated)
+            if (!String.IsNullOrEmpty(result))
             {
                 var user = await _userManager.FindByNameAsync(request.Username);
                 if (user == null)
@@ -74,50 +74,23 @@ public class LoginHandler : IRequestHandler<Login,bool>
                     if (user == null)
                     {
                         throw new KeyNotFoundException($"Không tìm thấy tên đăng nhập hoặc địa chỉ email '{request.Username}'");
-
                     }
                 }
-                var httpContext = _httpContextAccessor.HttpContext;
-                var response = httpContext.Response;
-                var userManager = _userManager;
-
-                var roles = await userManager.GetRolesAsync(user);
-
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, user.UserName),
-                    new Claim(ClaimTypes.Email, user.Email),
-                    new Claim("Id", user.Id),
-                };
+                var roles = await _userManager.GetRolesAsync(user);
 
                 var userModel = new UserLogin();
+                userModel.userId = user.Id;
                 userModel.Email = user.Email;
                 userModel.FullName = user.Fullname;
                 userModel.Username = user.UserName;
                 userModel.Image = user.Image;
                 userModel.listRoles = roles.ToList();
-                /*CookieOptions option = new CookieOptions {
-                    Expires = DateTime.Now.AddHours(1)
-            }
-                ;*/
-                string infor = JsonConvert.SerializeObject(userModel) ;
-                response.Cookies.Append("UserInfor", infor);
-                foreach (var role in roles)
-                {
-                    claims.Add(new Claim(ClaimTypes.Role, role));
-                }
-
-                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                var principal = new ClaimsPrincipal(identity);
-
-                await httpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+                userModel.Token = result;
 
                 /*var employee = await _context.Employees.FirstOrDefaultAsync(e => e.ApplicationUserId == user.Id);
                 var employeeId = employee.Id;
                 response.Cookies.Append("EmployeeId", employeeId.ToString());*/
-                return true;
-
-                
+                return userModel;
             }
 
             throw new AuthenticationException("Đăng nhập không thành công!");

@@ -15,6 +15,7 @@ using Newtonsoft.Json;
 using Serilog;
 using WebUI;
 using WebUI.Services;
+using WebUI.Services.FileManager;
 using WebUI.Services.MomoServices;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -55,12 +56,13 @@ builder.Services.AddSession(
 });
 builder.Services.Configure<GoogleCaptchaConfig>(builder.Configuration.GetSection("GoogleReCaptcha"));
 builder.Services.Configure<MomoServices>(builder.Configuration.GetSection("MomoServices"));
+builder.Services.AddTransient<IFileService, FileService>();
 
 builder.Services.AddTransient(typeof(GoogleCaptchaService));
 builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
    opt.TokenLifespan = TimeSpan.FromMinutes(30));
 
-/*builder.Services.AddAuthentication(options =>
+builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -78,7 +80,7 @@ builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecrectKey"]))
 
     };
-});*/
+});
 var app = builder.Build();
 
 app.UseCors(MyAllowSpecificOrigins);

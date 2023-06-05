@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Newtonsoft.Json;
+using WebUI.Models;
 
 namespace WebUI.Controllers;
 public class AuthController : ApiControllerBase
@@ -28,81 +29,69 @@ public class AuthController : ApiControllerBase
 
     [HttpPost]
     [Route("/Login")]
-    public async Task<IActionResult> Login(string email, string password)
+    public async Task<IActionResult> Login([FromForm]LoginWithPassword model)
     {
-        
-        if(User.Identity.IsAuthenticated)
+        try
         {
-            var response = new ObjectResult("Bạn đã đăng nhập. Vui lòng không đăng nhập thêm!")
+            //var result = await _identityService.AuthenticateAsync(email, password);
+            string callbackUrl = "";
+            var user = await _userManager.FindByNameAsync(model.Username);
+            if (user == null)
             {
-                StatusCode = 429
-            };
-            return await Task.FromResult<IActionResult>(response);
+                user = await _userManager.FindByEmailAsync(model.Username);
+                if (user == null)
+                {
+                    return BadRequest("Tài khoản này không tồn tại!");
+                }
+            }
+            if (user.EmailConfirmed == false)
+            {
+                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+
+                callbackUrl = Request.Scheme + "://" + Request.Host + Url.Action("ConfirmEmail", "Auth", new { userId = user.Id, code = code });
+                var result = await Mediator.Send(new Login { Username = model.Username, Password = model.Password, callbackUrl = callbackUrl });
+                if (result==null)
+                {
+                    return BadRequest("Đăng nhập không thành công!");
+                }
+                return Ok(result);
+            }
+            else
+            {
+                var result = await Mediator.Send(new Login { Username = model.Username, Password = model.Password });
+                /*var roles = await _userManager.GetRolesAsync(user);
+                var userModel = new UserLogin();
+                userModel.Email = user.Email;
+                userModel.FullName = user.Fullname;
+                userModel.Username = user.UserName;
+                userModel.Image = user.Image;
+                userModel.listRoles = roles.ToList();
+                *//*CookieOptions option = new CookieOptions {
+                    Expires = DateTime.Now.AddHours(1)
+            }
+                ;*//*
+                string infor = JsonConvert.SerializeObject(userModel);
+                HttpContext.Session.SetString("UserInfor", infor);*/
+
+                if (result == null)
+                {
+                    return BadRequest("Đăng nhập không thành công!");
+                }
+                return Ok(result);
+            }
+
         }
-        else
+        catch (Exception ex)
         {
-            try
-            {
-                //var result = await _identityService.AuthenticateAsync(email, password);
-                string callbackUrl = "";
-               var user = await _userManager.FindByNameAsync(email);
-                if(user == null)
-                {
-                    user = await _userManager.FindByEmailAsync(email);
-                    if (user == null)
-                    {
-                        return BadRequest("Tài khoản này không tồn tại!");
-                    }
-                }
-                if (user.EmailConfirmed == false)
-                {
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-
-                    callbackUrl = Request.Scheme + "://" + Request.Host + Url.Action("ConfirmEmail", "Auth", new { userId = user.Id, code = code });
-                    var result = await Mediator.Send(new Login { Username = email, Password = password, callbackUrl = callbackUrl });
-                    if (result)
-                    {
-                        return BadRequest("Đăng nhập không thành công!");
-                    }
-                    return Ok(result);
-                }
-                else
-                {
-                    var result = await Mediator.Send(new Login { Username = email, Password = password });
-                    /*var roles = await _userManager.GetRolesAsync(user);
-                    var userModel = new UserLogin();
-                    userModel.Email = user.Email;
-                    userModel.FullName = user.Fullname;
-                    userModel.Username = user.UserName;
-                    userModel.Image = user.Image;
-                    userModel.listRoles = roles.ToList();
-                    *//*CookieOptions option = new CookieOptions {
-                        Expires = DateTime.Now.AddHours(1)
-                }
-                    ;*//*
-                    string infor = JsonConvert.SerializeObject(userModel);
-                    HttpContext.Session.SetString("UserInfor", infor);*/
-
-                    if (!result)
-                    {
-                        return BadRequest("Đăng nhập không thành công!");
-                    }
-                    return Ok("Đăng nhập thành công!");
-                }
-
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return BadRequest(ex.Message);
         }
-        
+
     }
 
     [HttpGet]
     [Route("/ConfirmEmail")]
-    public async Task<IActionResult> ConfirmEmail( string? code,string? userId)
+    public async Task<IActionResult> ConfirmEmail(string? code, string? userId)
     {
         if (userId == null || code == null)
         {

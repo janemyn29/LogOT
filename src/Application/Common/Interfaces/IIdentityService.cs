@@ -13,7 +13,7 @@ public interface IIdentityService
     Task<bool> AuthorizeAsync(string userId, string policyName);
 
     // Task<string> AuthenticateAsync(string Email, string password);
-    Task<ClaimsPrincipal> AuthenticateAsync(string Email, string password);
+    Task<string> AuthenticateAsync(string Email, string password);
     Task<bool> SendEmailConfirmAsync(string Email,string callbackUrl);
 
     Task<(Result Result, string UserId)> CreateUserAsync( string username, string email, string password , string fullname , string image, string address, string identityNumber , DateTime birthDay, string BankAccountNumber , string BankAccountName, string BankName,Guid PositionId, GenderType gender, bool IsMaternity );

@@ -18,6 +18,7 @@ public class ApplicationUser : IdentityUser
     public string BankAccountName { get; set; }
     public string BankName { get; set; }
     public bool IsMaternity { get; set; } = false;
+    public string? ImageBase { get;set; }
     public IList<Experience> Experiences { get; private set; }
     public IList<OvertimeLog> OvertimeLogs { get; private set; }
     public IList<LeaveLog> LeaveLogs { get; private set; }

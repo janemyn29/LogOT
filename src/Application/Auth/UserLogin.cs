@@ -12,5 +12,7 @@ public class UserLogin
     public string FullName { get; set; }
     public string Email { get; set; }
     public string Image { get; set; }
+
+    public string Token { get; set; }
     public List<string> listRoles { get; set; }
 }

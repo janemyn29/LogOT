@@ -4,6 +4,7 @@ using mentor_v1.Application.ApplicationUser.Commands.CreateUse;
 using mentor_v1.Application.ApplicationUser.Queries.GetUser;
 using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.Interfaces;
+using mentor_v1.Application.Common.Models;
 using mentor_v1.Domain.Entities;
 using mentor_v1.Domain.Identity;
 using Microsoft.AspNetCore.Authorization;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebUI.Models;
+using WebUI.Services.FileManager;
 
 namespace WebUI.Controllers;
 
@@ -19,14 +21,17 @@ public class EmployeeController : ApiControllerBase
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IIdentityService _identityService;
-
+    private readonly IFileService _fileService;
     private readonly IApplicationDbContext _context;
+    private readonly IWebHostEnvironment environment;
 
-    public EmployeeController(UserManager<ApplicationUser> userManager, IIdentityService identityService, IApplicationDbContext context)
+    public EmployeeController(IWebHostEnvironment ev, IFileService fileService,UserManager<ApplicationUser> userManager, IIdentityService identityService, IApplicationDbContext context)
     {
         _userManager = userManager;
         _identityService = identityService;
         _context = context;
+        _fileService = fileService;
+        environment = ev;
     }
 
     //Quản lý employee của staff
@@ -38,17 +43,41 @@ public class EmployeeController : ApiControllerBase
 
     public async Task<IActionResult> Index(int pg = 1)
     {
-        var name = User.Identity.Name;
+        var file = new FileService(environment);
         var listEmployee = await Mediator.Send(new GetListUserRequest { Page=1, Size=20 });
+        foreach (var item in listEmployee.Items)
+        {
+            if (item.Image != null)
+            {
+                try
+                {
+                    var wwwPath = this.environment.ContentRootPath;
+                    var path = Path.Combine(wwwPath, "Uploads\\", item.Image);
+                    if (System.IO.File.Exists(path))
+                    {
+                        byte[] base64 = System.IO.File.ReadAllBytes(path);
+                        item.ImageBase = Convert.ToBase64String(base64);
+                    }
+                   
+                }
+                catch (Exception ex)
+                {
+                }
+
+            }
+        }
         return Ok(listEmployee);
     }
 
     [Authorize(Roles = "Manager")]
     [HttpPost]
     [Route("/Employee/Create")]
-    public async Task<IActionResult> Create(string role, [FromBody] UserViewModel model)
+    public async Task<IActionResult> Create(string role, [FromForm] UserViewModel model)
     {
-        
+        if(!ModelState.IsValid)
+        {
+            return BadRequest("Vui lòng điền đầy đủ các thông tin được yêu cầu!");
+        }
         if (!role.Equals("Employee") && !role.Equals("Manager") && !role.Equals("Staff"))
         {
 
@@ -70,32 +99,40 @@ public class EmployeeController : ApiControllerBase
             return BadRequest(errors);
 
         }
-        
-        var result = await _identityService.CreateUserAsync(model.Username, model.Email, "Employee1!", model.Fullname, model.Image, model.Address, model.IdentityNumber, model.BirthDay,model.BankAccountNumber, model.BankAccountName,model.BankName,model.PositionId, model.GenderType,model.IsMaternity);
-        
-        if (result.Result.Succeeded)
+        if(model.Image!= null)
         {
-            var user = await _identityService.FindUserByEmailAsync(model.Email);
+            var fileResult = _fileService.SaveImage(model.Image);
+            var result = await _identityService.CreateUserAsync(model.Username, model.Email, "Employee1!", model.Fullname, fileResult, model.Address, model.IdentityNumber, model.BirthDay, model.BankAccountNumber, model.BankAccountName, model.BankName, model.PositionId, model.GenderType, model.IsMaternity);
 
-            var addRoleResult = await _userManager.AddToRoleAsync(user, role);
-            if (addRoleResult.Succeeded)
+            if (result.Result.Succeeded)
             {
-                //confirm email
-                return Ok(user);
+                var user = await _identityService.FindUserByEmailAsync(model.Email);
 
+                var addRoleResult = await _userManager.AddToRoleAsync(user, role);
+                if (addRoleResult.Succeeded)
+                {
+                    //confirm email
+                    return Ok(user);
+
+                }
+                else
+                {
+                    await _userManager.DeleteAsync(user);
+
+                    return BadRequest("Thêm Role bị lỗi");
+
+                }
             }
             else
             {
-                await _userManager.DeleteAsync(user);
-
-                return BadRequest("Thêm Role bị lỗi");
-
+                return BadRequest(result.Result.Errors);
             }
         }
         else
         {
-            return BadRequest(result.Result.Errors);
+            return BadRequest("Vui lòng không để trống hình ảnh!");
         }
+
     }
 
 }

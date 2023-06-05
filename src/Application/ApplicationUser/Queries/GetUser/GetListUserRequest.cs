@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
+using mentor_v1.Application.Common.Files;
 using mentor_v1.Application.Common.Interfaces;
 using mentor_v1.Application.Common.Models;
 using mentor_v1.Application.Common.PagingUser;
@@ -41,7 +42,13 @@ public class GetListUserRequestHandler : IRequestHandler<GetListUserRequest, Pag
         // Paginate data
         var page = await PagingAppUser<Domain.Identity.ApplicationUser>
             .CreateAsync(ListApplicationUser, request.Page, request.Size);
-
+/*        foreach (var item in page.Items)
+        {
+            if (item.Image != null)
+            {
+                item.ImageBase = _file.CovertToBase64(item.Image);
+            }
+        }*/
         return page;
     }
 }
