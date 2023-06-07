@@ -4,15 +4,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using mentor_v1.Domain.Identity;
+using mentor_v1.Domain.Entities;
+using mentor_v1.Domain.Enums;
+using Microsoft.AspNetCore.Http;
 
-namespace mentor_v1.Domain.Entities;
-public class EmployeeContract : BaseAuditableEntity
+namespace mentor_v1.Application.EmployeeContract.Queries.GetEmpContract;
+public class EmpContractViewModel
 {
-    [ForeignKey("ApplicationUser")]
     public string ApplicationUserId { get; set; }
-    public string ContractCode { get; set; }
-    public string? File { get; set; }
+    public IFormFile? File { get; set; }
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
     public string? Job { get; set; }
@@ -21,12 +21,4 @@ public class EmployeeContract : BaseAuditableEntity
     public double? PercentDeduction { get; set; }
     public SalaryType SalaryType { get; set; }
     public ContractType ContractType { get; set; }
-
-    public virtual ApplicationUser ApplicationUser { get; set; }
-
-    public IList<PaySlip> PaySlips { get; private set; }
-
-    public IList<AllowanceEmployee> AllowanceEmployees { get; private set; }
-
 }
-

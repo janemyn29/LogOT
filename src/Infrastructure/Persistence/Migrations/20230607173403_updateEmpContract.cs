@@ -5,24 +5,25 @@
 namespace mentorv1.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class updateBase64 : Migration
+    public partial class updateEmpContract : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "ImageBase",
-                table: "AspNetUsers",
+                name: "ContractCode",
+                table: "EmployeeContract",
                 type: "nvarchar(max)",
-                nullable: true);
+                nullable: false,
+                defaultValue: "");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "ImageBase",
-                table: "AspNetUsers");
+                name: "ContractCode",
+                table: "EmployeeContract");
         }
     }
 }

@@ -12,8 +12,8 @@ using mentor_v1.Infrastructure.Persistence;
 namespace mentorv1.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230605190227_updateBase64")]
-    partial class updateBase64
+    [Migration("20230607165546_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -513,6 +513,92 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                             LastModifiedBy = "Test",
                             Name = "Phòng IT"
                         });
+                });
+
+            modelBuilder.Entity("mentor_v1.Domain.Entities.DepartmentAllowance", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("DepartmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("SubsidizeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DepartmentId");
+
+                    b.HasIndex("SubsidizeId");
+
+                    b.ToTable("DepartmentAllowances");
+                });
+
+            modelBuilder.Entity("mentor_v1.Domain.Entities.Dependent", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("AcceptanceType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("BirthDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Desciption")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Relationship")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.ToTable("Dependents");
                 });
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.DetailTaxIncome", b =>
@@ -1476,6 +1562,43 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.ToTable("SkillJD");
                 });
 
+            modelBuilder.Entity("mentor_v1.Domain.Entities.Subsidize", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("Amount")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Subsidize");
+                });
+
             modelBuilder.Entity("mentor_v1.Domain.Entities.TodoItem", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1762,6 +1885,36 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                 {
                     b.HasOne("mentor_v1.Domain.Identity.ApplicationUser", "ApplicationUser")
                         .WithMany("Degrees")
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+                });
+
+            modelBuilder.Entity("mentor_v1.Domain.Entities.DepartmentAllowance", b =>
+                {
+                    b.HasOne("mentor_v1.Domain.Entities.Department", "Departments")
+                        .WithMany()
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("mentor_v1.Domain.Entities.Subsidize", "Subsidize")
+                        .WithMany("DepartmentAllowances")
+                        .HasForeignKey("SubsidizeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Departments");
+
+                    b.Navigation("Subsidize");
+                });
+
+            modelBuilder.Entity("mentor_v1.Domain.Entities.Dependent", b =>
+                {
+                    b.HasOne("mentor_v1.Domain.Identity.ApplicationUser", "ApplicationUser")
+                        .WithMany()
                         .HasForeignKey("ApplicationUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -2067,6 +2220,11 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Navigation("SkillEmployees");
 
                     b.Navigation("SkillJDs");
+                });
+
+            modelBuilder.Entity("mentor_v1.Domain.Entities.Subsidize", b =>
+                {
+                    b.Navigation("DepartmentAllowances");
                 });
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.TodoList", b =>

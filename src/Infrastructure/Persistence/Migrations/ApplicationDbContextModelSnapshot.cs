@@ -643,6 +643,10 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<double?>("BasicSalary")
                         .HasColumnType("float");
 
+                    b.Property<string>("ContractCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("ContractType")
                         .HasColumnType("int");
 
