@@ -41,6 +41,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
     public DbSet<DetailTaxIncome> DetailTaxIncomes => Set<DetailTaxIncome>();
     public DbSet<AnnualWorkingDay> AnnualWorkingDays => Set<AnnualWorkingDay>();
     public DbSet<PayDay> PayDays => Set<PayDay>();
+    public DbSet<Dependent> Dependents => Set<Dependent>();
+    public DbSet<DepartmentAllowance> DepartmentAllowances => Set<DepartmentAllowance>();
+
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
