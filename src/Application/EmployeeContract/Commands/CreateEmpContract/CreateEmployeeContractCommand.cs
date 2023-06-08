@@ -11,7 +11,7 @@ using mentor_v1.Domain.Enums;
 namespace mentor_v1.Application.EmployeeContract.Commands.CreateEmpContract;
 public class CreateEmployeeContractCommand : IRequest<Guid>
 {
-    
+    public string Id { get; set; }
     public string? File { get; set; }
     public EmpContractViewModel EmpContractViewModel { get; set; }
 }
@@ -29,7 +29,7 @@ public class CreateEmployeeContractCommandHandler : IRequestHandler<CreateEmploy
     {
         var city = new Domain.Entities.EmployeeContract()
         {
-            ApplicationUserId = request.EmpContractViewModel.ApplicationUserId,
+            ApplicationUserId =request.Id,
             File = request.File,
             StartDate = request.EmpContractViewModel.StartDate,
             EndDate = request.EmpContractViewModel.EndDate,

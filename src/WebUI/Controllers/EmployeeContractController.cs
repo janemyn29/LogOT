@@ -3,6 +3,7 @@ using mentor_v1.Application.ApplicationUser.Queries.GetUser;
 using mentor_v1.Application.Common.Interfaces;
 using mentor_v1.Application.EmployeeContract.Commands.CreateEmpContract;
 using mentor_v1.Application.EmployeeContract.Queries.GetEmpContract;
+using mentor_v1.Domain.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,12 +15,13 @@ public class EmployeeContractController : ApiControllerBase
 {
     private readonly IApplicationDbContext _context;
     private readonly IFileService _fileService;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public EmployeeContractController(IApplicationDbContext context, IFileService fileService)
+    public EmployeeContractController(IApplicationDbContext context, IFileService fileService, UserManager<ApplicationUser> userManager)
     {
         _context = context;
         _fileService = fileService; 
-
+        _userManager = userManager;
     }
     [Authorize (Roles ="Manager")]
     [Route("/EmployeeContract")]
@@ -31,7 +33,7 @@ public class EmployeeContractController : ApiControllerBase
     }
 
     [Authorize(Roles = "Manager")]
-    [Route("/EmployeeContract")]
+    [Route("/EmployeeContract/Create")]
     [HttpPost]
     public async Task<IActionResult> Create([FromForm] EmpContractViewModel model) 
     {
@@ -50,10 +52,10 @@ public class EmployeeContractController : ApiControllerBase
         }
         try
         {
-            var user = await Mediator.Send(new GetUserByIdRequest { Id = model.ApplicationUserId });
-            var filePath = _fileService.SaveImagePdf(model.File);
-            var result = await Mediator.Send(new CreateEmployeeContractCommand { EmpContractViewModel = model, File = filePath});
-            return Ok();
+            var user = await _userManager.FindByNameAsync(model.Username);
+            var filePath = await _fileService.UploadFile(model.File);
+            var result = await Mediator.Send(new CreateEmployeeContractCommand { EmpContractViewModel = model, File = filePath, Id = user.Id});
+            return Ok("Thêm hợp đồng thành công!");
         }
         catch (Exception ex)
         {
@@ -61,5 +63,14 @@ public class EmployeeContractController : ApiControllerBase
             return BadRequest(ex.Message);
         }
         
+    }
+
+    [Authorize(Roles = "Manager")]
+    [Route("/EmployeeContract/DowloadEmpContract")]
+    [HttpGet]
+    public async Task<IActionResult> DownloadFile()
+    {
+        var result = await _fileService.DownloadFile(FileName);
+        return File(result.Item1, result.Item2, result.Item2);
     }
 }

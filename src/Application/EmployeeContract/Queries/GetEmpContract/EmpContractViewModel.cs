@@ -11,9 +11,8 @@ using Microsoft.AspNetCore.Http;
 namespace mentor_v1.Application.EmployeeContract.Queries.GetEmpContract;
 public class EmpContractViewModel
 {
-    public string ApplicationUserId { get; set; }
+    public string Username { get; set; }
     public string ContractCode { get; set; }
-
     public IFormFile? File { get; set; }
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }

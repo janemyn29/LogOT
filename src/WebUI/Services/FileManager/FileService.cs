@@ -1,4 +1,7 @@
-﻿namespace WebUI.Services.FileManager;
+﻿using Microsoft.AspNetCore.StaticFiles;
+using WebUI.Helper;
+
+namespace WebUI.Services.FileManager;
 
 public class FileService : IFileService
 {
@@ -8,7 +11,7 @@ public class FileService : IFileService
         this.environment = env;
     }
 
-    public string SaveImage(IFormFile imageFile)
+    public  string SaveImage(IFormFile imageFile)
     {
         try
         {
@@ -81,57 +84,41 @@ public class FileService : IFileService
         }
     }
 
-    public string SaveImagePdf(IFormFile imageFile)
+    public async Task<string> UploadFile(IFormFile _IFormFile)
     {
+        string FileName = "";
         try
         {
-            var contentPath = this.environment.ContentRootPath;
-            // path = "c://projects/productminiapi/uploads" ,not exactly something like that
-            var path = Path.Combine(contentPath, "CV");
-            if (!Directory.Exists(path))
+            FileInfo _FileInfo = new FileInfo(_IFormFile.FileName);
+            FileName = Guid.NewGuid().ToString() + _FileInfo.Extension;
+            var _GetFilePath = Common.GetFilePath(FileName);
+            using (var _FileStream = new FileStream(_GetFilePath, FileMode.Create))
             {
-                Directory.CreateDirectory(path);
+                await _IFormFile.CopyToAsync(_FileStream);
             }
-
-            // Check the allowed extenstions
-            var ext = Path.GetExtension(imageFile.FileName);
-            var allowedExtensions = new string[] { ".jpg", ".png", ".jpeg",".pdf" };
-            if (!allowedExtensions.Contains(ext))
-            {
-                string msg = string.Format("Only {0} extensions are allowed", string.Join(",", allowedExtensions));
-                throw new("Tải hình ảnh đã xảy ra lỗi!");
-            }
-            string uniqueString = Guid.NewGuid().ToString();
-            // we are trying to create a unique filename here
-            var newFileName = uniqueString + ext;
-            var fileWithPath = Path.Combine(path, newFileName);
-            var stream = new FileStream(fileWithPath, FileMode.Create);
-            imageFile.CopyTo(stream);
-            stream.Close();
-            return newFileName;
+            return FileName;
         }
         catch (Exception ex)
         {
-            throw new("Tải hình ảnh đã xảy ra lỗi!");
+            throw ex;
         }
     }
-
-    public string CovertToBase64Pdf(string imageFileName)
+    public async Task<(byte[], string, string)> DownloadFile(string FileName)
     {
         try
         {
-            var wwwPath = this.environment.WebRootPath;
-            var path = Path.Combine(wwwPath, "CV\\", imageFileName);
-            if (System.IO.File.Exists(path))
+            var _GetFilePath = Common.GetFilePath(FileName);
+            var provider = new FileExtensionContentTypeProvider();
+            if (!provider.TryGetContentType(_GetFilePath, out var _ContentType))
             {
-                string base64 = File.ReadAllText(path);
-                return base64;
+                _ContentType = "application/octet-stream";
             }
-            return null;
+            var _ReadAllBytesAsync = await File.ReadAllBytesAsync(_GetFilePath);
+            return (_ReadAllBytesAsync, _ContentType, Path.GetFileName(_GetFilePath));
         }
         catch (Exception ex)
         {
-            return null;
+            throw ex;
         }
     }
 }
