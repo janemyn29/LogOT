@@ -29,7 +29,7 @@ public class AuthController : ApiControllerBase
 
     [HttpPost]
     [Route("/Login")]
-    public async Task<IActionResult> Login([FromForm]LoginWithPassword model)
+    public async Task<IActionResult> Login([FromBody]LoginWithPassword model)
     {
         try
         {
