@@ -11,6 +11,8 @@ namespace mentor_v1.Application.EmployeeContract.Commands.CreateEmpContract;
 public class CreateEmployeeContractCommand : IRequest<Guid>
 {
     public string ApplicationUserId { get; set; }
+    public string ContractCode { get; set; }
+
     public string? File { get; set; }
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
@@ -45,6 +47,7 @@ public class CreateEmployeeContractCommandHandler : IRequestHandler<CreateEmploy
             PercentDeduction = request.PercentDeduction,
             SalaryType = request.SalaryType,
             ContractType = request.ContractType,
+            ContractCode = request.ContractCode,    
         };
 
         // add new category

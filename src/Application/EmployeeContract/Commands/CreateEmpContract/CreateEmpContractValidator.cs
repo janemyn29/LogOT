@@ -7,50 +7,51 @@ using FluentValidation;
 using mentor_v1.Application.Common.Interfaces;
 using mentor_v1.Application.EmployeeContract.Queries.GetEmpContract;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace mentor_v1.Application.EmployeeContract.Commands.CreateEmpContract;
 public class CreateEmpContractValidator : AbstractValidator<EmpContractViewModel>
 {
+    private readonly IApplicationDbContext _context;
     public CreateEmpContractValidator(IApplicationDbContext context)
     {
-        /*_context = context;
+        _context = context;
 
         // Add validation for request
-        RuleFor(v => v.Fullname)
-            .NotEmpty().WithMessage("Họ và tên không được để trống.")
-            .MaximumLength(70).WithMessage("Họ và tên không được quá 70 ký tự.");
+        RuleFor(v => v.ContractCode)
+            .NotEmpty().WithMessage("Mã hợp đồng không thể để trống.")
+            .MaximumLength(70).WithMessage("Mã hợp đồng không được quá 70 ký tự.")
+             .MustAsync(BeUniqueCode).WithMessage("Mã hợp đồng này đã tồn tại!");
         // Add validation for request
-        RuleFor(v => v.Address)
-            .NotEmpty().WithMessage("Địa chỉ không được để trống.")
-            .MaximumLength(200).WithMessage("Địa chỉ không được quá 200 ký tự.");
+        RuleFor(v => v.StartDate)
+            .NotEmpty().WithMessage("Ngày bắt đầu không được để trống.").GreaterThan(v => v.EndDate).WithMessage("Ngày bắt đầu không thể lớn hơn ngày kết thúc!");
+            ;
         // Add validation for request
-        RuleFor(v => v.IdentityNumber)
-            .NotEmpty().WithMessage("Số cccd không được để trống.")
-            .MaximumLength(12).WithMessage("Số cccd không được quá 12 ký tự.")
-             .MustAsync(BeUniqueIdentity).WithMessage("Số cccd đã tồn tại!");
+        RuleFor(v => v.EndDate.Value.ToString())
+            .NotEmpty().WithMessage("Ngày kết thúc không được để trống.");
         // Add validation for request
-        RuleFor(v => v.BirthDay)
-            .NotEmpty().WithMessage("Ngày sinh không được để trống.");
-
-        RuleFor(v => v.BirthDay.AddYears(18)).LessThan(DateTime.Now).WithMessage("Ngày sinh chưa đủ 18 tuổi.");
+        RuleFor(v => v.File)
+            .NotEmpty().WithMessage("File hợp đồng không thể để trống!");
         // Add validation for request
-        RuleFor(v => v.BankName)
-            .NotEmpty().WithMessage("Tên Ngân Hàng không được để trống.")
-            .MaximumLength(100).WithMessage("Tên Ngân Hàng không được quá 100 ký tự.");
+        RuleFor(v => v.Job)
+            .NotEmpty().WithMessage("Công việc không thể để trống.")
+            .MaximumLength(200).WithMessage("Tên Ngân Hàng không được quá 100 ký tự.");
         // Add validation for request
-        RuleFor(v => v.BankAccountNumber)
-            .NotEmpty().WithMessage("Số tài khoản không được để trống.")
-            .MaximumLength(70).WithMessage("Số tài khoản không được quá 70 ký tự.");
+        RuleFor(v => v.BasicSalary)
+            .NotEmpty().WithMessage("Lương cơ bản không được để trống.");
         // Add validation for request
-        RuleFor(v => v.BankAccountName)
-            .NotEmpty().WithMessage("Tên tài khoản ngân hàng không được để trống.")
-            .MaximumLength(70).WithMessage("Tên tài khoản ngân hàng không được quá 70 ký tự.");*/
+        RuleFor(v => v.Status)
+            .NotEmpty().WithMessage("Trạng thái hợp đồng không được để trống.");
+        RuleFor(v => v.ContractType)
+            .NotEmpty().WithMessage("Loại hợp đồng không được để trống.");
+        RuleFor(v => v.SalaryType)
+            .NotEmpty().WithMessage("Loại lương không được để trống.");
     }
 
     // Custom action to check with the database
-    /*public async Task<bool> BeUniqueIdentity(string identity, CancellationToken cancellationToken)
+    public async Task<bool> BeUniqueCode(string identity, CancellationToken cancellationToken)
     {
-        var result = await _userManager.Users.Where(u => u.IdentityNumber == identity).FirstOrDefaultAsync();
+        var result = await _context.Get<Domain.Entities.EmployeeContract>().Where(u => u.ContractCode == identity).FirstOrDefaultAsync();
         if (result == null)
         {
             return true;
@@ -59,5 +60,5 @@ public class CreateEmpContractValidator : AbstractValidator<EmpContractViewModel
         {
             return false;
         }
-    }*/
+    }
 }
