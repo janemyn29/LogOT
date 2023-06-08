@@ -24,7 +24,7 @@ public class CreateEmpContractValidator : AbstractValidator<EmpContractViewModel
              .MustAsync(BeUniqueCode).WithMessage("Mã hợp đồng này đã tồn tại!");
         // Add validation for request
         RuleFor(v => v.StartDate)
-            .NotEmpty().WithMessage("Ngày bắt đầu không được để trống.").GreaterThan(v => v.EndDate).WithMessage("Ngày bắt đầu không thể lớn hơn ngày kết thúc!");
+            .NotEmpty().WithMessage("Ngày bắt đầu không được để trống.").LessThan(v => v.EndDate).WithMessage("Ngày bắt đầu không thể lớn hơn ngày kết thúc!");
             ;
         // Add validation for request
         RuleFor(v => v.EndDate.Value.ToString())

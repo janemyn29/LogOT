@@ -7,6 +7,6 @@ using System.Threading.Tasks;
 namespace mentor_v1.Domain.Enums;
 public enum WorkStatus
 {
-    StillWork = 0,
-    Quit = 1,
+    StillWork = 1,
+    Quit = 2,
 }

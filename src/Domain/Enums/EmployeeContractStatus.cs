@@ -7,6 +7,6 @@ using System.Threading.Tasks;
 namespace mentor_v1.Domain.Enums;
 public enum EmployeeContractStatus
 {
-    Expeires = 0,
-    Pending = 1
+    Expeires = 1,
+    Pending = 2
 }

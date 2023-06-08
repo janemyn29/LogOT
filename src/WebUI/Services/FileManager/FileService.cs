@@ -81,7 +81,7 @@ public class FileService : IFileService
         }
     }
 
-    public string SavePdf(IFormFile imageFile)
+    public string SaveImagePdf(IFormFile imageFile)
     {
         try
         {

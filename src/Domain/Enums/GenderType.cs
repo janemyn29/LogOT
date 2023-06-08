@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace mentor_v1.Domain.Enums;
 public enum GenderType
 {
-    Women = 0,
-    Men = 1,
-    Other = 2,
+    Women = 1,
+    Men = 2,
+    Other = 3,
 }

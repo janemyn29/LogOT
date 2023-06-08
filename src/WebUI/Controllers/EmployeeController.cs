@@ -87,7 +87,6 @@ public class EmployeeController : ApiControllerBase
         var valResult = await validator.ValidateAsync(model);
        
 
-        var tempUser = await _userManager.Users.Where(x=>x.IdentityNumber.Equals(model.IdentityNumber)).FirstOrDefaultAsync();
         if (valResult.Errors.Count != 0)
         {
 
@@ -101,32 +100,40 @@ public class EmployeeController : ApiControllerBase
         }
         if(model.Image!= null)
         {
-            var fileResult = _fileService.SaveImage(model.Image);
-            var result = await _identityService.CreateUserAsync(model.Username, model.Email, "Employee1!", model.Fullname, fileResult, model.Address, model.IdentityNumber, model.BirthDay, model.BankAccountNumber, model.BankAccountName, model.BankName, model.PositionId, model.GenderType, model.IsMaternity);
-
-            if (result.Result.Succeeded)
+            try
             {
-                var user = await _identityService.FindUserByEmailAsync(model.Email);
+                string fileResult = _fileService.SaveImage(model.Image);
+                var result = await _identityService.CreateUserAsync(model.Username, model.Email, "Employee1!", model.Fullname, fileResult, model.Address, model.IdentityNumber, model.BirthDay, model.BankAccountNumber, model.BankAccountName, model.BankName, model.PositionId, model.GenderType, model.IsMaternity, mentor_v1.Domain.Enums.WorkStatus.StillWork);
 
-                var addRoleResult = await _userManager.AddToRoleAsync(user, role);
-                if (addRoleResult.Succeeded)
+                if (result.Result.Succeeded)
                 {
-                    //confirm email
-                    return Ok(user);
+                    var user = await _identityService.FindUserByEmailAsync(model.Email);
 
+                    var addRoleResult = await _userManager.AddToRoleAsync(user, role);
+                    if (addRoleResult.Succeeded)
+                    {
+                        //confirm email
+                        return Ok(user);
+
+                    }
+                    else
+                    {
+                        await _userManager.DeleteAsync(user);
+
+                        return BadRequest("Thêm Role bị lỗi");
+
+                    }
                 }
                 else
                 {
-                    await _userManager.DeleteAsync(user);
-
-                    return BadRequest("Thêm Role bị lỗi");
-
+                    return BadRequest(result.Result.Errors);
                 }
             }
-            else
+            catch (Exception ex)
             {
-                return BadRequest(result.Result.Errors);
+                return BadRequest(ex.Message);
             }
+            
         }
         else
         {

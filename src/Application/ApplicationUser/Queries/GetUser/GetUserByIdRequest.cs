@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 namespace mentor_v1.Application.ApplicationUser.Queries.GetUser;
 public class GetUserByIdRequest : IRequest<Domain.Identity.ApplicationUser>
 {
-    public Guid Id { get; set; }
+    public string Id { get; set; }
 
 }
 
@@ -35,7 +35,7 @@ public class GetUserByIdRequestHandler : IRequestHandler<GetUserByIdRequest, Dom
     public Task<Domain.Identity.ApplicationUser> Handle(GetUserByIdRequest request, CancellationToken cancellationToken)
     {
         // get categories
-        var city = _userManager.Users.Where(x => x.Id.Equals(request.Id)).AsNoTracking().FirstOrDefault();
+        var city = _userManager.Users.Where(x => x.WorkStatus==Domain.Enums.WorkStatus.StillWork && x.Id.Equals(request.Id)).AsNoTracking().FirstOrDefault();
         if (city == null)
         {
             throw new NotFoundException("Không tìm thấy id!");

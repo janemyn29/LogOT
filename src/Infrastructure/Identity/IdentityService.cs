@@ -99,7 +99,7 @@ public class IdentityService : IIdentityService
         }
     }
 
-    public async Task<(Result Result, string UserId)> CreateUserAsync(string username, string email, string password, string fullname, string image, string address, string identityNumber, DateTime birthDay, string BankAccountNumber, string BankAccountName, string BankName, Guid PositionId, GenderType gender, bool IsMaternity)
+    public async Task<(Result Result, string UserId)> CreateUserAsync(string username, string email, string password, string fullname, string image, string address, string identityNumber, DateTime birthDay, string BankAccountNumber, string BankAccountName, string BankName, Guid PositionId, GenderType gender, bool IsMaternity, WorkStatus workStatus)
 
     {
         var user = new ApplicationUser
@@ -116,7 +116,8 @@ public class IdentityService : IIdentityService
             BankAccountNumber=BankAccountNumber,
             PositionId=PositionId,
             IsMaternity = IsMaternity,
-            GenderType = gender
+            GenderType = gender,
+            WorkStatus = workStatus
 
         };
 

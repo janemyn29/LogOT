@@ -7,6 +7,6 @@ using System.Threading.Tasks;
 namespace mentor_v1.Domain.Enums;
 public enum SalaryType
 {
-    Gross = 0,
-    Net = 1
+    Gross = 1,
+    Net = 2
 }

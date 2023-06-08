@@ -16,7 +16,7 @@ public interface IIdentityService
     Task<string> AuthenticateAsync(string Email, string password);
     Task<bool> SendEmailConfirmAsync(string Email,string callbackUrl);
 
-    Task<(Result Result, string UserId)> CreateUserAsync( string username, string email, string password , string fullname , string image, string address, string identityNumber , DateTime birthDay, string BankAccountNumber , string BankAccountName, string BankName,Guid PositionId, GenderType gender, bool IsMaternity );
+    Task<(Result Result, string UserId)> CreateUserAsync( string username, string email, string password , string fullname , string image, string address, string identityNumber , DateTime birthDay, string BankAccountNumber , string BankAccountName, string BankName,Guid PositionId, GenderType gender, bool IsMaternity ,WorkStatus workStatus);
 
     Task<(Result Result, string UserId)> CreateAllUserAsync(string fullname, string username, string email, string password, string address, DateTime birthday, string phone, string avatar, string avatarurl);
     Task<(Result Result, string UserId)> ModifyAllUserAsync(string fullname, string username, string email, string password, string address, DateTime birthday, string phone, string avatar, string avatarurl);
