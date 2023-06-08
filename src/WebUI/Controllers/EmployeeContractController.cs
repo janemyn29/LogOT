@@ -68,7 +68,7 @@ public class EmployeeContractController : ApiControllerBase
     [Authorize(Roles = "Manager")]
     [Route("/EmployeeContract/DowloadEmpContract")]
     [HttpGet]
-    public async Task<IActionResult> DownloadFile()
+    public async Task<IActionResult> DownloadFile(string FileName)
     {
         var result = await _fileService.DownloadFile(FileName);
         return File(result.Item1, result.Item2, result.Item2);
