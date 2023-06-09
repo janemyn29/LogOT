@@ -35,11 +35,6 @@ public class CreateAllowanceCommandHandler : IRequestHandler<CreateAllowanceComm
             Amount = request.Amount,
             Eligibility_Criteria = request.Eligibility_Criteria,
             Requirements = request.Requirements,
-            Created = DateTime.Now,
-            //CreatedBy = lấy guid người login
-            LastModified = DateTime.Now,
-            //LastModifiedBy = lấy guid người login
-            IsDeleted = false
         };
 
         _applicationDbContext.Get<Domain.Entities.Allowance>().Add(entity);

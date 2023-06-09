@@ -10,6 +10,7 @@ using mentor_v1.Domain.Enums;
 namespace mentor_v1.Application.Allowance.Queries.GetAllowance;
 public class AllowanceViewModel : IMapFrom<Domain.Entities.Allowance>
 {
+    public Guid Id { get; set; }
     public string Name { get; set; }
     public AllowanceType AllowanceType { get; set; }
     public double Amount { get; set; }

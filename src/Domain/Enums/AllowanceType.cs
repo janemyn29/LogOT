@@ -8,8 +8,8 @@ namespace mentor_v1.Domain.Enums;
 public enum AllowanceType
 {
     // Ăn uống
-    Meal_Allowance= 0,
+    Meal_Allowance= 1,
 
     // Đi lại
-    Travel_Allowance=1,
+    Travel_Allowance=2,
 }

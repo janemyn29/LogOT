@@ -42,8 +42,6 @@ public class UpdateAllowanceCommandHandler : IRequestHandler<UpdateAllowanceComm
         entity.Amount = request.Amount;
         entity.Eligibility_Criteria = request.Eligibility_Criteria;
         entity.Requirements = request.Requirements;
-        entity.LastModified = DateTime.Now;
-        //entity.LastModifiedBy = 
         if (await _context.SaveChangesAsync(cancellationToken) == 0)
             throw new Exception();
             

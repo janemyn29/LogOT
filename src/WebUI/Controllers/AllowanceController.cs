@@ -74,7 +74,7 @@ public class AllowanceController : ApiControllerBase
 
     #region Create Allowance
     [HttpPost]
-    public async Task<IActionResult> CreateAllowance([FromForm]CreateAllowanceViewModel createAllowanceViewModel)
+    public async Task<IActionResult> CreateAllowance(CreateAllowanceViewModel createAllowanceViewModel)
     {
 
         if (!ModelState.IsValid)
@@ -148,7 +148,7 @@ public class AllowanceController : ApiControllerBase
 
     #region Update Allowance
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(Guid id, [FromForm]UpdateAllowanceViewModel updateAllowanceViewModel)
+    public async Task<IActionResult> UpdateAllowance(Guid id, [FromForm]UpdateAllowanceViewModel updateAllowanceViewModel)
     {
         if (!ModelState.IsValid)
         {
@@ -203,6 +203,4 @@ public class AllowanceController : ApiControllerBase
         }
     }
     #endregion
-
-
 }
