@@ -147,7 +147,7 @@ public class EmployeeController : ApiControllerBase
         {
             return BadRequest("Vui lòng điền đầy đủ các thông tin được yêu cầu!");
         }
-        var validator = new CreateUseCommandValidator(_context, _userManager);
+        var validator = new UpdateUserCommandValidator(_context, _userManager);
         var valResult = await validator.ValidateAsync(model);
         try
         {

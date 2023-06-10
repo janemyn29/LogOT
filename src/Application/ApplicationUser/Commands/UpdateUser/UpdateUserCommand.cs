@@ -30,16 +30,20 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand>
     public async Task<Unit> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
         var CurrentUser = _userManager.FindByNameAsync(request.model.Username).Result;
-
+        var otherUser = _userManager.Users.Where(x=>!x.UserName.Equals(request.model.Username) && x.IdentityNumber.Equals(request.model.IdentityNumber)).FirstOrDefault();
+        if(otherUser != null)
+        {
+            throw new InvalidOperationException("Số cccd đã được sử dụng cho người khác!");
+        }
         if (CurrentUser == null)
         {
             throw new NotFoundException("Không tìm thấy người dùng bạn yêu cầu!");
         }
+        
         CurrentUser.PositionId = request.model.PositionId;
         CurrentUser.Fullname = request.model.Fullname;
         CurrentUser.Address = request.model.Address;
         CurrentUser.GenderType = request.model.GenderType;
-
         CurrentUser.IdentityNumber = request.model.IdentityNumber;
         CurrentUser.BirthDay = request.model.BirthDay;
         CurrentUser.BankAccountNumber = request.model.BankAccountNumber;
@@ -47,7 +51,6 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand>
         CurrentUser.BankName = request.model.BankName;
         CurrentUser.IsMaternity = request.model.IsMaternity;
         CurrentUser.Image= request.model.Image;
-
         await _context.SaveChangesAsync(cancellationToken);
         return Unit.Value;
     }
