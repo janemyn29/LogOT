@@ -36,6 +36,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="ApplicationUser\Queries\GetUserByRelatedObject\" />
       <Folder Include="Positions\Commands\" />
     </ItemGroup>
 

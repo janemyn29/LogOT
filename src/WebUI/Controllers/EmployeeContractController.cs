@@ -3,16 +3,19 @@ using mentor_v1.Application.ApplicationUser.Commands.CreateUse;
 using mentor_v1.Application.ApplicationUser.Queries.GetUser;
 using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.Interfaces;
+using mentor_v1.Application.Common.Models;
 using mentor_v1.Application.EmployeeContract.Commands.CreateEmpContract;
 using mentor_v1.Application.EmployeeContract.Commands.DeleteEmpContract;
 using mentor_v1.Application.EmployeeContract.Commands.UpdateEmpContract;
 using mentor_v1.Application.EmployeeContract.Queries.GetEmpContract;
 using mentor_v1.Application.EmployeeContract.Queries.GetEmpContractByRelativedObject;
+using mentor_v1.Domain.Entities;
 using mentor_v1.Domain.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Rewrite;
+using WebUI.Models;
 using WebUI.Services.FileManager;
 
 namespace WebUI.Controllers;
@@ -38,13 +41,34 @@ public class EmployeeContractController : ApiControllerBase
     }
 
     /*    [Authorize (Roles ="Manager")]*/
-    [HttpGet()]
-    public async Task<IActionResult> GetById(string code)
+    [HttpGet]
+    public async Task<IActionResult> GetByContractCode(string code)
     {
         try
         {
             var Contract = await Mediator.Send(new GetEmpContractByCodeRequest { code = code });
             return Ok(Contract);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+
+    /*    [Authorize (Roles ="Manager")]*/
+    [HttpGet]
+    public async Task<IActionResult> GetListByEmployee(string username, int pg = 1)
+    {
+        try
+        {
+            var user = await _userManager.FindByNameAsync(username);
+
+            var list = await Mediator.Send(new GetEmpContractByEmpRequest { Username = username, page = pg, size = 20 });
+            DefaultModel<PaginatedList<EmployeeContract>> repository = new DefaultModel<PaginatedList<EmployeeContract>>();
+            repository.User = user;
+            repository.ListItem = list;
+            return Ok(repository);
         }
         catch (Exception ex)
         {
@@ -155,4 +179,7 @@ public class EmployeeContractController : ApiControllerBase
             var result = await _fileService.DownloadFile(FileName);
             return File(result.Item1, result.Item2, result.Item2);
         }*/
+
+
+
 }
