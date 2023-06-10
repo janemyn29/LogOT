@@ -273,6 +273,8 @@ public class IdentityService : IIdentityService
             var roles = await _userManager.GetRolesAsync(user);
             List<Claim> authClaims = new List<Claim>();
             authClaims.Add(new Claim(ClaimTypes.Email, user.Email));
+            authClaims.Add(new Claim(ClaimTypes.Name, user.UserName));
+
             authClaims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
             foreach (var item in roles)
             {
@@ -288,6 +290,8 @@ public class IdentityService : IIdentityService
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha512Signature)
                 );
+
+
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 

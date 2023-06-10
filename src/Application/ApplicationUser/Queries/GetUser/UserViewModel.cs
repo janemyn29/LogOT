@@ -21,7 +21,5 @@ public class UserViewModel
     public string Username { get; set; }
     public string Email { get; set; }
     public bool IsMaternity { get; set; } = false;
-    public IFormFile Image { get;set; }
-
-
+    public string Image { get;set; }
 }

@@ -13,7 +13,7 @@ public class EmpContractViewModel
 {
     public string Username { get; set; }
     public string ContractCode { get; set; }
-    public IFormFile? File { get; set; }
+    public string File { get; set; }
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
     public string? Job { get; set; }

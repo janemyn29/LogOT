@@ -65,7 +65,7 @@ public class LoginHandler : IRequestHandler<Login, UserLogin>
         {
             var result = await _identityService.AuthenticateAsync(request.Username.Trim(), request.Password.Trim());
 
-            if (!String.IsNullOrEmpty(result))
+            if (result!=null)
             {
                 var user = await _userManager.FindByNameAsync(request.Username);
                 if (user == null)
@@ -77,6 +77,7 @@ public class LoginHandler : IRequestHandler<Login, UserLogin>
                     }
                 }
                 var roles = await _userManager.GetRolesAsync(user);
+                
 
                 var userModel = new UserLogin();
                 userModel.userId = user.Id;

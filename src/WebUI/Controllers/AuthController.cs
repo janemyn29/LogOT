@@ -60,20 +60,6 @@ public class AuthController : ApiControllerBase
             else
             {
                 var result = await Mediator.Send(new Login { Username = model.Username, Password = model.Password });
-                /*var roles = await _userManager.GetRolesAsync(user);
-                var userModel = new UserLogin();
-                userModel.Email = user.Email;
-                userModel.FullName = user.Fullname;
-                userModel.Username = user.UserName;
-                userModel.Image = user.Image;
-                userModel.listRoles = roles.ToList();
-                *//*CookieOptions option = new CookieOptions {
-                    Expires = DateTime.Now.AddHours(1)
-            }
-                ;*//*
-                string infor = JsonConvert.SerializeObject(userModel);
-                HttpContext.Session.SetString("UserInfor", infor);*/
-
                 if (result == null)
                 {
                     return BadRequest("Đăng nhập không thành công!");

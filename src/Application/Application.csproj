@@ -35,4 +35,8 @@
         <ProjectReference Include="..\Domain\Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Positions\Commands\" />
+    </ItemGroup>
+
 </Project>

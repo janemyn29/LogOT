@@ -35,7 +35,7 @@ public class EmployeeContractController : ApiControllerBase
     [Authorize(Roles = "Manager")]
     [Route("/EmployeeContract/Create")]
     [HttpPost]
-    public async Task<IActionResult> Create([FromForm] EmpContractViewModel model) 
+    public async Task<IActionResult> Create([FromBody] EmpContractViewModel model) 
     {
         var validator = new CreateEmpContractValidator(_context);
         var valResult = await validator.ValidateAsync(model);
@@ -53,8 +53,8 @@ public class EmployeeContractController : ApiControllerBase
         try
         {
             var user = await _userManager.FindByNameAsync(model.Username);
-            var filePath = await _fileService.UploadFile(model.File);
-            var result = await Mediator.Send(new CreateEmployeeContractCommand { EmpContractViewModel = model, File = filePath, Id = user.Id});
+/*            var filePath = await _fileService.UploadFile(model.File);*/
+            var result = await Mediator.Send(new CreateEmployeeContractCommand { EmpContractViewModel = model, File = model.File, Id = user.Id});
             return Ok("Thêm hợp đồng thành công!");
         }
         catch (Exception ex)
@@ -64,7 +64,7 @@ public class EmployeeContractController : ApiControllerBase
         }
         
     }
-
+/*
     [Authorize(Roles = "Manager")]
     [Route("/EmployeeContract/DowloadEmpContract")]
     [HttpGet]
@@ -72,5 +72,5 @@ public class EmployeeContractController : ApiControllerBase
     {
         var result = await _fileService.DownloadFile(FileName);
         return File(result.Item1, result.Item2, result.Item2);
-    }
+    }*/
 }
