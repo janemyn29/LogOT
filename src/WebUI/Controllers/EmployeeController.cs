@@ -6,6 +6,7 @@ using mentor_v1.Application.ApplicationUser.Queries.GetUser;
 using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.Interfaces;
 using mentor_v1.Application.Common.Models;
+using mentor_v1.Application.Common.PagingUser;
 using mentor_v1.Application.Positions.Queries.GetPositionByRelatedObjects;
 using mentor_v1.Domain.Entities;
 using mentor_v1.Domain.Identity;
@@ -186,20 +187,31 @@ public class EmployeeController : ApiControllerBase
     /*
     [Authorize(Roles = "Manager")]*/
     [HttpGet]
-    [Route("/Employee/GetByEmail")]
-    public async Task<IActionResult> GetByEmail(string email)
+    [Route("/Employee/GetByName")]
+    public async Task<IActionResult> GetByName(string username)
     {
     
         try
         {
-            var result = await _userManager.FindByNameAsync(email);
+            var result = await _userManager.FindByNameAsync(username);
             return Ok(result);
 
         }
         catch (Exception ex)
         {
-            return BadRequest("Không tìm thấy nhân viên có email "+email+ "!");
+            return BadRequest("Không tìm thấy nhân viên có tên đăng nhập là  "+ username + "!");
         }
+
+    }
+
+    [HttpGet]
+    [Route("/Employee/Search")]
+    public async Task<IActionResult> Search(string Keyword)
+    {
+            var result = _userManager.Users.Where(x=>x.UserName.ToLower().Contains(Keyword.ToLower()) || x.Email.ToLower().Contains(Keyword.ToLower())|| x.Fullname.ToLower().Contains(Keyword.ToLower())).ToList();
+        var page = await PagingAppUser<ApplicationUser>
+        .CreateAsync(result, 1,20);
+        return Ok(page);
 
     }
 }

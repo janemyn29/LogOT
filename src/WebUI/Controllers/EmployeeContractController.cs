@@ -65,6 +65,10 @@ public class EmployeeContractController : ApiControllerBase
             var user = await _userManager.FindByNameAsync(username);
 
             var list = await Mediator.Send(new GetEmpContractByEmpRequest { Username = username, page = pg, size = 20 });
+            foreach (var item in list.Items)
+            {
+                item.ApplicationUser = null;
+            }
             DefaultModel<PaginatedList<EmployeeContract>> repository = new DefaultModel<PaginatedList<EmployeeContract>>();
             repository.User = user;
             repository.ListItem = list;
@@ -179,7 +183,5 @@ public class EmployeeContractController : ApiControllerBase
             var result = await _fileService.DownloadFile(FileName);
             return File(result.Item1, result.Item2, result.Item2);
         }*/
-
-
 
 }

@@ -37,7 +37,7 @@ public class GetEmpContractByEmpRequestHandler : IRequestHandler<GetEmpContractB
     public Task<PaginatedList<Domain.Entities.EmployeeContract>> Handle(GetEmpContractByEmpRequest request, CancellationToken cancellationToken)
     {
 
-        var EmpContract = _context.Get<Domain.Entities.EmployeeContract>().Include(x=>x.ApplicationUser).Where(x => x.IsDeleted == false && x.ApplicationUser.UserName.Equals(request.Username));
+        var EmpContract = _context.Get<Domain.Entities.EmployeeContract>().Where(x => x.IsDeleted == false && x.ApplicationUser.UserName.Equals(request.Username));
         var page = PaginatedList<Domain.Entities.EmployeeContract>.CreateAsync(EmpContract, request.page, request.size);
         return page; 
     }
