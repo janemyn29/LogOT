@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
+using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.Interfaces;
 using mentor_v1.Application.Common.Models;
 using mentor_v1.Domain.Entities;
@@ -32,7 +33,7 @@ public class GetAllowanceIdRequestHandler : IRequestHandler<GetAllowanceIdReques
         var allowance = _applicationDbContext.Get<Domain.Entities.Allowance>().Where(x => x.Id.Equals(request.Id) && x.IsDeleted == false).AsNoTracking().FirstOrDefault();
         if (allowance == null)
         {
-            throw new Exception();
+            throw new NotFoundException("Không tìm thấy ID " + request.Id);
         }
         var map = _mapper.Map<AllowanceViewModel>(allowance);
         return Task.FromResult(map);

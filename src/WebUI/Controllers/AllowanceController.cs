@@ -32,7 +32,7 @@ public class AllowanceController : ApiControllerBase
             return Ok(new
             {
                 Status = Ok().StatusCode,
-                Message = "Get All Succeed.",
+                Message = "Lấy danh sách thành công.",
                 Result = listAllowance
             });
         }
@@ -41,14 +41,14 @@ public class AllowanceController : ApiControllerBase
             return NotFound(new
             {
                 Status = NotFound().StatusCode,
-                Message = "Cannot Found This List."
+                Message = "Không tìm thấy danh sách."
             });
         }
     }
     #endregion
 
     #region GetAllowanceId
-    [HttpGet]
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetAllowanceId(Guid id)
     {
         try
@@ -57,16 +57,16 @@ public class AllowanceController : ApiControllerBase
             return Ok(new
             {
                 Status = Ok().StatusCode,
-                Message = "Get Succeed.",
+                Message = "Lấy dữ liệu thành công.",
                 Result = allowanceId
             });
         }
-        catch (Exception ex)
+        catch (NotFoundException ex)
         {
             return NotFound(new
             {
                 Status = NotFound().StatusCode,
-                Message = "Not Found Item."
+                Message = ex.Message
             });
         }
     }
@@ -76,12 +76,6 @@ public class AllowanceController : ApiControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateAllowance(CreateAllowanceViewModel createAllowanceViewModel)
     {
-
-        if (!ModelState.IsValid)
-        {
-            return BadRequest("Please fill out all required information.");
-        }
-
         var validator = new CreateAllowanceCommandValidator(_context);
         var valResult = await validator.ValidateAsync(createAllowanceViewModel);
 
@@ -108,7 +102,7 @@ public class AllowanceController : ApiControllerBase
             return Ok(new
             {
                 Status = Ok().StatusCode,
-                Message = "Create Succeed."
+                Message = "Tạo thành công."
             });
         }
         catch (Exception ex)
@@ -116,7 +110,7 @@ public class AllowanceController : ApiControllerBase
             return BadRequest(new
             {
                 Status = BadRequest().StatusCode,
-                Message = "Create Faild."
+                Message = "Tạo thất bại."
             });
         }
     }
@@ -132,7 +126,7 @@ public class AllowanceController : ApiControllerBase
             return Ok(new
             {
                 Status = Ok().StatusCode,
-                Message = "Delete Succeed.",
+                Message = "Xoá thành công.",
             });
         }
         catch (NotFoundException ex)
@@ -140,7 +134,7 @@ public class AllowanceController : ApiControllerBase
             return NotFound(new
             {
                 Status = NotFound().StatusCode,
-                Message = "Delete Fail."
+                Message = "Xoá thất bại."
             });
         }
     }
@@ -150,11 +144,6 @@ public class AllowanceController : ApiControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateAllowance(Guid id, [FromForm]UpdateAllowanceViewModel updateAllowanceViewModel)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest("Please fill out all required information.");
-        }
-
         var validator = new UpdateAllowanceCommandValidator(_context);
         var valResult = await validator.ValidateAsync(updateAllowanceViewModel);
 
@@ -181,7 +170,7 @@ public class AllowanceController : ApiControllerBase
             return Ok(new
             {
                 Status = Ok().StatusCode,
-                Message = "Update Succeed."
+                Message = "Cập nhật thành công."
             });
 
         }
@@ -198,7 +187,7 @@ public class AllowanceController : ApiControllerBase
             return BadRequest(new
             {
                 Status = BadRequest().StatusCode,
-                Message = "Update Faild."
+                Message = "Cập nhật thất bại."
             });
         }
     }

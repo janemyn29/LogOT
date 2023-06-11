@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using mentor_v1.Application.Common.Mappings;
 
 namespace mentor_v1.Application.Allowance.Commands.UpdateAllowance;
-public class UpdateAllowanceViewModel
-{
+public class UpdateAllowanceViewModel : IMapFrom<Domain.Entities.Allowance>
+{ 
     public string Name { get; set; }
     public int AllowanceType { get; set; }
     public float Amount { get; set; }

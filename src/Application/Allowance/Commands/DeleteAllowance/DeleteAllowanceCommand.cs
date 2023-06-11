@@ -26,7 +26,7 @@ public class DeleteAllowanceCommandHandler : IRequestHandler<DeleteAllowanceComm
     {
         var currentAllowance = await _context.Get<Domain.Entities.Allowance>().FindAsync(new object[] { request.Id }, cancellationToken);
 
-        if (currentAllowance == null)
+        if (currentAllowance == null || currentAllowance.IsDeleted == true)
         {
             throw new NotFoundException(nameof(Domain.Entities.Allowance), request.Id);
         }
