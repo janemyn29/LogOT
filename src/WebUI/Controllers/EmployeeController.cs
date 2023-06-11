@@ -75,21 +75,20 @@ public class EmployeeController : ApiControllerBase
         [Authorize(Roles = "Manager")]*/
     [HttpPost]
     [Route("/Employee/Create")]
-    public async Task<IActionResult> Create(string role, [FromForm] UserViewModel model)
+    public async Task<IActionResult> Create([FromBody] UserViewModel model , string role)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest("Vui lòng điền đầy đủ các thông tin được yêu cầu!");
         }
-        if (!role.Equals("Employee") && !role.Equals("Manager") && !role.Equals("Staff"))
+        var validator = new CreateUseCommandValidator(_context, _userManager);
+        var valResult = await validator.ValidateAsync(model);
+
+         if (!role.Equals("Employee") && !role.Equals("Manager") && !role.Equals("Staff"))
         {
 
             return BadRequest("Role không tồn tại!");
         }
-        var validator = new CreateUseCommandValidator(_context, _userManager);
-        var valResult = await validator.ValidateAsync(model);
-
-
         if (valResult.Errors.Count != 0)
         {
 
@@ -109,21 +108,31 @@ public class EmployeeController : ApiControllerBase
             if (result.Result.Succeeded)
             {
                 var user = await _identityService.FindUserByEmailAsync(model.Email);
-
-                var addRoleResult = await _userManager.AddToRoleAsync(user, role);
-                if (addRoleResult.Succeeded)
+                try
                 {
-                    //confirm email
-                    return Ok(user);
+                    var addRoleResult = await _userManager.AddToRoleAsync(user, role);
+                    if (addRoleResult.Succeeded)
+                    {
+                        //confirm email
+                        return Ok(user);
 
+                    }
+                    else
+                    {
+                        await _userManager.DeleteAsync(user);
+
+                        return BadRequest("Thêm Role bị lỗi");
+
+                    }
                 }
-                else
+                catch (Exception)
                 {
+
                     await _userManager.DeleteAsync(user);
 
                     return BadRequest("Thêm Role bị lỗi");
-
                 }
+               
             }
             else
             {
@@ -187,8 +196,8 @@ public class EmployeeController : ApiControllerBase
     /*
     [Authorize(Roles = "Manager")]*/
     [HttpGet]
-    [Route("/Employee/GetByName")]
-    public async Task<IActionResult> GetByName(string username)
+    [Route("/Employee/GetDetailEmployee")]
+    public async Task<IActionResult> GetDetailEmployee(string username)
     {
     
         try
