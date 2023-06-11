@@ -32,9 +32,9 @@ public class UpdateAllowanceCommandHandler : IRequestHandler<UpdateAllowanceComm
     {
         var entity = await _context.Get<Domain.Entities.Allowance>()
                     .FindAsync(new object[] { request.Id }, cancellationToken);
-        if (entity == null && entity.IsDeleted == true)
+        if (entity == null || entity.IsDeleted == true)
         {
-            throw new NotFoundException("Not Found Item " + request.Id);
+            throw new NotFoundException("Không tìm thấy ID " + request.Id);
         }
 
         entity.Name = request.Name;

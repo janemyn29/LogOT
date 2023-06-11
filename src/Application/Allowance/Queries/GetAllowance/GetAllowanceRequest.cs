@@ -28,7 +28,7 @@ public class GetAllowanceRequestHandler : IRequestHandler<GetAllowanceRequest, P
     }
     public Task<PaginatedList<AllowanceViewModel>> Handle(GetAllowanceRequest request, CancellationToken cancellationToken)
     {
-        var allowance = _applicationDbContext.Get<Domain.Entities.Allowance>().Where(x => x.IsDeleted == false).AsNoTracking();
+        var allowance = _applicationDbContext.Get<Domain.Entities.Allowance>().Where(x => x.IsDeleted == false).OrderByDescending(x => x.Created).AsNoTracking();
         var model = _mapper.ProjectTo<AllowanceViewModel>(allowance);
         var page = PaginatedList<AllowanceViewModel>.CreateAsync(model, request.Page, request.Size);
         return page;

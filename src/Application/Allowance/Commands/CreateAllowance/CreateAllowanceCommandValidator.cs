@@ -14,20 +14,19 @@ public class CreateAllowanceCommandValidator : AbstractValidator<CreateAllowance
     {
         _context = context;
 
-
         RuleFor(v => v.Name)
-            .NotEmpty().WithMessage("Name cannot be blank.");
+            .NotEmpty().WithMessage("Tên không được để trống.");
 
         RuleFor(v => v.AllowanceType)
-            .NotEmpty().WithMessage("AllowanceType cannot be blank.").LessThan(2).WithMessage("Less than 2").GreaterThan(-1).WithMessage("Greater than or equal to 0.");
+            .NotEmpty().WithMessage("Loại phụ cấp không được để trống.").LessThan(3).WithMessage("AllowanceType less than or equal 2").GreaterThan(0).WithMessage("AllowanceType greater than or equal to 1.");
 
         RuleFor(v => v.Amount).NotEmpty()
-            .WithMessage("Amount cannot be blank");
+            .WithMessage("Tiền không được để trống.");
 
         RuleFor(v => v.Eligibility_Criteria).NotEmpty()
-            .WithMessage("Eligibility_Criteria cannot be blank");
+            .WithMessage("Đủ tiêu chuẩn không được để trống.");
 
         RuleFor(v => v.Requirements).NotEmpty()
-            .WithMessage("Requirements cannot be blank");
+            .WithMessage("Yêu cầu không được để trống.");
     }
 }

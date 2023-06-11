@@ -12,7 +12,7 @@ public class AllowanceViewModel : IMapFrom<Domain.Entities.Allowance>
 {
     public Guid Id { get; set; }
     public string Name { get; set; }
-    public AllowanceType AllowanceType { get; set; }
+    public string AllowanceType { get; set; }
     public double Amount { get; set; }
     public string Eligibility_Criteria { get; set; }
     public string Requirements { get; set; }

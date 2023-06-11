@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace mentor_v1.Domain.Enums;
 public enum DegreeType
 {
-    HighSchoolDegree = 0,
-    UniversityDegree=1
+    HighSchoolDegree = 1,
+    UniversityDegree= 2
 
 }
