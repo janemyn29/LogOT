@@ -38,8 +38,7 @@ public class UpdateEmpContractCommandHandler : IRequestHandler<UpdateEmpContract
 
     public async Task<Unit> Handle(UpdateEmpContractCommand request, CancellationToken cancellationToken)
     {
-        var CurrentEmpContract = await _context.Get<Domain.Entities.EmployeeContract>()
-           .FindAsync(new object[] { request.Id }, cancellationToken);
+        var CurrentEmpContract = _context.Get<Domain.Entities.EmployeeContract>().Where(x=>x.Id == request.Id && x.IsDeleted ==false ).FirstOrDefault();
 
         if (CurrentEmpContract == null)
         {

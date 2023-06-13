@@ -24,8 +24,7 @@ public class DeleteEmpContractCommandHandler : IRequestHandler<DeleteEmpContract
 
     public async Task<bool> Handle(DeleteEmpContractCommand request, CancellationToken cancellationToken)
     {
-        var CurrentCity = await _context.Get<Domain.Entities.EmployeeContract>()
-            .FindAsync(new object[] { request.Id }, cancellationToken);
+        var CurrentCity = _context.Get<Domain.Entities.EmployeeContract>().Where(x => x.IsDeleted == false && x.Id == request.Id).FirstOrDefault();
 
         if (CurrentCity == null)
         {

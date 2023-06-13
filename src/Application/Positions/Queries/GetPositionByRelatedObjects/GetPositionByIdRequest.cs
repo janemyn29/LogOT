@@ -33,7 +33,7 @@ public class GetPositionByIdRequestHandler : IRequestHandler<GetPositionByIdRequ
     public Task<Domain.Entities.Position> Handle(GetPositionByIdRequest request, CancellationToken cancellationToken)
     {
         // get categories
-        var city = _context.Get<Domain.Entities.Position>().Where(x => x.IsDeleted == false && x.Id.Equals(request.Id)).AsNoTracking().FirstOrDefault();
+        var city = _context.Get<Domain.Entities.Position>().Include(x=>x.ApplicationUsers).Include(x=>x.Department).Include(x=>x.Level).Where(x => x.IsDeleted == false && x.Id== request.Id).AsNoTracking().FirstOrDefault();
         if (city == null)
         {
             throw new NotFoundException("Không tìm vị trí công việc mà bạn yêu cầu!");

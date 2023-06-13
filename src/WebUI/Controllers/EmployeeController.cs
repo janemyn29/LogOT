@@ -215,12 +215,13 @@ public class EmployeeController : ApiControllerBase
 
     [HttpGet]
     [Route("/Employee/Search")]
-    public async Task<IActionResult> Search(string Keyword)
+    public async Task<IActionResult> Search(string Keyword, int pg= 1)
     {
-            var result = _userManager.Users.Where(x=>x.UserName.ToLower().Contains(Keyword.ToLower()) || x.Email.ToLower().Contains(Keyword.ToLower())|| x.Fullname.ToLower().Contains(Keyword.ToLower())).ToList();
-        var page = await PagingAppUser<ApplicationUser>
-        .CreateAsync(result, 1,20);
-        return Ok(page);
-
+        var result = _userManager.Users.Where(x=>x.UserName.ToLower().Contains(Keyword.ToLower()) || x.Email.ToLower().Contains(Keyword.ToLower())|| x.Fullname.ToLower().Contains(Keyword.ToLower())).OrderBy(x => x.Fullname).ToList();
+        var page = await PagingAppUser<ApplicationUser>.CreateAsync(result, pg,20);
+        var model = new DefalutSearchModel<PagingAppUser<ApplicationUser>>();
+        model.DefautList = page;
+        model.Keyword = Keyword;
+        return Ok(model);
     }
 }

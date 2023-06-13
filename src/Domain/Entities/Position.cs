@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using mentor_v1.Domain.Identity;
 
 namespace mentor_v1.Domain.Entities;
 public class Position : BaseAuditableEntity
@@ -17,5 +18,7 @@ public class Position : BaseAuditableEntity
 
     public virtual Department Department { get; set; }
     public virtual Level Level { get; set; }
+
+    public IList<ApplicationUser> ApplicationUsers { get; set; }
 }
 
