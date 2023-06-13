@@ -29,6 +29,7 @@ public class AllowanceController : ApiControllerBase
         try
         {
             var listAllowance = await Mediator.Send(new GetAllowanceRequest { Page = 1, Size = 10 });
+            if (listAllowance.TotalCount == 0) throw new NotFoundException();
             return Ok(new
             {
                 Status = Ok().StatusCode,
@@ -36,7 +37,7 @@ public class AllowanceController : ApiControllerBase
                 Result = listAllowance
             });
         }
-        catch (Exception ex)
+        catch (NotFoundException ex)
         {
             return NotFound(new
             {
