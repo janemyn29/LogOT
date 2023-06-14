@@ -5,17 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using MediatR;
 using mentor_v1.Application.Common.Interfaces;
+using mentor_v1.Application.Level.Queries.GetLevel;
 using mentor_v1.Domain.Entities;
 
 namespace mentor_v1.Application.Level.Commands.CreateLevel;
 
 public class CreateLevelCommand : IRequest<Guid>
 {
-    public string Name { get; set; }
-
-    public string Description { get; set; }
-
-    public IList<Position> Positions { get; set; }
+    public LevelViewModel levelViewModel { get; set; }
 
 }
 
@@ -35,9 +32,9 @@ public class CreateLevelCommandHandler : IRequestHandler<CreateLevelCommand, Gui
         // create new Level from request data
         var Level = new Domain.Entities.Level()
         {
-            Name = request.Name,
-            Description = request.Description,
-            Positions = request.Positions
+            Name = request.levelViewModel.Name,
+            Description = request.levelViewModel.Description,
+            //Positions = request.levelViewModel.Positions
         };
 
         // add new Level

@@ -16,6 +16,6 @@ public class LevelViewModel : IMapFrom<Domain.Entities.Level>
 
     public string Description { get; set; }
 
-    public IList<Position> Positions { get; set; }
+    //public IList<Position> Positions { get; set; }
 
 }
