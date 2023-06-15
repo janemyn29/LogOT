@@ -65,7 +65,6 @@
     <Folder Include="Areas\Admin\Data\" />
     <Folder Include="Areas\Admin\Models\" />
     <Folder Include="Areas\Admin\Views\" />
-    <Folder Include="CV\" />
   </ItemGroup>
 
   <Target Name="EnsureContentOnViews" BeforeTargets="BeforeBuild">

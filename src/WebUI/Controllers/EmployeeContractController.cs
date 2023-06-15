@@ -65,11 +65,11 @@ public class EmployeeContractController : ApiControllerBase
             var user = await _userManager.FindByNameAsync(username);
 
             var list = await Mediator.Send(new GetEmpContractByEmpRequest { Username = username, page = pg, size = 20 });
-            foreach (var item in list.Items)
+/*            foreach (var item in list.Items)
             {
                 item.ApplicationUser = null;
-            }
-            DefaultModel<PaginatedList<EmployeeContract>> repository = new DefaultModel<PaginatedList<EmployeeContract>>();
+            }*/
+            DefaultModel<PaginatedList<EmpContractViewModel>> repository = new DefaultModel<PaginatedList<EmpContractViewModel>>();
             repository.User = user;
             repository.ListItem = list;
             return Ok(repository);
@@ -81,10 +81,10 @@ public class EmployeeContractController : ApiControllerBase
     }
 
 
-    [Authorize(Roles = "Manager")]
+   // [Authorize(Roles = "Manager")]
     /*    [Route("/EmployeeContract/Create")]*/
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] EmpContractViewModel model)
+    public async Task<IActionResult> Create([FromBody] CreateEmployeeContractCommand model)
     {
         var validator = new CreateEmpContractValidator(_context);
         var valResult = await validator.ValidateAsync(model);
@@ -99,9 +99,20 @@ public class EmployeeContractController : ApiControllerBase
         }
         try
         {
-            var user = await _userManager.FindByNameAsync(model.Username);
+            
             /*            var filePath = await _fileService.UploadFile(model.File);*/
-            var result = await Mediator.Send(new CreateEmployeeContractCommand { EmpContractViewModel = model, Id = user.Id });
+            var result = await Mediator.Send(new CreateEmployeeContractCommand {
+                Username = model.Username,
+                ContractCode = model.ContractCode,
+                StartDate = model.StartDate,
+                EndDate = model.EndDate,
+                BasicSalary = model.BasicSalary,
+                File = model.File,
+                Job = model.Job, 
+                ContractType = model.ContractType, 
+                PercentDeduction = model.PercentDeduction,
+                SalaryType = model.SalaryType, 
+                Status = model.Status });
             return Ok("Thêm hợp đồng thành công!");
         }
         catch (Exception ex)

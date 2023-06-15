@@ -11,6 +11,10 @@ public interface IApplicationDbContext
     DbSet<TodoList> TodoLists { get; }
 
     DbSet<TodoItem> TodoItems { get; }
+    DbSet<AnnualWorkingDay> AnnualWorkingDays { get; }
+    DbSet<ConfigDay> ConfigDays { get; }
+
+
     //public DbSet<Blog> Blogs { get; }
     //public DbSet<BlogCategory> BlogCategorys { get; }
     //public DbSet<Certificate> Certificates { get; }

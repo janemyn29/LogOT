@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace mentor_v1.Application.EmployeeContract.Commands.CreateEmpContract;
-public class CreateEmpContractValidator : AbstractValidator<EmpContractViewModel>
+public class CreateEmpContractValidator : AbstractValidator<CreateEmployeeContractCommand>
 {
     private readonly IApplicationDbContext _context;
     public CreateEmpContractValidator(IApplicationDbContext context)
@@ -29,6 +29,8 @@ public class CreateEmpContractValidator : AbstractValidator<EmpContractViewModel
         // Add validation for request
         RuleFor(v => v.EndDate.Value.ToString())
             .NotEmpty().WithMessage("Ngày kết thúc không được để trống.");
+        RuleFor(v => v.Username)
+            .NotEmpty().WithMessage("Tên người dùng không được để trống.");
         // Add validation for request
         RuleFor(v => v.File)
             .NotEmpty().WithMessage("File hợp đồng không thể để trống!");

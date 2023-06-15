@@ -8,7 +8,7 @@ namespace mentor_v1.Domain.Entities;
 public class AnnualWorkingDay : BaseAuditableEntity
 {
     public DateTime Day { get; set; }
-    public double Coefficients { get; set; }
+    public ShiftType ShiftType { get; set; }
 
     public TypeDate TypeDate { get; set; }
 }

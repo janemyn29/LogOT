@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using mentor_v1.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using mentor_v1.Infrastructure.Persistence;
 namespace mentorv1.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230615094649_updateCoefficients")]
+    partial class updateCoefficients
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -449,44 +452,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.HasIndex("CompanyId");
 
                     b.ToTable("CompanyContract");
-                });
-
-            modelBuilder.Entity("mentor_v1.Domain.Entities.ConfigDay", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Holiday")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Normal")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Saturday")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Sunday")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ConfigDays");
                 });
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.Degree", b =>

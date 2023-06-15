@@ -8,11 +8,12 @@ using MediatR;
 using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.Interfaces;
 using mentor_v1.Application.Common.Models;
+using mentor_v1.Application.EmployeeContract.Queries.GetEmpContract;
 using mentor_v1.Application.Level.Queries.GetLevel;
 using Microsoft.EntityFrameworkCore;
 
 namespace mentor_v1.Application.EmployeeContract.Queries.GetEmpContractByRelativedObject;
-public class GetEmpContractByEmpRequest : IRequest<PaginatedList<Domain.Entities.EmployeeContract>>
+public class GetEmpContractByEmpRequest : IRequest<PaginatedList<EmpContractViewModel>>
 {
     public string Username { get; set; }
     public int page { get; set; }
@@ -22,7 +23,7 @@ public class GetEmpContractByEmpRequest : IRequest<PaginatedList<Domain.Entities
 }
 
 // IRequestHandler<request type, return type>
-public class GetEmpContractByEmpRequestHandler : IRequestHandler<GetEmpContractByEmpRequest, PaginatedList<Domain.Entities.EmployeeContract>>
+public class GetEmpContractByEmpRequestHandler : IRequestHandler<GetEmpContractByEmpRequest, PaginatedList<EmpContractViewModel>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IMapper _mapper;
@@ -34,11 +35,12 @@ public class GetEmpContractByEmpRequestHandler : IRequestHandler<GetEmpContractB
         _mapper = mapper;
     }
 
-    public Task<PaginatedList<Domain.Entities.EmployeeContract>> Handle(GetEmpContractByEmpRequest request, CancellationToken cancellationToken)
+    public Task<PaginatedList<EmpContractViewModel>> Handle(GetEmpContractByEmpRequest request, CancellationToken cancellationToken)
     {
 
         var EmpContract = _context.Get<Domain.Entities.EmployeeContract>().Where(x => x.IsDeleted == false && x.ApplicationUser.UserName.Equals(request.Username));
-        var page = PaginatedList<Domain.Entities.EmployeeContract>.CreateAsync(EmpContract, request.page, request.size);
+        var map = _mapper.ProjectTo<EmpContractViewModel>(EmpContract);
+        var page = PaginatedList<EmpContractViewModel>.CreateAsync(map, request.page, request.size);
         return page; 
     }
 }

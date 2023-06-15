@@ -43,7 +43,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
     public DbSet<PayDay> PayDays => Set<PayDay>();
     public DbSet<Dependent> Dependents => Set<Dependent>();
     public DbSet<DepartmentAllowance> DepartmentAllowances => Set<DepartmentAllowance>();
-
+    
+    public DbSet<Coefficient> Coefficients => Set<Coefficient>();
+    public DbSet<ConfigDay> ConfigDays => Set<ConfigDay>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

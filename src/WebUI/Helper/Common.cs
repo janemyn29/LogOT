@@ -9,7 +9,7 @@ public static class Common
     }
     public static string GetStaticContentDirectory()
     {
-        var result = Path.Combine(Directory.GetCurrentDirectory(), "CV\\StaticContent\\");
+        var result = Path.Combine(Directory.GetCurrentDirectory(), "AnnualWorkingDay\\StaticContent\\");
         if (!Directory.Exists(result))
         {
             Directory.CreateDirectory(result);

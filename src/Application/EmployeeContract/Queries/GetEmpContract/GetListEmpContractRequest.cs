@@ -7,17 +7,19 @@ using AutoMapper;
 using MediatR;
 using mentor_v1.Application.Common.Interfaces;
 using mentor_v1.Application.Common.Models;
+using mentor_v1.Application.Department.Queries.GetDepartment;
+using mentor_v1.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace mentor_v1.Application.EmployeeContract.Queries.GetEmpContract;
-public class GetListEmpContractRequest : IRequest<PaginatedList<Domain.Entities.EmployeeContract>>
+public class GetListEmpContractRequest : IRequest<PaginatedList<EmpContractViewModel>>
 {
     public int Page { get; set; }
     public int Size { get; set; }
 }
 
 // IRequestHandler<request type, return type>
-public class GetListEmpContractRequestHandler : IRequestHandler<GetListEmpContractRequest, PaginatedList<Domain.Entities.EmployeeContract>>
+public class GetListEmpContractRequestHandler : IRequestHandler<GetListEmpContractRequest, PaginatedList<EmpContractViewModel>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IMapper _mapper;
@@ -29,16 +31,17 @@ public class GetListEmpContractRequestHandler : IRequestHandler<GetListEmpContra
         _mapper = mapper;
     }
 
-    public async Task<PaginatedList<Domain.Entities.EmployeeContract>> Handle(GetListEmpContractRequest request, CancellationToken cancellationToken)
+    public async Task<PaginatedList<EmpContractViewModel>> Handle(GetListEmpContractRequest request, CancellationToken cancellationToken)
     {
         // get categories
         var ListCity = _context.Get<Domain.Entities.EmployeeContract>().Where(x => x.IsDeleted == false).AsNoTracking();
 
         // map IQueryable<BlogCity> to IQueryable<CityViewModel>
+        var map = _mapper.ProjectTo<EmpContractViewModel>(ListCity);
         // AsNoTracking to remove default tracking on entity framework
         // Paginate data
-        var page = await PaginatedList<Domain.Entities.EmployeeContract>
-            .CreateAsync(ListCity, request.Page, request.Size);
+        var page = await PaginatedList<EmpContractViewModel>
+            .CreateAsync(map, request.Page, request.Size);
 
         return page;
     }

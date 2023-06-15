@@ -90,7 +90,7 @@ public class FileService : IFileService
         try
         {
             FileInfo _FileInfo = new FileInfo(_IFormFile.FileName);
-            FileName = Guid.NewGuid().ToString() + _FileInfo.Extension;
+            FileName =_FileInfo.Name+ "_"+ Guid.NewGuid().ToString() + _FileInfo.Extension;
             var _GetFilePath = Common.GetFilePath(FileName);
             using (var _FileStream = new FileStream(_GetFilePath, FileMode.Create))
             {
