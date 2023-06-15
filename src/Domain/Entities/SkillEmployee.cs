@@ -11,11 +11,11 @@ public class SkillEmployee : BaseAuditableEntity
 {
     [ForeignKey("ApplicationUser")]
     public string ApplicationUserId { get; set; }
-    [ForeignKey("Skill")]
-    public Guid SkillId { get; set; }
+    public string  Name { get; set; }
+    public string Description { get; set; }
+
     public LevelEnum Level { get; set; }
     //Relationship
 
     public virtual ApplicationUser ApplicationUser { get; set; }
-    public virtual Skill Skill { get; set; }
 }

@@ -13,6 +13,7 @@ public interface IApplicationDbContext
     DbSet<TodoItem> TodoItems { get; }
     DbSet<AnnualWorkingDay> AnnualWorkingDays { get; }
     DbSet<ConfigDay> ConfigDays { get; }
+    DbSet<Coefficient> Coefficients { get; }
 
 
     //public DbSet<Blog> Blogs { get; }

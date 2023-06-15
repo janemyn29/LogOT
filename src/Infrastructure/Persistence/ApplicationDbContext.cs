@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
 using mentor_v1.Domain;
+using mentor_v1.Domain.Enums;
 
 namespace mentor_v1.Infrastructure.Persistence;
 
@@ -64,6 +65,23 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
                 IsDeleted = false
             }
         );
+        builder.Entity<ConfigDay>()
+           .HasData(
+           new ConfigDay
+           {
+               Id = Guid.Parse("ea7cebd4-6de8-40a3-958b-f4d28ee9c843"),
+               Normal = ShiftType.Full, 
+               Holiday = ShiftType.NotWork,
+               Sunday = ShiftType.NotWork ,
+               Saturday= ShiftType.Morning,
+               Created = DateTime.Parse("1/1/2023"),
+               CreatedBy = "Test",
+               LastModified = DateTime.Parse("1/1/2023"),
+               LastModifiedBy = "Test",
+               IsDeleted = false
+           }
+       );
+       
         builder.Entity<Level>()
             .HasData(
             new Level
@@ -94,6 +112,63 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
                 IsDeleted = false
             }
         );
+
+        builder.Entity<Coefficient>()
+          .HasData(
+          new Coefficient
+          {
+              Id = Guid.Parse("a510ba38-65d8-445c-95fd-f1b719b19c08"),
+              AmountCoefficient = 1,
+              TypeDate = TypeDate.Normal,
+              Created = DateTime.Parse("1/1/2023"),
+              CreatedBy = "Test",
+              LastModified = DateTime.Parse("1/1/2023"),
+              LastModifiedBy = "Test",
+              IsDeleted = false
+          }
+      );
+        builder.Entity<Coefficient>()
+          .HasData(
+          new Coefficient
+          {
+              Id = Guid.Parse("b861adcd-208c-4b6c-bef1-962cd147a6f7"),
+              AmountCoefficient = 1.5,
+              TypeDate = TypeDate.Saturday,
+              Created = DateTime.Parse("1/1/2023"),
+              CreatedBy = "Test",
+              LastModified = DateTime.Parse("1/1/2023"),
+              LastModifiedBy = "Test",
+              IsDeleted = false
+          }
+      );
+        builder.Entity<Coefficient>()
+          .HasData(
+          new Coefficient
+          {
+              Id = Guid.Parse("22104ebc-c6e6-4f44-a7b6-344752e8d1e5"),
+              AmountCoefficient = 1.5,
+              TypeDate = TypeDate.Sunday,
+              Created = DateTime.Parse("1/1/2023"),
+              CreatedBy = "Test",
+              LastModified = DateTime.Parse("1/1/2023"),
+              LastModifiedBy = "Test",
+              IsDeleted = false
+          }
+      );
+        builder.Entity<Coefficient>()
+         .HasData(
+         new Coefficient
+         {
+             Id = Guid.Parse("7fd46536-291c-40f0-8f19-0aeed5d26e63"),
+             AmountCoefficient = 2,
+             TypeDate = TypeDate.Holiday,
+             Created = DateTime.Parse("1/1/2023"),
+             CreatedBy = "Test",
+             LastModified = DateTime.Parse("1/1/2023"),
+             LastModifiedBy = "Test",
+             IsDeleted = false
+         }
+     );
         base.OnModelCreating(builder);
     }
 

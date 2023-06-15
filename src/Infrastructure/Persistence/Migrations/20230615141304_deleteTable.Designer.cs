@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using mentor_v1.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using mentor_v1.Infrastructure.Persistence;
 namespace mentorv1.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230615141304_deleteTable")]
+    partial class deleteTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -245,7 +248,10 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CoefficientId")
+                    b.Property<Guid?>("CoefficientId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ConfigDayId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Created")
@@ -275,6 +281,8 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CoefficientId");
+
+                    b.HasIndex("ConfigDayId");
 
                     b.ToTable("AnnualWorkingDays");
                 });
@@ -1627,13 +1635,17 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.AnnualWorkingDay", b =>
                 {
-                    b.HasOne("mentor_v1.Domain.Entities.Coefficient", "Coefficient")
+                    b.HasOne("mentor_v1.Domain.Entities.Coefficient", null)
                         .WithMany("AnnualWorkingDays")
-                        .HasForeignKey("CoefficientId")
+                        .HasForeignKey("CoefficientId");
+
+                    b.HasOne("mentor_v1.Domain.Entities.ConfigDay", "ConfigDay")
+                        .WithMany()
+                        .HasForeignKey("ConfigDayId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Coefficient");
+                    b.Navigation("ConfigDay");
                 });
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.Attendance", b =>

@@ -25,7 +25,6 @@ public class ApplicationUser : IdentityUser
     public IList<LeaveLog> LeaveLogs { get; private set; }
 
     public IList<EmployeeContract> EmployeeContracts { get; private set; }
-    public IList<InterviewProcess> InterviewProcesses { get; private set; }
     public IList<SkillEmployee> SkillEmployees { get; private set; }
     public IList<RequestChange> RequestChanges { get; private set; }
     public IList<Degree> Degrees { get; private set; }

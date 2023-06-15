@@ -9,4 +9,5 @@ public class Coefficient:BaseAuditableEntity
 {
     public double AmountCoefficient { get; set; }
     public TypeDate TypeDate { get; set; } 
+    public IList<AnnualWorkingDay> AnnualWorkingDays { get; set; }  
 }

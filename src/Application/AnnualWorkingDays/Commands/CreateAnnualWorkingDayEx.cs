@@ -12,6 +12,7 @@ using mentor_v1.Domain.Entities;
 using mentor_v1.Domain.Enums;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using OfficeOpenXml;
 using LicenseContext = OfficeOpenXml.LicenseContext;
 
@@ -49,6 +50,7 @@ public class CreateAnnualWorkingDayExCommandHandler : IRequestHandler<CreateAnnu
                     int rowCount = worksheet.Dimension.Rows;
                     var annualWorkingDays = new List<AnnualWorkingDay>();
                     var configDay = _context.ConfigDays.FirstOrDefault();
+                    var coefficientList = _context.Coefficients;
 
                     for (int row = 2; row <= rowCount; row++) // Bắt đầu từ hàng thứ 2 để bỏ qua tiêu đề
                     {
@@ -67,6 +69,7 @@ public class CreateAnnualWorkingDayExCommandHandler : IRequestHandler<CreateAnnu
                                 }
                                 ShiftType shiftType;
                                 TypeDate typeDate;
+                                
 
                                 // Tự động tính toán hệ số lương và loại ngày dựa trên ngày
                                 //Ngày t7
@@ -85,12 +88,16 @@ public class CreateAnnualWorkingDayExCommandHandler : IRequestHandler<CreateAnnu
                                     typeDate = TypeDate.Normal;
                                     shiftType = configDay.Normal;
                                 }
+                                
+                                var coefficient = coefficientList.Where(x=>x.TypeDate == typeDate).FirstOrDefault();
+
 
                                 var entity = new AnnualWorkingDay
                                 {
                                     Day = day,
                                     ShiftType = shiftType,
-                                    TypeDate = typeDate
+                                    TypeDate = typeDate,
+                                    CoefficientId = coefficient.Id
                                 };
 
                                 annualWorkingDays.Add(entity);
@@ -105,13 +112,15 @@ public class CreateAnnualWorkingDayExCommandHandler : IRequestHandler<CreateAnnu
                                 {
                                     continue; // Bỏ qua hàng này và chuyển sang hàng tiếp theo
                                 }
+                                var coefficient = coefficientList.Where(x => x.TypeDate == TypeDate.Holiday).FirstOrDefault();
 
 
                                 var entity = new AnnualWorkingDay
                                 {
                                     Day = day,
                                     ShiftType = configDay.Holiday,
-                                    TypeDate = TypeDate.Holiday
+                                    TypeDate = TypeDate.Holiday,
+                                    CoefficientId = coefficient.Id
                                 };
 
                                 annualWorkingDays.Add(entity);
@@ -134,11 +143,11 @@ public class CreateAnnualWorkingDayExCommandHandler : IRequestHandler<CreateAnnu
         }
         catch (InvalidDataException ex)
         {
-            throw new Exception("Invalid Excel file format.", ex);
+            throw new Exception("Dữ liệu trong file không đúng định dạng!");
         }
         catch (IOException ex)
         {
-            throw new Exception("Error accessing the Excel file.", ex);
+            throw new Exception("Đã xảy ra lỗi khi truy cập vào file!");
         }
 
 

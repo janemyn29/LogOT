@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using mentor_v1.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using mentor_v1.Infrastructure.Persistence;
 namespace mentorv1.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230615135359_updateConfigDay2")]
+    partial class updateConfigDay2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -245,7 +248,10 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CoefficientId")
+                    b.Property<Guid?>("CoefficientId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ConfigDayId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Created")
@@ -275,6 +281,8 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CoefficientId");
+
+                    b.HasIndex("ConfigDayId");
 
                     b.ToTable("AnnualWorkingDays");
                 });
@@ -391,14 +399,115 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                         new
                         {
                             Id = new Guid("7fd46536-291c-40f0-8f19-0aeed5d26e63"),
-                            AmountCoefficient = 2.0,
+                            AmountCoefficient = 1.5,
                             Created = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CreatedBy = "Test",
                             IsDeleted = false,
                             LastModified = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LastModifiedBy = "Test",
-                            TypeDate = 4
+                            TypeDate = 3
                         });
+                });
+
+            modelBuilder.Entity("mentor_v1.Domain.Entities.Company", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AccountEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HREmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Company");
+                });
+
+            modelBuilder.Entity("mentor_v1.Domain.Entities.CompanyContract", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ContactCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("DayOff")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("File")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("PayDay")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double?>("Price")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double?>("UnitPrice")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("CompanyContract");
                 });
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.ConfigDay", b =>
@@ -816,6 +925,156 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.ToTable("Experience");
                 });
 
+            modelBuilder.Entity("mentor_v1.Domain.Entities.Holiday", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DateName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Day")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("HourlyPay")
+                        .HasColumnType("float");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("Holiday");
+                });
+
+            modelBuilder.Entity("mentor_v1.Domain.Entities.InterviewProcess", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DayTime")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FeedBack")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Info")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("JobDescriptionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Place")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Result")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("JobDescriptionId");
+
+                    b.ToTable("InterviewProcess");
+                });
+
+            modelBuilder.Entity("mentor_v1.Domain.Entities.JobDescription", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("JobDescription");
+                });
+
             modelBuilder.Entity("mentor_v1.Domain.Entities.LeaveLog", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1150,6 +1409,61 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.ToTable("PaySlip");
                 });
 
+            modelBuilder.Entity("mentor_v1.Domain.Entities.PaymentHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AcceptanceCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("CompanyContractId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<double?>("Tax")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("Total")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("TotalBonus")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("TotalDeduction")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyContractId");
+
+                    b.ToTable("PaymentHistory");
+                });
+
             modelBuilder.Entity("mentor_v1.Domain.Entities.Position", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1280,6 +1594,40 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.ToTable("RequestChange");
                 });
 
+            modelBuilder.Entity("mentor_v1.Domain.Entities.Skill", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SkillName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Skill_Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Skill");
+                });
+
             modelBuilder.Entity("mentor_v1.Domain.Entities.SkillEmployee", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1296,10 +1644,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -1312,15 +1656,55 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<int>("Level")
                         .HasColumnType("int");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("SkillId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ApplicationUserId");
 
+                    b.HasIndex("SkillId");
+
                     b.ToTable("SkillEmployee");
+                });
+
+            modelBuilder.Entity("mentor_v1.Domain.Entities.SkillJD", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("JobDescriptionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("SkillId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("JobDescriptionId");
+
+                    b.HasIndex("SkillId");
+
+                    b.ToTable("SkillJD");
                 });
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.Subsidize", b =>
@@ -1627,13 +2011,17 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.AnnualWorkingDay", b =>
                 {
-                    b.HasOne("mentor_v1.Domain.Entities.Coefficient", "Coefficient")
+                    b.HasOne("mentor_v1.Domain.Entities.Coefficient", null)
                         .WithMany("AnnualWorkingDays")
-                        .HasForeignKey("CoefficientId")
+                        .HasForeignKey("CoefficientId");
+
+                    b.HasOne("mentor_v1.Domain.Entities.ConfigDay", "ConfigDay")
+                        .WithMany()
+                        .HasForeignKey("ConfigDayId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Coefficient");
+                    b.Navigation("ConfigDay");
                 });
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.Attendance", b =>
@@ -1643,6 +2031,17 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                         .HasForeignKey("ApplicationUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("mentor_v1.Domain.Entities.CompanyContract", b =>
+                {
+                    b.HasOne("mentor_v1.Domain.Entities.Company", "Company")
+                        .WithMany("CompanyContracts")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.Degree", b =>
@@ -1708,6 +2107,47 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Navigation("ApplicationUser");
                 });
 
+            modelBuilder.Entity("mentor_v1.Domain.Entities.Holiday", b =>
+                {
+                    b.HasOne("mentor_v1.Domain.Entities.Company", "Company")
+                        .WithMany("Holidays")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("mentor_v1.Domain.Entities.InterviewProcess", b =>
+                {
+                    b.HasOne("mentor_v1.Domain.Identity.ApplicationUser", "ApplicationUser")
+                        .WithMany("InterviewProcesses")
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("mentor_v1.Domain.Entities.JobDescription", "JobDescription")
+                        .WithMany()
+                        .HasForeignKey("JobDescriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("JobDescription");
+                });
+
+            modelBuilder.Entity("mentor_v1.Domain.Entities.JobDescription", b =>
+                {
+                    b.HasOne("mentor_v1.Domain.Entities.Company", "Company")
+                        .WithMany("JobDescriptions")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+                });
+
             modelBuilder.Entity("mentor_v1.Domain.Entities.LeaveLog", b =>
                 {
                     b.HasOne("mentor_v1.Domain.Identity.ApplicationUser", "ApplicationUser")
@@ -1760,6 +2200,17 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Navigation("EmployeeContract");
                 });
 
+            modelBuilder.Entity("mentor_v1.Domain.Entities.PaymentHistory", b =>
+                {
+                    b.HasOne("mentor_v1.Domain.Entities.CompanyContract", "CompanyContract")
+                        .WithMany("PaymentHistories")
+                        .HasForeignKey("CompanyContractId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CompanyContract");
+                });
+
             modelBuilder.Entity("mentor_v1.Domain.Entities.Position", b =>
                 {
                     b.HasOne("mentor_v1.Domain.Entities.Department", "Department")
@@ -1798,7 +2249,34 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("mentor_v1.Domain.Entities.Skill", "Skill")
+                        .WithMany("SkillEmployees")
+                        .HasForeignKey("SkillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("ApplicationUser");
+
+                    b.Navigation("Skill");
+                });
+
+            modelBuilder.Entity("mentor_v1.Domain.Entities.SkillJD", b =>
+                {
+                    b.HasOne("mentor_v1.Domain.Entities.JobDescription", "JobDescription")
+                        .WithMany("SkillJDs")
+                        .HasForeignKey("JobDescriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("mentor_v1.Domain.Entities.Skill", "Skill")
+                        .WithMany("SkillJDs")
+                        .HasForeignKey("SkillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("JobDescription");
+
+                    b.Navigation("Skill");
                 });
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.TodoItem", b =>
@@ -1864,6 +2342,20 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Navigation("AnnualWorkingDays");
                 });
 
+            modelBuilder.Entity("mentor_v1.Domain.Entities.Company", b =>
+                {
+                    b.Navigation("CompanyContracts");
+
+                    b.Navigation("Holidays");
+
+                    b.Navigation("JobDescriptions");
+                });
+
+            modelBuilder.Entity("mentor_v1.Domain.Entities.CompanyContract", b =>
+                {
+                    b.Navigation("PaymentHistories");
+                });
+
             modelBuilder.Entity("mentor_v1.Domain.Entities.Department", b =>
                 {
                     b.Navigation("Positions");
@@ -1874,6 +2366,11 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Navigation("AllowanceEmployees");
 
                     b.Navigation("PaySlips");
+                });
+
+            modelBuilder.Entity("mentor_v1.Domain.Entities.JobDescription", b =>
+                {
+                    b.Navigation("SkillJDs");
                 });
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.Level", b =>
@@ -1889,6 +2386,13 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("mentor_v1.Domain.Entities.Position", b =>
                 {
                     b.Navigation("ApplicationUsers");
+                });
+
+            modelBuilder.Entity("mentor_v1.Domain.Entities.Skill", b =>
+                {
+                    b.Navigation("SkillEmployees");
+
+                    b.Navigation("SkillJDs");
                 });
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.Subsidize", b =>
@@ -1910,6 +2414,8 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Navigation("EmployeeContracts");
 
                     b.Navigation("Experiences");
+
+                    b.Navigation("InterviewProcesses");
 
                     b.Navigation("LeaveLogs");
 
