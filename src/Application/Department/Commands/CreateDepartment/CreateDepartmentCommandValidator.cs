@@ -18,21 +18,13 @@ public class CreateDepartmentCommandValidator : AbstractValidator<CreateDepartme
     {
         _context = context;
 
-        
+
         RuleFor(v => v.Name)
-            .NotEmpty().WithMessage("Name is required.")
-            .MaximumLength(200).WithMessage("Title must not exceed 200 characters.")         
-            .MustAsync(BeUniqueName).WithMessage("The specified Title already exists.");
+            .NotEmpty().WithMessage("Tên phòng ban không được để trống.");
         RuleFor(v => v.Description)
-            .NotEmpty().WithMessage("Description is required.")
-            .MaximumLength(200).WithMessage("Description must not exceed 200 characters.");      
+            .NotEmpty().WithMessage("Mô tả phòng ban không được để trống.");
     }
 
-    public async Task<bool> BeUniqueName(string name, CancellationToken cancellationToken)
-    {
-        return await _context.Get<Domain.Entities.Department>()
-            .AllAsync(l => l.Name != name || l.IsDeleted == true, cancellationToken);
-    }
    
 
 }
