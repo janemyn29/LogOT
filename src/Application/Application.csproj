@@ -40,6 +40,8 @@
 
     <ItemGroup>
       <Folder Include="ApplicationUser\Queries\GetUserByRelatedObject\" />
+      <Folder Include="Coefficients\Queries\GetByRelatedObject\" />
+      <Folder Include="ConfigDays\Queries\GetByRelatedObject\" />
     </ItemGroup>
 
 </Project>
