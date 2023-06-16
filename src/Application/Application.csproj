@@ -39,8 +39,8 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="AnnualWorkingDays\Queries\GetByRelatedObject\" />
       <Folder Include="ApplicationUser\Queries\GetUserByRelatedObject\" />
-      <Folder Include="Coefficients\Queries\GetByRelatedObject\" />
       <Folder Include="ConfigDays\Queries\GetByRelatedObject\" />
     </ItemGroup>
 
