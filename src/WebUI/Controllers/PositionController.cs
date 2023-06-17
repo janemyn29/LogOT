@@ -98,9 +98,10 @@ public class PositionController : ApiControllerBase
                 var position = await Mediator.Send(new CreatePositionCommand { Name = model.Name, DepartmentId = model.DepartmentId, LevelId = model.LevelId });
                 return Ok("Tạo vị trí công việc thành công!");
             }
+            
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                return BadRequest(ex.Message);
             }
         }
         catch (Exception)

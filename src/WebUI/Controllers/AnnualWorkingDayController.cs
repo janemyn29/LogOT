@@ -1,6 +1,7 @@
 ﻿using mentor_v1.Application.AnnualWorkingDays.Commands;
 using mentor_v1.Application.AnnualWorkingDays.Commands.Delete;
 using mentor_v1.Application.AnnualWorkingDays.Commands.Update;
+using mentor_v1.Application.AnnualWorkingDays.Queries.GetByRelatedObject;
 using mentor_v1.Application.AnnualWorkingDays.Queries.GetList;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -109,6 +110,24 @@ public class AnnualWorkingDayController : ApiControllerBase
         {
             await Mediator.Send(new DeleteAnnualCommand { Id = id });
             return Ok("Xóa thành công");
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+
+    }
+
+    [HttpGet]
+    [Route("/Annual/GetByMonth")]
+
+    //[Authorize(Policy = "Manager")]
+    public async Task<IActionResult> GetByMonth([FromBody] int Month, int Year)
+    {
+        try
+        {
+            var list = await Mediator.Send(new GetAnnualByMonthRequest{ Month = Month, Year = Year });
+            return Ok(list);
         }
         catch (Exception ex)
         {
