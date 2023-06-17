@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MediatR;
 using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.Interfaces;
+using mentor_v1.Application.Level.Queries.GetLevel;
 using mentor_v1.Domain.Entities;
 
 namespace mentor_v1.Application.Level.Commands.UpdateLevel;
@@ -13,11 +14,7 @@ namespace mentor_v1.Application.Level.Commands.UpdateLevel;
 public record UpdateLevelCommand : IRequest
 {
     public Guid Id { get; init; }
-    public string Name { get; set; }
-
-    public string Description { get; set; }
-
-    public IList<Position> Positions { get; set; }
+    public LevelViewModel LevelViewModel { get; init; }
 }
 public class UpdateLevelCommandHandler : IRequestHandler<UpdateLevelCommand>
 {
@@ -38,8 +35,8 @@ public class UpdateLevelCommandHandler : IRequestHandler<UpdateLevelCommand>
             throw new NotFoundException(nameof(Domain.Entities.Level), request.Id);
         }
         
-        CurrentLevel.Name = request.Name;
-        CurrentLevel.Description = request.Description;
+        CurrentLevel.Name = request.LevelViewModel.Name;
+        CurrentLevel.Description = request.LevelViewModel.Description;
         await _context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;
