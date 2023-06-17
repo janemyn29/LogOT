@@ -7,6 +7,7 @@ using MediatR;
 using mentor_v1.Application.Common.Interfaces;
 using mentor_v1.Application.Level.Queries.GetLevel;
 using mentor_v1.Domain.Entities;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace mentor_v1.Application.Level.Commands.CreateLevel;
 
@@ -29,6 +30,14 @@ public class CreateLevelCommandHandler : IRequestHandler<CreateLevelCommand, Gui
 
     public async Task<Guid> Handle(CreateLevelCommand request, CancellationToken cancellationToken)
     {
+        var tempLevel = _context.Get<Domain.Entities.Level>()
+            .Where(l => l.Name.Equals(request.levelViewModel.Name)).FirstOrDefault();
+
+        if (tempLevel != null) 
+        {
+            throw new Exception("Tên cấp độ đã tồn tại");
+        }
+
         // create new Level from request data
         var Level = new Domain.Entities.Level()
         {

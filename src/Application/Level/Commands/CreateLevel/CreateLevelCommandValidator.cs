@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using FluentValidation;
@@ -21,17 +22,24 @@ public class CreateLevelCommandValidator : AbstractValidator<LevelViewModel>
         // Add validation for request
         RuleFor(v => v.Name)
             .NotEmpty().WithMessage("Tên cấp độ không thể để trống.")
-            .MaximumLength(200).WithMessage("Tên cấp độ không vượt quá 200 kí tự.")
-            .MustAsync(BeUniqueName).WithMessage("Tên cấp độ đã tồn tại.");
+            .MaximumLength(200).WithMessage("Tên cấp độ không vượt quá 200 kí tự.");
+            //.MustAsync(BeUniqueName).WithMessage("Tên cấp độ đã tồn tại.");
         RuleFor(v => v.Description)
             .NotEmpty().WithMessage("Miêu tả không thể để trống.")
             .MaximumLength(200).WithMessage("Miêu tả không vượt quá 200 ký tự.");
     }
 
     // Custom action to check with the database
-    public async Task<bool> BeUniqueName(string name, CancellationToken cancellationToken)
+    /*public async Task<bool> BeUniqueName(string name, CancellationToken cancellationToken)
     {
-        return await _context.Get<Domain.Entities.Level>()
-            .AllAsync(l => l.Name != name || l.IsDeleted == true, cancellationToken);
-    }
+        var result = await _context.Get<Domain.Entities.Level>().Where(u => u.Name == name || u.IsDeleted == true).FirstOrDefaultAsync();
+        if (result == null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }*/
 }

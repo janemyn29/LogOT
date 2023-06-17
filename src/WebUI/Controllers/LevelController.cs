@@ -1,13 +1,10 @@
-﻿using MediatR;
-using mentor_v1.Application.ApplicationUser.Queries.GetUser;
-using Microsoft.AspNetCore.Authorization;
-using mentor_v1.Application.Level.Queries.GetLevel;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
-using mentor_v1.Application.Level.Commands.CreateLevel;
+﻿using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.Interfaces;
-using FluentValidation;
+using mentor_v1.Application.Level.Commands.CreateLevel;
+using mentor_v1.Application.Level.Commands.DeleteLevel;
 using mentor_v1.Application.Level.Commands.UpdateLevel;
+using mentor_v1.Application.Level.Queries.GetLevel;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers;
 
@@ -35,7 +32,7 @@ public class LevelController : ApiControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateLevel([FromForm] LevelViewModel model)
     {
-      /*  if (!ModelState.IsValid)
+        if (!ModelState.IsValid)
         {
             return BadRequest("Vui lòng điền đầy đủ các thông tin được yêu cầu");
         }
@@ -51,7 +48,7 @@ public class LevelController : ApiControllerBase
             }
             return BadRequest(errors);
         }
-*/
+
         try
         {
             var create = await Mediator.Send(new CreateLevelCommand() { levelViewModel = model });
@@ -61,10 +58,10 @@ public class LevelController : ApiControllerBase
                 message = "Khởi tạo thành công"
             });
         }
-        catch (Exception)
+        catch (Exception e)
         {
 
-            return BadRequest("Khởi tạo thất bại");
+            return BadRequest("Khởi tạo thất bại: " + e.Message );
         }
     }
 
@@ -76,7 +73,7 @@ public class LevelController : ApiControllerBase
         {
             return BadRequest("Vui lòng điền đầy đủ các thông tin được yêu cầu");
         }
-        var validator = new CreateLevelCommandValidator(_context);
+        var validator = new UpdateLevelCommandValidator(_context);
         var valResult = await validator.ValidateAsync(model);
 
         if (valResult.Errors.Count != 0)
@@ -106,12 +103,20 @@ public class LevelController : ApiControllerBase
     {
         try
         {
-            return Ok("Xóa thành công");
+            var result = await Mediator.Send(new DeleteLevelCommand { Id = id });
+            return Ok(new
+            {
+                status = Ok().StatusCode,
+                message = "Xoá thành công"
+            });
         }
-        catch (Exception)
+        catch (NotFoundException ex)
         {
-
-            return BadRequest("Xóa không thành công");
+            return NotFound(new
+            {
+                staus = NotFound().StatusCode,
+                message = ex.Message
+            });
         }
     }
 }
