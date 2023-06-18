@@ -12,13 +12,13 @@ using mentor_v1.Domain.Entities;
 
 namespace mentor_v1.Application.Level.Queries.GetLevel;
 
-public class GetLevelRequest : IRequest<PaginatedList<LevelViewModel>>
+public class GetLevelRequest : IRequest<PaginatedList<Domain.Entities.Level>>
 {
     public int Page { get; set; }
     public int Size { get; set; }
 }
 
-public class GetLevelRequestHandler : IRequestHandler<GetLevelRequest, PaginatedList<LevelViewModel>>
+public class GetLevelRequestHandler : IRequestHandler<GetLevelRequest, PaginatedList<Domain.Entities.Level>>
 {
     private readonly IApplicationDbContext _applicationDbContext;
     private readonly IMapper _mapper;
@@ -29,14 +29,14 @@ public class GetLevelRequestHandler : IRequestHandler<GetLevelRequest, Paginated
         _mapper = mapper;
     }
 
-    public Task<PaginatedList<LevelViewModel>> Handle(GetLevelRequest request, CancellationToken cancellationToken)
+    public Task<PaginatedList<Domain.Entities.Level>> Handle(GetLevelRequest request, CancellationToken cancellationToken)
     {
 
         //get Level by ?
         var Levels = _applicationDbContext.Get<Domain.Entities.Level>().Where(x => x.IsDeleted == false).OrderByDescending(x => x.Created).AsNoTracking();
-        var models = _mapper.ProjectTo<LevelViewModel>(Levels);
+        //var models = _mapper.ProjectTo<LevelViewModel>(Levels);
 
-        var page = PaginatedList<LevelViewModel>.CreateAsync(models, request.Page, request.Size);
+        var page = PaginatedList<Domain.Entities.Level>.CreateAsync(Levels, request.Page, request.Size);
 
         return page;
     }

@@ -11,24 +11,24 @@ using mentor_v1.Application.Common.Models;
 
 namespace mentor_v1.Application.Department.Queries.GetDepartment;
 
-public class GetDepartmentRequest : IRequest<PaginatedList<DepartmentViewModel>>
+public class GetListDepartmentRequest : IRequest<PaginatedList<DepartmentViewModel>>
 {
     public int Page { get; set; }
     public int Size { get; set; }
 }
 
-public class GetDepartmentRequestHandler : IRequestHandler<GetDepartmentRequest, PaginatedList<DepartmentViewModel>>
+public class GetListDepartmentRequestHandler : IRequestHandler<GetListDepartmentRequest, PaginatedList<DepartmentViewModel>>
 {
     private readonly IApplicationDbContext _applicationDbContext;
     private readonly IMapper _mapper;
 
-    public GetDepartmentRequestHandler(IApplicationDbContext applicationDbContext, IMapper mapper)
+    public GetListDepartmentRequestHandler(IApplicationDbContext applicationDbContext, IMapper mapper)
     {
         _applicationDbContext = applicationDbContext;
         _mapper = mapper;
     }
 
-    public Task<PaginatedList<DepartmentViewModel>> Handle(GetDepartmentRequest request, CancellationToken cancellationToken)
+    public Task<PaginatedList<DepartmentViewModel>> Handle(GetListDepartmentRequest request, CancellationToken cancellationToken)
     {
 
         //get Department by ?

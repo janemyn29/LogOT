@@ -17,7 +17,6 @@ public record UpdateDepartmentCommand : IRequest
 
     public string Description { get; set; }
 
-    public IList<Position> Positions { get; set; }
 }
 public class UpdateDepartmentCommandHandler : IRequestHandler<UpdateDepartmentCommand>
 {
@@ -40,6 +39,7 @@ public class UpdateDepartmentCommandHandler : IRequestHandler<UpdateDepartmentCo
 
         CurrentDepartment.Name = request.Name;
         CurrentDepartment.Description = request.Description;
+
         await _context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;

@@ -14,8 +14,6 @@ public class CreateDepartmentCommand : IRequest<Guid>
 
     public string Description { get; set; }
 
-    public IList<Position> Positions { get; set; }
-
 }
 
 public class CreateDepartmentCommandHandler : IRequestHandler<CreateDepartmentCommand, Guid>
@@ -34,7 +32,7 @@ public class CreateDepartmentCommandHandler : IRequestHandler<CreateDepartmentCo
         {
             Name = request.Name,
             Description = request.Description,
-            Positions = request.Positions
+           
         };
 
         _context.Get<Domain.Entities.Department>().Add(Department);

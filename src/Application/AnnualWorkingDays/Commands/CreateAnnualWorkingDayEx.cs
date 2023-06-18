@@ -63,7 +63,7 @@ public class CreateAnnualWorkingDayExCommandHandler : IRequestHandler<CreateAnnu
 
                             if (DateTime.TryParse(dayCell.ToString(), out day))
                             {
-                                if (_context.AnnualWorkingDays.Any(x => x.Day == day))
+                                if (_context.AnnualWorkingDays.Any(x => x.Day.Date == day.Date))
                                 {
                                     continue; // Bỏ qua hàng này và chuyển sang hàng tiếp theo
                                 }
