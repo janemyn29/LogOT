@@ -27,6 +27,7 @@ public class CreateEmployeeContractCommand : IRequest<Guid>
     public bool isPersonalTaxDeduction { get; set; }
     public InsuranceType InsuranceType { get; set; }
     public double? InsuranceAmount { get; set; }
+    public Guid[]? AllowanceId { get; set; }
 }
 
 public class CreateEmployeeContractCommandHandler : IRequestHandler<CreateEmployeeContractCommand, Guid>
@@ -57,7 +58,7 @@ public class CreateEmployeeContractCommandHandler : IRequestHandler<CreateEmploy
 
             throw new NotFoundException("Không tìm thấy người dùng bạn yêu cầu!");
         }
-
+        
         var city = new Domain.Entities.EmployeeContract()
         {
             ApplicationUserId =user.Id,
@@ -83,7 +84,32 @@ public class CreateEmployeeContractCommandHandler : IRequestHandler<CreateEmploy
         // because the function is async so we await it
         await _context.SaveChangesAsync(cancellationToken);
 
-        // return the Guid
-        return city.Id;
+        if (request.AllowanceId!=null&& request.AllowanceId.Length > 0)
+        {
+            foreach (var item in request.AllowanceId)
+            {
+                var allowance = _context.Get<Domain.Entities.Allowance>().Where(x => x.Id == item).FirstOrDefault();
+                if(allowance==null) {
+                    throw new Exception("Danh sách trợ cấp theo hợp đồng không hợp lệ!");
+                }
+            }
+            foreach (var item in request.AllowanceId.Distinct())
+            {
+                var allowance = new Domain.Entities.AllowanceEmployee
+                {
+                    AllowanceId = item,
+                    EmployeeContractId = city.Id,
+                };
+                // add new category
+                _context.Get<Domain.Entities.AllowanceEmployee>().Add(allowance);
+
+                // commit change to database
+                // because the function is async so we await it
+                await _context.SaveChangesAsync(cancellationToken);
+
+            }
+        }
+            // return the Guid
+            return city.Id;
     }
 }

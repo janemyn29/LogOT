@@ -29,6 +29,7 @@ public record UpdateEmpContractCommand : IRequest
     public InsuranceType InsuranceType { get; set; }
     public double? InsuranceAmount { get; set; }
 
+
 }
 
 public class UpdateEmpContractCommandHandler : IRequestHandler<UpdateEmpContractCommand>

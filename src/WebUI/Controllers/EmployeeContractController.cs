@@ -151,6 +151,7 @@ public class EmployeeContractController : ApiControllerBase
                 isPersonalTaxDeduction = model.isPersonalTaxDeduction,
                 InsuranceAmount = model.InsuranceAmount,
                 InsuranceType = model.InsuranceType,
+                AllowanceId = model.AllowanceId,
             });
             return Ok("Thêm hợp đồng thành công!");
         }
@@ -205,8 +206,7 @@ public class EmployeeContractController : ApiControllerBase
 
         try
         {
-            ;
-            /*            var filePath = await _fileService.UploadFile(model.File);*/
+
             var result = await Mediator.Send(new UpdateEmpContractCommand {
                 Id = model.Id,
                  ContractCode = model.ContractCode,
@@ -222,6 +222,7 @@ public class EmployeeContractController : ApiControllerBase
                  InsuranceAmount= model.InsuranceAmount,
                  InsuranceType= model.InsuranceType,
                  isPersonalTaxDeduction = model.isPersonalTaxDeduction,
+
             });
             return Ok("Cập nhật hợp đồng thành công!");
         }
