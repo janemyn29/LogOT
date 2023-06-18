@@ -24,6 +24,9 @@ public class CreateEmployeeContractCommand : IRequest<Guid>
     public double? PercentDeduction { get; set; }
     public SalaryType SalaryType { get; set; }
     public ContractType ContractType { get; set; }
+    public bool isPersonalTaxDeduction { get; set; }
+    public InsuranceType InsuranceType { get; set; }
+    public double? InsuranceAmount { get; set; }
 }
 
 public class CreateEmployeeContractCommandHandler : IRequestHandler<CreateEmployeeContractCommand, Guid>
@@ -67,7 +70,10 @@ public class CreateEmployeeContractCommandHandler : IRequestHandler<CreateEmploy
             PercentDeduction = request.PercentDeduction,
             SalaryType = request.SalaryType,
             ContractType = request.ContractType,
-            ContractCode = request.ContractCode,    
+            ContractCode = request.ContractCode,
+            InsuranceAmount = request.InsuranceAmount,
+            InsuranceType = request.InsuranceType,
+            isPersonalTaxDeduction = request.isPersonalTaxDeduction,
         };
 
         // add new category

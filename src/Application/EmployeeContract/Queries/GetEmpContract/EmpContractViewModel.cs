@@ -24,4 +24,8 @@ public class EmpContractViewModel : IMapFrom<Domain.Entities.EmployeeContract>
     public double? PercentDeduction { get; set; }
     public string SalaryType { get; set; }
     public string ContractType { get; set; }
+
+    public bool isPersonalTaxDeduction { get; set; }
+    public string InsuranceType { get; set; }
+    public double? InsuranceAmount { get; set; }
 }

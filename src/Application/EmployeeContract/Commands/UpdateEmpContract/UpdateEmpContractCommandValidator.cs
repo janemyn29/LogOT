@@ -43,6 +43,10 @@ public class UpdateEmpContractCommandValidator : AbstractValidator<UpdateEmpCont
             .NotEmpty().WithMessage("Loại hợp đồng không được để trống.");
         RuleFor(v => v.SalaryType)
             .NotEmpty().WithMessage("Loại lương không được để trống.");
+        RuleFor(v => v.isPersonalTaxDeduction)
+           .NotEmpty().WithMessage("Yêu cầu tính giảm trừ gia cảnh bản thân không được để trống.");
+        RuleFor(v => v.InsuranceType)
+           .NotEmpty().WithMessage("Hình thức nộp bảo hiểm không được để trống.");
     }
 }
 
