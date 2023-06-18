@@ -1,44 +1,46 @@
-﻿using mentor_v1.Application.Allowance.Commands.CreateAllowance;
-using mentor_v1.Application.Common.Exceptions;
+﻿using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.Interfaces;
-using mentor_v1.Application.Degree.Commands.CreateDegree;
-using mentor_v1.Application.Degree.Commands.DeleteDegree;
-using mentor_v1.Application.Degree.Commands.UpdateDegree;
-using mentor_v1.Application.Degree.Queries.GetDegree;
+using mentor_v1.Application.Dependent.Commands.CreateDependent;
+using mentor_v1.Application.Dependent.Commands.DeleteDependentCommand;
+using mentor_v1.Application.Dependent.Commands.UpdateDependent;
+using mentor_v1.Application.Dependent.Queries;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.DotNet.Scaffolding.Shared.Messaging;
-using WebUI.Models;
+using OfficeOpenXml.Packaging.Ionic.Zip;
 
 namespace WebUI.Controllers;
 
 [ApiController]
+
 [Route("[controller]/[action]")]
-public class DegreeController : ApiControllerBase
+public class DependentController : ApiControllerBase
 {
     private readonly IIdentityService _identityService;
     private readonly IApplicationDbContext _context;
 
-    public DegreeController(IIdentityService identityService, IApplicationDbContext context)
+    public DependentController(IIdentityService identityService, IApplicationDbContext context)
     {
         _identityService = identityService;
         _context = context;
     }
 
-
     #region Get List
     [HttpGet]
-    public async Task<IActionResult> GetListDegree()
+    public async Task<IActionResult> GetListDependent()
     {
-        try {
-            var result = await Mediator.Send(new GetDegreeRequest { Page = 1, Size = 20 });
-            return Ok(new {
+        try
+        {
+            var result = await Mediator.Send(new GetDependentRequest { Page = 1, Size = 20 });
+            return Ok(new
+            {
                 status = Ok().StatusCode,
                 message = "Lấy danh sách thành công.",
                 result = result
             });
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
-            return NotFound(new {
+            return NotFound(new
+            {
                 status = NotFound().StatusCode,
                 message = "Không tìm thấy danh sách."
             });
@@ -48,11 +50,11 @@ public class DegreeController : ApiControllerBase
 
     #region Get id
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetDegreeId(Guid id)
+    public async Task<IActionResult> GetDependentId(Guid id)
     {
         try
         {
-            var result = await Mediator.Send(new GetDegreeIdRequest { id = id });
+            var result = await Mediator.Send(new GetDependentIdRequest { id = id });
             return Ok(new
             {
                 status = Ok().StatusCode,
@@ -60,8 +62,10 @@ public class DegreeController : ApiControllerBase
                 result = result
             });
         }
-        catch (NotFoundException ex) {
-            return NotFound(new {
+        catch (NotFoundException ex)
+        {
+            return NotFound(new
+            {
                 status = NotFound().StatusCode,
                 message = ex.Message
             });
@@ -71,10 +75,11 @@ public class DegreeController : ApiControllerBase
 
     #region Create
     [HttpPost]
-    public async Task<IActionResult> CreateDegree(CreateDegreeViewModel createDegreeViewModel)
+    public async Task<IActionResult> CreateDependent(CreateDependentViewModel createDependentViewModel)
     {
-        var validator = new CreateDegreeCommadValidator(_context);
-        var valResult = await validator.ValidateAsync(createDegreeViewModel);
+
+        var validator = new CreateDepentdentCommandValidator(_context);
+        var valResult = await validator.ValidateAsync(createDependentViewModel);
 
         if (valResult.Errors.Count != 0)
         {
@@ -88,9 +93,9 @@ public class DegreeController : ApiControllerBase
 
         try
         {
-            var create = await Mediator.Send(new CreateDegreeCommand
+            var create = await Mediator.Send(new CreateDependentCommand
             {
-                createDegreeViewModel = createDegreeViewModel
+                createDependentViewModel = createDependentViewModel
             });
             return Ok(new
             {
@@ -98,22 +103,33 @@ public class DegreeController : ApiControllerBase
                 message = "Tạo thành công."
             });
         }
-        catch (Exception ex) {
-            return BadRequest(new {
+        catch (ArgumentNullException ex)
+        {
+            return BadRequest(new
+            {
+                status = BadRequest().StatusCode,
+                message = "ApplicationUserId không xuất hiện."
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new
+            {
                 status = BadRequest().StatusCode,
                 message = "Tạo thất bại."
             });
         }
+        
     }
     #endregion
 
     # region Update
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(Guid id, UpdateDegreeViewModel updateDegreeViewModel) 
+    public async Task<IActionResult> Update(Guid id, UpdateDependentViewModel UpdateDependentViewModel)
     {
 
-        var validator = new UdpateDegreeValidator(_context);
-        var valResult = await validator.ValidateAsync(updateDegreeViewModel);
+        var validator = new UpdateDependentValidator(_context);
+        var valResult = await validator.ValidateAsync(UpdateDependentViewModel);
 
         if (valResult.Errors.Count != 0)
         {
@@ -127,10 +143,10 @@ public class DegreeController : ApiControllerBase
 
         try
         {
-            var update = await Mediator.Send(new UpdateDegreeCommand
+            var update = await Mediator.Send(new UpdateDependentCommand
             {
                 Id = id,
-                _updateDegreeViewModel = updateDegreeViewModel
+                _updateDependentViewModel = UpdateDependentViewModel
             });
             return Ok(new
             {
@@ -138,16 +154,19 @@ public class DegreeController : ApiControllerBase
                 message = "Cập nhật thành công."
             });
 
-        } catch (NotFoundException ex)
-        { 
-            return NotFound(new { 
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(new
+            {
                 staus = NotFound().StatusCode,
                 message = ex.Message
             });
         }
         catch (Exception ex)
         {
-            return BadRequest(new {
+            return BadRequest(new
+            {
                 status = NotFound().StatusCode,
                 message = "Cập nhật thất bại."
             });
@@ -160,14 +179,19 @@ public class DegreeController : ApiControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteDegree(Guid id)
     {
-        try {
-            var result = await Mediator.Send(new DeleteDegreeCommand { Id = id });
-            return Ok(new {
+        try
+        {
+            var result = await Mediator.Send(new DeleteDependentCommand { Id = id });
+            return Ok(new
+            {
                 status = Ok().StatusCode,
                 message = "Xoá thành công"
             });
-        } catch (NotFoundException ex) { 
-            return NotFound(new { 
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(new
+            {
                 staus = NotFound().StatusCode,
                 message = ex.Message
             });
