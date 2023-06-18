@@ -117,33 +117,9 @@ public class AllowanceController : ApiControllerBase
     }
     #endregion
 
-    #region Delete Allowance
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteAllowance(Guid id)
-    {
-        try
-        {
-            var item = await Mediator.Send(new DeleteAllowanceCommand { Id = id });
-            return Ok(new
-            {
-                Status = Ok().StatusCode,
-                Message = "Xoá thành công.",
-            });
-        }
-        catch (NotFoundException ex)
-        {
-            return NotFound(new
-            {
-                Status = NotFound().StatusCode,
-                Message = "Xoá thất bại."
-            });
-        }
-    }
-    #endregion
-
     #region Update Allowance
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateAllowance(Guid id, [FromForm]UpdateAllowanceViewModel updateAllowanceViewModel)
+    public async Task<IActionResult> UpdateAllowance(Guid id, [FromForm] UpdateAllowanceViewModel updateAllowanceViewModel)
     {
         var validator = new UpdateAllowanceCommandValidator(_context);
         var valResult = await validator.ValidateAsync(updateAllowanceViewModel);
@@ -193,4 +169,38 @@ public class AllowanceController : ApiControllerBase
         }
     }
     #endregion
+
+    #region Delete Allowance
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteAllowance(Guid id)
+    {
+        try
+        {
+            var item = await Mediator.Send(new DeleteAllowanceCommand { Id = id });
+            return Ok(new
+            {
+                Status = Ok().StatusCode,
+                Message = "Xoá thành công.",
+            });
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(new
+            {
+                Status = NotFound().StatusCode,
+                Message = "Xoá thất bại."
+            });
+        }
+
+        catch (Exception ex){
+            return BadRequest(new
+            {
+                status = BadRequest().StatusCode,
+                message = "Xoá thất bại bời vì id của bảng này đang được sử dụng ở bảng AllowanceEmployee."
+            });
+        }
+    }
+    #endregion
+
+    
 }

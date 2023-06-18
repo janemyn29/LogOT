@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace mentor_v1.Domain.Enums;
 public enum AcceptanceType
 {
-    Accept = 0,
-    Deny = 1,
-    Request = 2,
+    Accept = 1,
+    Deny = 2,
+    Request = 3,
 }
