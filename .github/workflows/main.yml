@@ -1,8 +1,12 @@
 name: new
 on:
   push:
+    paths:
+      - "!README.md"
     branches: [main]
 
+  pull_request:
+    types: [opened,reopened,synchronize,labeled,unlabeled]
 jobs:
   say-hello:
     runs-on: ubuntu-latest
