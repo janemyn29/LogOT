@@ -11,14 +11,14 @@ using mentor_v1.Application.Common.Interfaces;
 
 namespace mentor_v1.Application.Level.Queries.GetLevelWithRelativeObject;
 
-public class GetLevelByIdRequest : IRequest<GetLevel.LevelViewModel>
+public class GetLevelByIdRequest : IRequest<Domain.Entities.Level>
 {
     public Guid Id { get; set; }
 
 }
 
 // IRequestHandler<request type, return type>
-public class GetLevelByIdRequestHandler : IRequestHandler<GetLevelByIdRequest, GetLevel.LevelViewModel>
+public class GetLevelByIdRequestHandler : IRequestHandler<GetLevelByIdRequest, Domain.Entities.Level>
 {
     private readonly IApplicationDbContext _context;
     private readonly IMapper _mapper;
@@ -30,7 +30,7 @@ public class GetLevelByIdRequestHandler : IRequestHandler<GetLevelByIdRequest, G
         _mapper = mapper;
     }
 
-    public Task<GetLevel.LevelViewModel> Handle(GetLevelByIdRequest request, CancellationToken cancellationToken)
+    public Task<Domain.Entities.Level> Handle(GetLevelByIdRequest request, CancellationToken cancellationToken)
     {
         // get categories
         var Level = _context.Get<Domain.Entities.Level>()
@@ -43,9 +43,9 @@ public class GetLevelByIdRequestHandler : IRequestHandler<GetLevelByIdRequest, G
         }
 
         // AsNoTracking to remove default tracking on entity framework
-        var map = _mapper.Map<GetLevel.LevelViewModel>(Level);
+        //var map = _mapper.Map<GetLevel.LevelViewModel>(Level);
 
         // Paginate data
-        return Task.FromResult(map); //Task.CompletedTask;
+        return Task.FromResult(Level); //Task.CompletedTask;
     }
 }

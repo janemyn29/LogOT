@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,19 +26,23 @@ public class DeleteLevelCommandHandler : IRequestHandler<DeleteLevelCommand, boo
 
     public async Task<bool> Handle(DeleteLevelCommand request, CancellationToken cancellationToken)
     {
+        var positions = await _context.Get<Domain.Entities.Position>().Where(p => p.LevelId == request.Id && p.IsDeleted == false).FirstOrDefaultAsync();
+
+        if (positions != null) 
+        {
+            throw new Exception();
+        }
+
         var CurrentLevel = await _context.Get<Domain.Entities.Level>()
             .FindAsync(new object[] { request.Id }, cancellationToken);
 
-        if (CurrentLevel == null)
+        if (CurrentLevel == null || positions.IsDeleted == true)
         {
             throw new NotFoundException(nameof(Domain.Entities.Level), request.Id);
         }
+
         CurrentLevel.IsDeleted = true;
-
-
-
         await _context.SaveChangesAsync(cancellationToken);
-
         return true;
     }
 }
