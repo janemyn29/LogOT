@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace mentor_v1.Domain.Enums;
 public enum LevelEnum
 {
-    Junior = 0,
-    Senior = 1
+    Junior = 1,
+    Senior = 2
 }
 

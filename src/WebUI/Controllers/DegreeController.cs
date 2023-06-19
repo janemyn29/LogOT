@@ -36,11 +36,13 @@ public class DegreeController : ApiControllerBase
                 message = "Lấy danh sách thành công.",
                 result = result
             });
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
-            return NotFound(new {
-                status = NotFound().StatusCode,
-                message = "Không tìm thấy danh sách."
+            return BadRequest(new
+            {
+                status = BadRequest().StatusCode,
+                message = ex.Message
             });
         }
     }
