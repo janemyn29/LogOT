@@ -4,6 +4,7 @@ using mentor_v1.Application.Level.Commands.CreateLevel;
 using mentor_v1.Application.Level.Commands.DeleteLevel;
 using mentor_v1.Application.Level.Commands.UpdateLevel;
 using mentor_v1.Application.Level.Queries.GetLevel;
+using mentor_v1.Application.Level.Queries.GetLevelWithRelativeObject;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers;
@@ -116,6 +117,14 @@ public class LevelController : ApiControllerBase
             {
                 staus = NotFound().StatusCode,
                 message = ex.Message
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new
+            {
+                status = BadRequest().StatusCode,
+                message = "Xóa không thành công! Cấp độ hiện tại đang có liên quan dữ liệu đến 1 số vị trí! "
             });
         }
     }
