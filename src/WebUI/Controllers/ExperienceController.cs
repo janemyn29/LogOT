@@ -141,7 +141,7 @@ public class ExperienceController : ApiControllerBase
     }
 
     [HttpGet]
-    [Route("/Department/GetListByUser")]
+    [Route("/Experience/GetListByUser")]
     public async Task<IActionResult> GetByUser(string id)
     {
         try
