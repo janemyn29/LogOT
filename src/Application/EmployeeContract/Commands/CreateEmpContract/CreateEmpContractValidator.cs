@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FluentValidation;
+using MediatR;
 using mentor_v1.Application.Common.Interfaces;
+using mentor_v1.Application.DefaultConfig.Queries.Get;
 using mentor_v1.Application.EmployeeContract.Queries.GetEmpContract;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -40,7 +42,7 @@ public class CreateEmpContractValidator : AbstractValidator<CreateEmployeeContra
             .MaximumLength(200).WithMessage("Tên Ngân Hàng không được quá 100 ký tự.");
         // Add validation for request
         RuleFor(v => v.BasicSalary)
-            .NotEmpty().WithMessage("Lương cơ bản không được để trống.");
+            .NotEmpty().WithMessage("Lương cơ bản không được để trống.").GreaterThan(0).WithMessage("Lương cơ bản không được nhỏ hơn hoặc bằng 0.");
         // Add validation for request
         RuleFor(v => v.Status)
             .NotEmpty().WithMessage("Trạng thái hợp đồng không được để trống.");
@@ -48,6 +50,10 @@ public class CreateEmpContractValidator : AbstractValidator<CreateEmployeeContra
             .NotEmpty().WithMessage("Loại hợp đồng không được để trống.");
         RuleFor(v => v.SalaryType)
             .NotEmpty().WithMessage("Loại lương không được để trống.");
+        RuleFor(v => v.isPersonalTaxDeduction)
+           .NotEmpty().WithMessage("Yêu cầu tính giảm trừ gia cảnh bản thân không được để trống.");
+        RuleFor(v => v.InsuranceType)
+           .NotEmpty().WithMessage("Hình thức nộp bảo hiểm không được để trống.");
     }
 
     // Custom action to check with the database
@@ -60,7 +66,7 @@ public class CreateEmpContractValidator : AbstractValidator<CreateEmployeeContra
         }
         else
         {
-            return false;
+            return false; 
         }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using mentor_v1.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using mentor_v1.Infrastructure.Persistence;
 namespace mentorv1.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230618094341_updateSalary")]
+    partial class updateSalary
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -475,9 +478,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<double>("DependentTaxDeduction")
                         .HasColumnType("float");
 
-                    b.Property<int>("InsuranceLimit")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -503,7 +503,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                             Created = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CreatedBy = "",
                             DependentTaxDeduction = 4400000.0,
-                            InsuranceLimit = 20,
                             IsDeleted = false,
                             LastModified = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LastModifiedBy = "",
@@ -980,6 +979,24 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("mentor_v1.Domain.Entities.MaternityAllowance", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("Amount")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Descrition")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MaternityAllowance");
+                });
+
             modelBuilder.Entity("mentor_v1.Domain.Entities.MaternityEmployee", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1002,8 +1019,8 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("DenyReason")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime?>("DueDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Image")
                         .IsRequired()
@@ -1018,9 +1035,14 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("MaternityAllowanceId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("MaternityAllowanceId");
 
                     b.ToTable("MaternityEmployee");
                 });
@@ -1107,43 +1129,22 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<int?>("Actual_Work_Hours")
                         .HasColumnType("int");
 
-                    b.Property<double>("AfterTaxSalary")
+                    b.Property<double?>("BHTN_Comp")
                         .HasColumnType("float");
 
-                    b.Property<double>("BHTN_Comp_Amount")
+                    b.Property<double?>("BHTN_Emp")
                         .HasColumnType("float");
 
-                    b.Property<double>("BHTN_Comp_Percent")
+                    b.Property<double?>("BHXH_Comp")
                         .HasColumnType("float");
 
-                    b.Property<double>("BHTN_Emp_Amount")
+                    b.Property<double?>("BHXH_Emp")
                         .HasColumnType("float");
 
-                    b.Property<double>("BHTN_Emp_Percent")
+                    b.Property<double?>("BHYT_Comp")
                         .HasColumnType("float");
 
-                    b.Property<double>("BHXH_Comp_Amount")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BHXH_Comp_Percent")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BHXH_Emp_Amount")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BHXH_Emp_Percent")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BHYT_Comp_Amount")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BHYT_Comp_Percent")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BHYT_Emp_Amount")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BHYT_Emp_Percent")
+                    b.Property<double?>("BHYT_Emp")
                         .HasColumnType("float");
 
                     b.Property<string>("BankAcountName")
@@ -1155,6 +1156,12 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<string>("BankName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<double?>("Base_Salary")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("Bonus")
+                        .HasColumnType("float");
+
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1165,28 +1172,13 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double?>("DefaultSalary")
-                        .HasColumnType("float");
-
-                    b.Property<double>("DependentTaxDeductionAmount")
+                    b.Property<double?>("Deduction")
                         .HasColumnType("float");
 
                     b.Property<Guid>("EmployeeContractId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<double?>("FinalSalary")
-                        .HasColumnType("float");
-
-                    b.Property<double>("InsuranceAmount")
-                        .HasColumnType("float");
-
-                    b.Property<int>("InsuranceType")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsMaternity")
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("LastModified")
@@ -1195,20 +1187,11 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double?>("LeaveWageDeduction")
-                        .HasColumnType("float");
-
                     b.Property<int?>("Leave_Hours")
                         .HasColumnType("int");
 
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("NumberOfDependent")
-                        .HasColumnType("int");
-
-                    b.Property<double?>("OTWage")
-                        .HasColumnType("float");
 
                     b.Property<int?>("Ot_Hours")
                         .HasColumnType("int");
@@ -1216,50 +1199,14 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<DateTime?>("Paid_date")
                         .HasColumnType("datetime2");
 
-                    b.Property<double>("PersonalTaxDeductionAmount")
-                        .HasColumnType("float");
-
-                    b.Property<double>("RegionMinimumWage")
-                        .HasColumnType("float");
-
-                    b.Property<int>("RegionType")
-                        .HasColumnType("int");
-
-                    b.Property<double>("SalaryPerHour")
-                        .HasColumnType("float");
-
-                    b.Property<int>("SalaryType")
-                        .HasColumnType("int");
-
                     b.Property<int?>("Standard_Work_Hours")
                         .HasColumnType("int");
 
-                    b.Property<double>("TaxPercent")
+                    b.Property<double?>("Tax_In_Come")
                         .HasColumnType("float");
 
-                    b.Property<double>("TaxableSalary")
+                    b.Property<double?>("Total_Salary")
                         .HasColumnType("float");
-
-                    b.Property<double?>("TotalContractAllowance")
-                        .HasColumnType("float");
-
-                    b.Property<double?>("TotalDepartmentAllowance")
-                        .HasColumnType("float");
-
-                    b.Property<double>("TotalDependentAmount")
-                        .HasColumnType("float");
-
-                    b.Property<double>("TotalInsuranceComp")
-                        .HasColumnType("float");
-
-                    b.Property<double>("TotalInsuranceEmp")
-                        .HasColumnType("float");
-
-                    b.Property<double>("TotalTaxIncome")
-                        .HasColumnType("float");
-
-                    b.Property<bool>("isPersonalTaxDeduction")
-                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -1923,7 +1870,15 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("mentor_v1.Domain.Entities.MaternityAllowance", "MaternityAllowance")
+                        .WithMany("MaternityEmployees")
+                        .HasForeignKey("MaternityAllowanceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("ApplicationUser");
+
+                    b.Navigation("MaternityAllowance");
                 });
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.OvertimeLog", b =>
@@ -2067,6 +2022,11 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("mentor_v1.Domain.Entities.Level", b =>
                 {
                     b.Navigation("Positions");
+                });
+
+            modelBuilder.Entity("mentor_v1.Domain.Entities.MaternityAllowance", b =>
+                {
+                    b.Navigation("MaternityEmployees");
                 });
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.Position", b =>

@@ -21,6 +21,9 @@ public class EmployeeContract : BaseAuditableEntity
     public double? PercentDeduction { get; set; }
     public SalaryType SalaryType { get; set; }
     public ContractType ContractType { get; set; }
+    public bool isPersonalTaxDeduction { get; set; }
+    public InsuranceType InsuranceType { get; set; }
+    public double? InsuranceAmount { get; set; }
 
     public virtual ApplicationUser ApplicationUser { get; set; }
 

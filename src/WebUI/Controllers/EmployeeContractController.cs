@@ -4,12 +4,15 @@ using mentor_v1.Application.ApplicationUser.Queries.GetUser;
 using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.Interfaces;
 using mentor_v1.Application.Common.Models;
+using mentor_v1.Application.DefaultConfig.Queries.Get;
 using mentor_v1.Application.EmployeeContract.Commands.CreateEmpContract;
 using mentor_v1.Application.EmployeeContract.Commands.DeleteEmpContract;
 using mentor_v1.Application.EmployeeContract.Commands.UpdateEmpContract;
 using mentor_v1.Application.EmployeeContract.Queries.GetEmpContract;
 using mentor_v1.Application.EmployeeContract.Queries.GetEmpContractByRelativedObject;
+using mentor_v1.Application.RegionalMinimumWage.Queries;
 using mentor_v1.Domain.Entities;
+using mentor_v1.Domain.Enums;
 using mentor_v1.Domain.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -17,6 +20,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Rewrite;
 using WebUI.Models;
 using WebUI.Services.FileManager;
+using WebUI.Services.Format;
 
 namespace WebUI.Controllers;
 [Route("[controller]/[action]")]
@@ -25,12 +29,15 @@ public class EmployeeContractController : ApiControllerBase
     private readonly IApplicationDbContext _context;
     private readonly IFileService _fileService;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IFormatMoney _format;
 
-    public EmployeeContractController(IApplicationDbContext context, IFileService fileService, UserManager<ApplicationUser> userManager)
+
+    public EmployeeContractController(IApplicationDbContext context, IFileService fileService, UserManager<ApplicationUser> userManager, IFormatMoney format)
     {
         _context = context;
         _fileService = fileService;
         _userManager = userManager;
+        _format = format;
     }
     /*    [Authorize (Roles ="Manager")]*/
     [HttpGet]
@@ -86,17 +93,45 @@ public class EmployeeContractController : ApiControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateEmployeeContractCommand model)
     {
+        //check validation:
         var validator = new CreateEmpContractValidator(_context);
         var valResult = await validator.ValidateAsync(model);
+        List<string> errors = new List<string>();
         if (valResult.Errors.Count != 0)
         {
-            List<string> errors = new List<string>();
             foreach (var error in valResult.Errors)
             {
                 var item = error.ErrorMessage; errors.Add(item);
             }
+            
+        }
+        if(model.InsuranceType == InsuranceType.BaseOnOtherAmount && model.InsuranceAmount <= 0)
+        {
+            var item = "Với hình thức đóng bảo hiểm dựa trên số khác yêu cầu phải cung cấp mức đóng bảo hiểm!";
+            errors.Add(item);
+        }
+        try
+        {
+            var config = await Mediator.Send(new GetDefaultConfigRequest { });
+            var region = await Mediator.Send(new GetRegionalWageByRegionTypeNoVm { RegionType = config.CompanyRegionType});
+            if (model.BasicSalary < region.Amount)
+            {
+                string amount = _format.Format(region.Amount);
+                var item = "Lương cơ bản không được thấp hơn mức lương tối thiểu của vùng ("+region.RegionType.ToString()+ ": " +amount+ " VND)";
+                errors.Add(item);
+            }
+        }
+        catch (Exception)
+        {
+            return BadRequest("Đã xảy ra lỗi vui lòng kiểm tra lại các cấu hình về lương và vùng!");
+        }
+        
+        if (errors!=null && errors.Count > 0)
+        {
             return BadRequest(errors);
         }
+
+        //kết thúc vheck validator
         try
         {
             
@@ -112,12 +147,16 @@ public class EmployeeContractController : ApiControllerBase
                 ContractType = model.ContractType, 
                 PercentDeduction = model.PercentDeduction,
                 SalaryType = model.SalaryType, 
-                Status = model.Status });
+                Status = model.Status ,
+                isPersonalTaxDeduction = model.isPersonalTaxDeduction,
+                InsuranceAmount = model.InsuranceAmount,
+                InsuranceType = model.InsuranceType,
+                AllowanceId = model.AllowanceId,
+            });
             return Ok("Thêm hợp đồng thành công!");
         }
         catch (Exception ex)
         {
-
             return BadRequest(ex.Message);
         }
     }
@@ -127,22 +166,47 @@ public class EmployeeContractController : ApiControllerBase
     [HttpPut]
     public async Task<IActionResult> Update([FromBody] UpdateEmpContractCommand model)
     {
+        //check validation:
         var validator = new UpdateEmpContractCommandValidator(_context);
         var valResult = await validator.ValidateAsync(model);
+        List<string> errors = new List<string>();
         if (valResult.Errors.Count != 0)
         {
-
-            List<string> errors = new List<string>();
             foreach (var error in valResult.Errors)
             {
                 var item = error.ErrorMessage; errors.Add(item);
             }
-            return BadRequest(errors);
 
         }
+        if (model.InsuranceType == InsuranceType.BaseOnOtherAmount && model.InsuranceAmount <= 0)
+        {
+            var item = "Với hình thức đóng bảo hiểm dựa trên số khác yêu cầu phải cung cấp mức đóng bảo hiểm!";
+            errors.Add(item);
+        }
         try
-        {;
-            /*            var filePath = await _fileService.UploadFile(model.File);*/
+        {
+            var config = await Mediator.Send(new GetDefaultConfigRequest { });
+            var region = await Mediator.Send(new GetRegionalWageByRegionTypeNoVm { RegionType = config.CompanyRegionType });
+            if (model.BasicSalary < region.Amount)
+            {
+                string amount = _format.Format(region.Amount);
+                var item = "Lương cơ bản không được thấp hơn mức lương tối thiểu của vùng (" + region.RegionType.ToString() + ": " + amount + " VND)";
+                errors.Add(item);
+            }
+        }
+        catch (Exception)
+        {
+            return BadRequest("Đã xảy ra lỗi vui lòng kiểm tra lại các cấu hình về lương và vùng!");
+        }
+        if (errors != null && errors.Count > 0)
+        {
+            return BadRequest(errors);
+        }
+        //kết thúc vheck validator
+
+        try
+        {
+
             var result = await Mediator.Send(new UpdateEmpContractCommand {
                 Id = model.Id,
                  ContractCode = model.ContractCode,
@@ -155,6 +219,10 @@ public class EmployeeContractController : ApiControllerBase
                  BasicSalary= model.BasicSalary,
                  SalaryType= model.SalaryType,
                  Status= model.Status,
+                 InsuranceAmount= model.InsuranceAmount,
+                 InsuranceType= model.InsuranceType,
+                 isPersonalTaxDeduction = model.isPersonalTaxDeduction,
+
             });
             return Ok("Cập nhật hợp đồng thành công!");
         }

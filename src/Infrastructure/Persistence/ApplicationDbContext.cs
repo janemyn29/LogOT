@@ -47,6 +47,11 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
     
     public DbSet<Coefficient> Coefficients => Set<Coefficient>();
     public DbSet<ConfigDay> ConfigDays => Set<ConfigDay>();
+    public DbSet<DefaultConfig> DefaultConfig => Set<DefaultConfig>();
+    public DbSet<RegionalMinimumWage> RegionalMinimumWage => Set<RegionalMinimumWage>();
+
+
+
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -65,6 +70,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
                 IsDeleted = false
             }
         );
+
         builder.Entity<ConfigDay>()
            .HasData(
            new ConfigDay
@@ -169,6 +175,81 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
              IsDeleted = false
          }
      );
+
+        builder.Entity<DefaultConfig>()
+            .HasData(
+            new DefaultConfig
+            {
+                Id = Guid.Parse("581e5321-94d3-4a13-8f95-c2938462e2fa"),
+                CompanyRegionType = RegionType.Region1,
+                BaseSalary = 1490000,
+                PersonalTaxDeduction= 11000000,
+                DependentTaxDeduction = 4400000,
+                InsuranceLimit =20,
+                Created = DateTime.Parse("1/1/2023"),
+                CreatedBy = "",
+                LastModified = DateTime.Parse("1/1/2023"),
+                LastModifiedBy = "",
+                IsDeleted = false
+            }
+        );
+        builder.Entity<RegionalMinimumWage>()
+            .HasData(
+            new RegionalMinimumWage
+            {
+                Id = Guid.Parse("d1564a77-716a-4e36-94f7-0f3a781548b8"),
+                RegionType = RegionType.Region1,
+                Amount = 4680000,
+                Created = DateTime.Parse("1/1/2023"),
+                CreatedBy = "",
+                LastModified = DateTime.Parse("1/1/2023"),
+                LastModifiedBy = "",
+                IsDeleted = false
+            }
+        );
+        builder.Entity<RegionalMinimumWage>()
+           .HasData(
+           new RegionalMinimumWage
+           {
+               Id = Guid.Parse("c859f162-3e32-4f41-af77-15c4628d7f22"),
+               RegionType = RegionType.Region2,
+               Amount = 4160000,
+               Created = DateTime.Parse("1/1/2023"),
+               CreatedBy = "",
+               LastModified = DateTime.Parse("1/1/2023"),
+               LastModifiedBy = "",
+               IsDeleted = false
+           }
+       );
+        builder.Entity<RegionalMinimumWage>()
+           .HasData(
+           new RegionalMinimumWage
+           {
+               Id = Guid.Parse("cd3262db-dd9d-409f-8944-1b8929dd9a41"),
+               RegionType = RegionType.Region3,
+               Amount = 3640000,
+               Created = DateTime.Parse("1/1/2023"),
+               CreatedBy = "",
+               LastModified = DateTime.Parse("1/1/2023"),
+               LastModifiedBy = "",
+               IsDeleted = false
+           }
+       );
+        builder.Entity<RegionalMinimumWage>()
+          .HasData(
+          new RegionalMinimumWage
+          {
+              Id = Guid.Parse("2c4e8e53-7de6-4b56-a6e1-8472343677a9"),
+              RegionType = RegionType.Region4,
+              Amount = 3250000,
+              Created = DateTime.Parse("1/1/2023"),
+              CreatedBy = "",
+              LastModified = DateTime.Parse("1/1/2023"),
+              LastModifiedBy = "",
+              IsDeleted = false
+          }
+      );
+
         base.OnModelCreating(builder);
     }
 

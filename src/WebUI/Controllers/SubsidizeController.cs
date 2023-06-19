@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 using mentor_v1.Application.Subsidize.Queries.GetSubsidizeWithRelativeObject;
 using mentor_v1.Application.Department.Commands.DeleteDepartment;
 using mentor_v1.Application.Subsidize.Commands.DeleteSubsidize;
+using mentor_v1.Application.DepartmentAllowance.Queries.GetDepartmentAllowanceWithRelativeObject;
+using mentor_v1.Application.Positions.Queries.GetPositionByRelatedObjects;
+using WebUI.Models;
 
 namespace WebUI.Controllers;
 
@@ -105,8 +108,15 @@ public class SubsidizeController : ApiControllerBase
     {
         try
         {
-            var result = await Mediator.Send(new DeleteSubsidizeCommand { Id = id });
-            return Ok("Xóa trợ cấp thành công!");
+            var check = await Mediator.Send(new GetSubsidizeByIdRequest { Id = id });
+            var check2 = await Mediator.Send(new GetDepartmentAllowanceBySubsidizeIdRequest { Id = id });
+
+            if (check != null && check2 != null)
+            {
+                var result = await Mediator.Send(new DeleteSubsidizeCommand { Id = id });
+                return Ok("Xóa trợ cấp thành công!");
+            }
+            return BadRequest("Xóa trợ cấp thất bại!");
         }
         catch (Exception ex)
         {
@@ -114,4 +124,30 @@ public class SubsidizeController : ApiControllerBase
         }
     }
 
+
+    [HttpGet]
+    [Route("/Subsidize/GetByUser")]
+    public async Task<IActionResult> GetByUser(string Username)
+    {
+        try
+        {
+            var user = await _userManager.FindByNameAsync(Username);
+            if (user == null)
+            {
+                return BadRequest("Không tìm thấy người dùng bạn yêu cầu");
+            }
+            var position = await Mediator.Send(new GetPositionByIdRequest { Id = user.PositionId });
+            PositionModel model = new PositionModel();
+            position.ApplicationUsers = null;
+            model.Position = position;
+            model.User = user;
+            var departmentAllowance = await Mediator.Send(new GetDepartmentAllowanceByDepartmentIdRequest { Id = model.Position.DepartmentId });
+            var subsidize = await Mediator.Send(new GetSubsidizeByIdRequest { Id = Guid.Parse(departmentAllowance.SubsidizeId) });
+            return Ok(subsidize);
+        }
+        catch (Exception)
+        {
+            return BadRequest("Không tìm thấy người dùng bạn yêu cầu");
+        }
+    }
 }

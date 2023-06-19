@@ -25,6 +25,11 @@ public record UpdateEmpContractCommand : IRequest
     public SalaryType SalaryType { get; set; }
     public ContractType ContractType { get; set; }
     public Guid Id { get; set; }
+    public bool isPersonalTaxDeduction { get; set; }
+    public InsuranceType InsuranceType { get; set; }
+    public double? InsuranceAmount { get; set; }
+
+
 }
 
 public class UpdateEmpContractCommandHandler : IRequestHandler<UpdateEmpContractCommand>
@@ -58,6 +63,9 @@ public class UpdateEmpContractCommandHandler : IRequestHandler<UpdateEmpContract
         CurrentEmpContract.PercentDeduction = request.PercentDeduction;
         CurrentEmpContract.SalaryType = request.SalaryType;
         CurrentEmpContract.ContractType= request.ContractType;
+        CurrentEmpContract.isPersonalTaxDeduction = request.isPersonalTaxDeduction;
+        CurrentEmpContract.InsuranceType = request.InsuranceType;
+        CurrentEmpContract.InsuranceAmount = request.InsuranceAmount;
 
         await _context.SaveChangesAsync(cancellationToken);
         return Unit.Value;
