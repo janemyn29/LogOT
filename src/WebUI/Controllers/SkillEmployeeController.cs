@@ -1,46 +1,45 @@
-﻿using mentor_v1.Application.Common.Exceptions;
+﻿
+using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.Interfaces;
-using mentor_v1.Application.Dependent.Commands.CreateDependent;
-using mentor_v1.Application.Dependent.Commands.DeleteDependentCommand;
-using mentor_v1.Application.Dependent.Commands.UpdateDependent;
-using mentor_v1.Application.Dependent.Queries;
+using mentor_v1.Application.SkillEmployee.Commands.CreateSkillEmployee;
+using mentor_v1.Application.SkillEmployee.Commands.DeleteSkillEmployeeCommand;
+using mentor_v1.Application.SkillEmployee.Commands.UpdateSkillEmployee;
+using mentor_v1.Application.SkillEmployee.Commands.UpdateSkillEmployeeCommand;
+using mentor_v1.Application.SkillEmployee.Queries.GetSkillEmployee;
 using Microsoft.AspNetCore.Mvc;
-using OfficeOpenXml.Packaging.Ionic.Zip;
+
 
 namespace WebUI.Controllers;
 
 [ApiController]
-
 [Route("[controller]/[action]")]
-public class DependentController : ApiControllerBase
+public class SkillEmployeeController : ApiControllerBase
 {
     private readonly IIdentityService _identityService;
     private readonly IApplicationDbContext _context;
 
-    public DependentController(IIdentityService identityService, IApplicationDbContext context)
+    public SkillEmployeeController(IIdentityService identityService, IApplicationDbContext context)
     {
         _identityService = identityService;
         _context = context;
     }
 
-    #region Get List
+    #region Get Skill
     [HttpGet]
-    public async Task<IActionResult> GetListDependent()
+    public async Task<IActionResult> GetSkillEmployee()
     {
         try
         {
-            var result = await Mediator.Send(new GetDependentRequest { Page = 1, Size = 20 });
+            var result = await Mediator.Send(new GetSkillEmployeeRequest { Page = 1, Size = 20 });
             return Ok(new
             {
-                status = Ok().StatusCode,
-                message = "Lấy danh sách thành công.",
+                staus = Ok().StatusCode,
+                message = "lấy danh sách thành công.",
                 result = result
             });
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
-            return BadRequest(new
-            {
+            return BadRequest(new {
                 status = BadRequest().StatusCode,
                 message = ex.Message
             });
@@ -48,17 +47,17 @@ public class DependentController : ApiControllerBase
     }
     #endregion
 
-    #region Get id
+    #region Get Skill ID
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetDependentId(Guid id)
+    public async Task<IActionResult> GetSkillEmployeeId(Guid id)
     {
         try
         {
-            var result = await Mediator.Send(new GetDependentIdRequest { id = id });
+            var result = await Mediator.Send(new GetSkillEmployeeIdRequest { id = id });
             return Ok(new
             {
                 status = Ok().StatusCode,
-                message = "Lấy dự liệu thành công.",
+                message = "Lấy dữ liệu thành công.",
                 result = result
             });
         }
@@ -73,13 +72,12 @@ public class DependentController : ApiControllerBase
     }
     #endregion
 
-    #region Create
+    #region Create Skill
     [HttpPost]
-    public async Task<IActionResult> CreateDependent(CreateDependentViewModel createDependentViewModel)
+    public async Task<IActionResult> CreateSkillEmployee(CreateSkillEmployeeCommandViewModel createSkillEmployeeCommandViewModel)
     {
-
-        var validator = new CreateDepentdentCommandValidator(_context);
-        var valResult = await validator.ValidateAsync(createDependentViewModel);
+        var validator = new CreateSkillEmployeeCommandValidator();
+        var valResult = await validator.ValidateAsync(createSkillEmployeeCommandViewModel);
 
         if (valResult.Errors.Count != 0)
         {
@@ -90,12 +88,11 @@ public class DependentController : ApiControllerBase
             }
             return BadRequest(errors);
         }
-
         try
         {
-            var create = await Mediator.Send(new CreateDependentCommand
+            var create = await Mediator.Send(new CreateSkillEmployeeCommand
             {
-                createDependentViewModel = createDependentViewModel
+                createSkillEmployeeCommandView = createSkillEmployeeCommandViewModel
             });
             return Ok(new
             {
@@ -108,7 +105,7 @@ public class DependentController : ApiControllerBase
             return BadRequest(new
             {
                 status = BadRequest().StatusCode,
-                message = "ApplicationUserId không xuất hiện."
+                message = "ApplicationUserId không xuất hiện tạo thất bại."
             });
         }
         catch (Exception ex)
@@ -119,17 +116,15 @@ public class DependentController : ApiControllerBase
                 message = "Tạo thất bại."
             });
         }
-        
     }
     #endregion
 
-    # region Update
+    #region Update Skill
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(Guid id, UpdateDependentViewModel UpdateDependentViewModel)
+    public async Task<IActionResult> UpdateSkillEmployee(Guid id, UpdateSkillEmployeeCommandViewModel updateSkillEmployeeCommandView)
     {
-
-        var validator = new UpdateDependentValidator(_context);
-        var valResult = await validator.ValidateAsync(UpdateDependentViewModel);
+        var validator = new UpdateSkillEmployeeCommandValidator();
+        var valResult = await validator.ValidateAsync(updateSkillEmployeeCommandView);
 
         if (valResult.Errors.Count != 0)
         {
@@ -140,13 +135,12 @@ public class DependentController : ApiControllerBase
             }
             return BadRequest(errors);
         }
-
         try
         {
-            var update = await Mediator.Send(new UpdateDependentCommand
+            var update = await Mediator.Send(new UpdateSkillEmployeeCommand
             {
                 Id = id,
-                _updateDependentViewModel = UpdateDependentViewModel
+                updateSkillEmployeeCommandView = updateSkillEmployeeCommandView
             });
             return Ok(new
             {
@@ -172,32 +166,30 @@ public class DependentController : ApiControllerBase
             });
         }
     }
-
     #endregion
 
-    #region Delete
+    #region Delete Skill
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteDegree(Guid id)
+    public async Task<IActionResult> DeleteSkillEmployee(Guid id)
     {
         try
         {
-            var result = await Mediator.Send(new DeleteDependentCommand { Id = id });
+            var item = await Mediator.Send(new DeleteSkillEmployeeCommand { Id = id });
             return Ok(new
             {
-                status = Ok().StatusCode,
-                message = "Xoá thành công"
+                Status = Ok().StatusCode,
+                Message = "Xoá thành công.",
             });
         }
         catch (NotFoundException ex)
         {
             return NotFound(new
             {
-                staus = NotFound().StatusCode,
-                message = ex.Message
+                Status = NotFound().StatusCode,
+                Message = "Xoá thất bại."
             });
         }
-
     }
     #endregion
-
 }
+

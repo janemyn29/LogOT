@@ -38,10 +38,10 @@ public class AllowanceController : ApiControllerBase
         }
         catch (Exception ex)
         {
-            return NotFound(new
+            return BadRequest(new
             {
-                Status = NotFound().StatusCode,
-                Message = "Không tìm thấy danh sách."
+                status = BadRequest().StatusCode,
+                message = ex.Message
             });
         }
     }

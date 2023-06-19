@@ -34,6 +34,8 @@ public class CreateDepentdentCommandValidator : AbstractValidator<CreateDependen
             .NotEmpty().WithMessage("Mối quan hệ không được để trống.");
 
         RuleFor(v => v.AcceptanceType)
-            .NotEmpty().WithMessage("AcceptanceType không được để trống.").LessThan(4).WithMessage("AcceptanceType less than or equal 3").GreaterThan(0).WithMessage("AcceptanceType greater than or equal to 1.");
+            .NotEmpty().WithMessage("AcceptanceType không được để trống.")
+            .LessThan(4).WithMessage("AcceptanceType less than or equal 3")
+            .GreaterThan(0).WithMessage("AcceptanceType greater than or equal to 1.");
     }
 }
