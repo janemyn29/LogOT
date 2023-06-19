@@ -11,4 +11,5 @@ public class DefaultConfig : BaseAuditableEntity
     public double BaseSalary { get; set; }
     public double PersonalTaxDeduction { get; set;}
     public double DependentTaxDeduction { get; set; }
+    public int InsuranceLimit { get; set; }
 }

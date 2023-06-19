@@ -185,6 +185,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
                 BaseSalary = 1490000,
                 PersonalTaxDeduction= 11000000,
                 DependentTaxDeduction = 4400000,
+                InsuranceLimit =20,
                 Created = DateTime.Parse("1/1/2023"),
                 CreatedBy = "",
                 LastModified = DateTime.Parse("1/1/2023"),
