@@ -11,6 +11,8 @@ using mentor_v1.Application.Subsidize.Commands.DeleteSubsidize;
 using mentor_v1.Application.DepartmentAllowance.Queries.GetDepartmentAllowanceWithRelativeObject;
 using mentor_v1.Application.Positions.Queries.GetPositionByRelatedObjects;
 using WebUI.Models;
+using Namotion.Reflection;
+using Google.Apis.Util;
 
 namespace WebUI.Controllers;
 
@@ -111,7 +113,7 @@ public class SubsidizeController : ApiControllerBase
             var check = await Mediator.Send(new GetSubsidizeByIdRequest { Id = id });
             var check2 = await Mediator.Send(new GetDepartmentAllowanceBySubsidizeIdRequest { Id = id });
 
-            if (check != null && check2 != null)
+            if (check != null && check2 == null)
             {
                 var result = await Mediator.Send(new DeleteSubsidizeCommand { Id = id });
                 return Ok("Xóa trợ cấp thành công!");

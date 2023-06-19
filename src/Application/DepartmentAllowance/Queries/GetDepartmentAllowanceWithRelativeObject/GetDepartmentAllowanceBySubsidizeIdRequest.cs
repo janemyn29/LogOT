@@ -34,11 +34,11 @@ public class GetDepartmentAllowanceBySubsidizeIdRequestHandler : IRequestHandler
     public Task<GetDepartmentAllowance.DepartmentAllowanceViewModel> Handle(GetDepartmentAllowanceBySubsidizeIdRequest request, CancellationToken cancellationToken)
     {
         var DepartmentAllowance = _context.Get<Domain.Entities.DepartmentAllowance>()
-            .Where(x => x.IsDeleted == true && x.SubsidizeId.Equals(request.Id))
+            .Where(x => x.IsDeleted == false && x.SubsidizeId.Equals(request.Id))
             .AsNoTracking().FirstOrDefault();
         if (DepartmentAllowance == null)
         {
-            throw new NotFoundException(nameof(Domain.Entities.DepartmentAllowance), request.Id);
+            DepartmentAllowance = null;
         }
 
         // AsNoTracking to remove default tracking on entity framework
