@@ -46,10 +46,27 @@ public class AuthController : ApiControllerBase
             }
             if (user.EmailConfirmed == false)
             {
+                var referer = Request.Headers["Referer"].ToString();
+                string schema;
+                string host;
                 var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                if (Uri.TryCreate(referer, UriKind.Absolute, out var uri))
+                {
+                    schema = uri.Scheme; // Lấy schema (http hoặc https) của frontend
+                    host = uri.Host; // Lấy host của frontend
 
-                callbackUrl = Request.Scheme + "://" + Request.Host + Url.Action("ConfirmEmail", "Auth", new { userId = user.Id, code = code });
+                    
+
+                    callbackUrl = schema+"://" + host + Url.Action("ConfirmEmail", "Auth", new { userId = user.Id, code = code });
+                }
+                if (callbackUrl.Equals(""))
+                {
+                    callbackUrl = Request.Scheme + "://" + Request.Host + Url.Action("ConfirmEmail", "Auth", new { userId = user.Id, code = code });
+                }
+                
+
+                //callbackUrl = Request.Scheme + "://" + Request.Host + Url.Action("ConfirmEmail", "Auth", new { userId = user.Id, code = code });
                 var result = await Mediator.Send(new Login { Username = model.Username, Password = model.Password, callbackUrl = callbackUrl });
                 if (result==null)
                 {
