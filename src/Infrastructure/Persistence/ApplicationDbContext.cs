@@ -47,8 +47,11 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
 
     public DbSet<Coefficient> Coefficients => Set<Coefficient>();
     public DbSet<ConfigDay> ConfigDays => Set<ConfigDay>();
-    public DbSet<DefaultConfig> DefaultConfig => Set<DefaultConfig>();
-    public DbSet<RegionalMinimumWage> RegionalMinimumWage => Set<RegionalMinimumWage>();
+    public DbSet<DefaultConfig> DefaultConfigs => Set<DefaultConfig>();
+    public DbSet<RegionalMinimumWage> RegionalMinimumWages => Set<RegionalMinimumWage>();
+
+    public DbSet<ConfigWifi> ConfigWifis => Set<ConfigWifi>();
+    public DbSet<Notification> Notifications => Set<Notification>();
 
 
 

@@ -8,6 +8,5 @@ namespace mentor_v1.Domain.Enums;
 public enum ShiftEnum
 {
     Morning = 0,
-    Afternoon = 1,
-    Night = 2,
+    Afternoon = 1
 }

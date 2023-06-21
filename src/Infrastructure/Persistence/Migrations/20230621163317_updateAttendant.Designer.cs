@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using mentor_v1.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using mentor_v1.Infrastructure.Persistence;
 namespace mentorv1.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230621163317_updateAttendant")]
+    partial class updateAttendant
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -460,40 +463,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                         });
                 });
 
-            modelBuilder.Entity("mentor_v1.Domain.Entities.ConfigWifi", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NameWifi")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WifiIpv4")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ConfigWifis");
-                });
-
             modelBuilder.Entity("mentor_v1.Domain.Entities.DefaultConfig", b =>
                 {
                     b.Property<Guid>("Id")
@@ -532,7 +501,7 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DefaultConfigs");
+                    b.ToTable("DefaultConfig");
 
                     b.HasData(
                         new
@@ -1258,46 +1227,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.ToTable("MaternityEmployee");
                 });
 
-            modelBuilder.Entity("mentor_v1.Domain.Entities.Notification", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ApplicationUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApplicationUserId");
-
-                    b.ToTable("Notifications");
-                });
-
             modelBuilder.Entity("mentor_v1.Domain.Entities.OvertimeLog", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1624,7 +1553,7 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RegionalMinimumWages");
+                    b.ToTable("RegionalMinimumWage");
 
                     b.HasData(
                         new
@@ -2194,17 +2123,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                 {
                     b.HasOne("mentor_v1.Domain.Identity.ApplicationUser", "ApplicationUser")
                         .WithMany("MaternityEmployees")
-                        .HasForeignKey("ApplicationUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ApplicationUser");
-                });
-
-            modelBuilder.Entity("mentor_v1.Domain.Entities.Notification", b =>
-                {
-                    b.HasOne("mentor_v1.Domain.Identity.ApplicationUser", "ApplicationUser")
-                        .WithMany()
                         .HasForeignKey("ApplicationUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
