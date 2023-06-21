@@ -11,7 +11,6 @@ using mentor_v1.Application.Common.Interfaces;
 namespace mentor_v1.Application.Degree.Commands.UpdateDegree;
 public class UpdateDegreeCommand : IRequest
 {
-    public Guid Id { get; set; }
     public UpdateDegreeViewModel _updateDegreeViewModel;
 }
 
@@ -27,11 +26,11 @@ public class UpdateDegreeCommandHandler : IRequestHandler<UpdateDegreeCommand>
     public async Task<Unit> Handle(UpdateDegreeCommand request, CancellationToken cancellationToken)
     {
         var entity = await _applicationDbContext.Get<Domain.Entities.Degree>()
-            .FindAsync(new object[] { request.Id }, cancellationToken);
+            .FindAsync(new object[] { request._updateDegreeViewModel.Id }, cancellationToken);
 
         if (entity == null || entity.IsDeleted == true) 
         {
-            throw new NotFoundException("Không tìm thấy ID " + request.Id);
+            throw new NotFoundException("Không tìm thấy ID " + request._updateDegreeViewModel.Id);
         }
 
         var degreeObject = _mapper.Map(request._updateDegreeViewModel, entity);

@@ -12,14 +12,17 @@ public class UpdateAllowanceCommandValidator : AbstractValidator<UpdateAllowance
     { 
         _context = context;
 
+        RuleFor(v => v.Id).NotEmpty().WithMessage("Id không được để trống.");
+
         RuleFor(v => v.Name)
             .NotEmpty().WithMessage("Tên không được để trống.");
 
         RuleFor(v => v.AllowanceType)
-            .NotEmpty().WithMessage("Loại phụ cấp không được để trống.").LessThan(3).WithMessage("AllowanceType less than or equal 2").GreaterThan(0).WithMessage("AllowanceType greater than or equal to 1.");
+            .NotNull().WithMessage("Loại phụ cấp không được để trống.").GreaterThan(0).WithMessage("Loại phụ cấp phải lớn hơn 0")
+            .LessThan(3).WithMessage("Loại phụ cấp phải bé hơn 3.");
 
-        RuleFor(v => v.Amount).NotEmpty()
-            .WithMessage("Tiền không được để trống.");
+        RuleFor(v => v.Amount).NotNull()
+            .WithMessage("Tiền không được để trống.").GreaterThan(-1).WithMessage("Tiền phải lớn hơn hoặc bằng 0.");
 
         RuleFor(v => v.Eligibility_Criteria).NotEmpty()
             .WithMessage("Đủ tiêu chuẩn không được để trống.");

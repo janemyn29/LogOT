@@ -8,6 +8,7 @@ using mentor_v1.Application.Common.Mappings;
 namespace mentor_v1.Application.Dependent.Commands.UpdateDependent;
 public class UpdateDependentViewModel : IMapFrom<Domain.Entities.Dependent>
 {
+    public Guid Id { get; set; }
     public string Name { get; set; }
     public DateTime BirthDate { get; set; }
     public string Desciption { get; set; }

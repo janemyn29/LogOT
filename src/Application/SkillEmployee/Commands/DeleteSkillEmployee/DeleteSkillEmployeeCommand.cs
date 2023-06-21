@@ -25,7 +25,7 @@ public class DeleteSkillEmployeeCommandHandler : IRequestHandler<DeleteSkillEmpl
     {
         var findskill = await _context.Get<Domain.Entities.SkillEmployee>().FindAsync(new object[] { request.Id, cancellationToken });
        
-        if (findskill == null) throw new NotFoundException("Không tìm thấy ID " + request.Id);
+        if (findskill == null) throw new NotFoundException("Không tìm thấy ID " + request.Id + ". Xoá thất bại.");
 
         findskill.IsDeleted = true;
         await _context.SaveChangesAsync(cancellationToken);

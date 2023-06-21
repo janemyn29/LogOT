@@ -24,12 +24,12 @@ public class DependentController : ApiControllerBase
     }
 
     #region Get List
-    [HttpGet]
-    public async Task<IActionResult> GetListDependent()
+    [HttpGet("{page}")]
+    public async Task<IActionResult> GetListDependent(int page)
     {
         try
         {
-            var result = await Mediator.Send(new GetDependentRequest { Page = 1, Size = 20 });
+            var result = await Mediator.Send(new GetDependentRequest { Page = page, Size = 20 });
             return Ok(new
             {
                 status = Ok().StatusCode,
@@ -124,8 +124,8 @@ public class DependentController : ApiControllerBase
     #endregion
 
     # region Update
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(Guid id, UpdateDependentViewModel UpdateDependentViewModel)
+    [HttpPut]
+    public async Task<IActionResult> Update(UpdateDependentViewModel UpdateDependentViewModel)
     {
 
         var validator = new UpdateDependentValidator(_context);
@@ -145,7 +145,6 @@ public class DependentController : ApiControllerBase
         {
             var update = await Mediator.Send(new UpdateDependentCommand
             {
-                Id = id,
                 _updateDependentViewModel = UpdateDependentViewModel
             });
             return Ok(new

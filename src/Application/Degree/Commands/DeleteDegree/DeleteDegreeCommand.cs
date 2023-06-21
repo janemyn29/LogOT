@@ -27,7 +27,7 @@ public class DeleteDegreeCommandshandler : IRequestHandler<DeleteDegreeCommand, 
         var findDegree = await _applicationDbContext.Get<Domain.Entities.Degree>().FindAsync(new object[] { request.Id}, cancellationToken);
         
         if (findDegree == null || findDegree.IsDeleted == true) {
-            throw new NotFoundException("Không tìm thấy ID " + request.Id);
+            throw new NotFoundException("Không tìm thấy ID " + request.Id + ". Xoá thất bại.");
         }
 
         findDegree.IsDeleted = true;

@@ -18,6 +18,8 @@ public class CreateDepentdentCommandValidator : AbstractValidator<CreateDependen
     {
         _context = context;
 
+        RuleFor(x => x.ApplicationUserId).NotEmpty().WithMessage("Id người dùng không được để trống");
+
         RuleFor(v => v.Name)
             .NotEmpty().WithMessage("Tên không được để trống.");
 
@@ -34,8 +36,8 @@ public class CreateDepentdentCommandValidator : AbstractValidator<CreateDependen
             .NotEmpty().WithMessage("Mối quan hệ không được để trống.");
 
         RuleFor(v => v.AcceptanceType)
-            .NotEmpty().WithMessage("AcceptanceType không được để trống.")
-            .LessThan(4).WithMessage("AcceptanceType less than or equal 3")
-            .GreaterThan(0).WithMessage("AcceptanceType greater than or equal to 1.");
+            .NotNull().WithMessage("Loại chập nhận không được để trống.")
+            .LessThan(4).WithMessage("Loại chập nhận nhỏ hơn hoặc bằng 3")
+            .GreaterThan(0).WithMessage("Loại chập nhận lớn hơn hoặc bằng 1.");
     }
 }
