@@ -119,4 +119,21 @@ public class ConfigDayController : ApiControllerBase
         }
 
     }
+
+    [HttpPut]
+    [Route("/Config/TaxIncome/Update")]
+    public async Task<IActionResult> UpdateTax([FromBody] UpdateWageCommand model)
+    {
+        try
+        {
+            var item = await Mediator.Send(new UpdateWageCommand { Id = model.Id, RegionType = model.RegionType, Amount = model.Amount });
+            return Ok("Cập nhật cấu hình lương tối thiểu của vùng thành công!");
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+
+    }
+
 }
