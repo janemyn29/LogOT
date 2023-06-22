@@ -4,14 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MediatR;
+using mentor_v1.Application.ApplicationUser.Queries.GetUser;
 using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.Interfaces;
+using mentor_v1.Application.Common.Mappings;
 using mentor_v1.Application.EmployeeContract.Queries.GetEmpContract;
 using mentor_v1.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 
 namespace mentor_v1.Application.EmployeeContract.Commands.CreateEmpContract;
-public class CreateEmployeeContractCommand : IRequest<Guid>
+public class CreateEmployeeContractCommand : IRequest<Guid>, IMapFrom<EmployeeModel>
 {
     public string Username { get; set; }
     public string ContractCode { get; set; }

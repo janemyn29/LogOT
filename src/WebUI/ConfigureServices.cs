@@ -10,6 +10,7 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using Hangfire;
 using WebUI.Services.ContractServices;
+using WebUI.Services.JobServices;
 
 namespace WebUI;
 
@@ -40,9 +41,8 @@ public static class ConfigureServices
 
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddTransient<IContracService, ContractService>();
-
+        services.AddTransient<IJobService, JobService>();
         services.AddDistributedMemoryCache();
-
         services.AddHealthChecks()
             .AddDbContextCheck<ApplicationDbContext>();
 

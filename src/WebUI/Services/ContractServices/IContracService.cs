@@ -6,6 +6,7 @@ namespace WebUI.Services.ContractServices;
 public interface IContracService
 {
      Task<List<string>> CheckValidatorCreate(CreateEmployeeContractCommand model);
+    Task<List<string>> CheckValidatorCreateEmployee(CreateEmployeeContractCommand model);
     Task<List<string>> CheckValidatorUpdate(UpdateEmpContractCommand model);
 
 }

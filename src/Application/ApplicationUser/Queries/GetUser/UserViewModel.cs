@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using mentor_v1.Application.Common.Mappings;
 using mentor_v1.Domain.Enums;
 using Microsoft.AspNetCore.Http;
 
 namespace mentor_v1.Application.ApplicationUser.Queries.GetUser;
-public class UserViewModel
+public class UserViewModel :IMapFrom<EmployeeModel>
 {
     public Guid PositionId { get; set; }
     public string Fullname { get; set; }

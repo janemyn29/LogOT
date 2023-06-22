@@ -26,7 +26,7 @@ public class CreateEmpContractValidator : AbstractValidator<CreateEmployeeContra
              .MustAsync(BeUniqueCode).WithMessage("Mã hợp đồng này đã tồn tại!");
         // Add validation for request
         RuleFor(v => v.StartDate)
-            .NotEmpty().WithMessage("Ngày bắt đầu không được để trống.").GreaterThan(DateTime.Now).WithMessage("Ngày bắt đầu không thể trùng hoặc nhỏ hơn ngày hiện tại!");
+            .NotEmpty().WithMessage("Ngày bắt đầu hợp đồng không được để trống.").GreaterThan(DateTime.Now).WithMessage("Ngày bắt đầu hợp đồng không thể trùng hoặc nhỏ hơn ngày hiện tại!");
         // Add validation for request
         RuleFor(v => v.Username)
             .NotEmpty().WithMessage("Tên người dùng không được để trống.");
