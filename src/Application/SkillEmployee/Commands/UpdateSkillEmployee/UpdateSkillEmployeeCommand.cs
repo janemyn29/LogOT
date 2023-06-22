@@ -12,7 +12,6 @@ using mentor_v1.Application.SkillEmployee.Commands.UpdateSkillEmployee;
 namespace mentor_v1.Application.SkillEmployee.Commands.UpdateSkillEmployeeCommand;
 public class UpdateSkillEmployeeCommand : IRequest
 {
-    public Guid Id { get; set; }
     public UpdateSkillEmployeeCommandViewModel updateSkillEmployeeCommandView;
 }
 
@@ -28,11 +27,11 @@ public class UpdateSkillEmployeeCommandHandler : IRequestHandler<UpdateSkillEmpl
     }
     public async Task<Unit> Handle(UpdateSkillEmployeeCommand request, CancellationToken cancellationToken)
     {
-        var skill = await _context.Get<Domain.Entities.SkillEmployee>().FindAsync(new object[] { request.Id }, cancellationToken);
+        var skill = await _context.Get<Domain.Entities.SkillEmployee>().FindAsync(new object[] { request.updateSkillEmployeeCommandView.Id }, cancellationToken);
         
         if (skill == null || skill.IsDeleted == true)
         {
-            throw new NotFoundException("Không tìm thấy ID " + request.Id);
+            throw new NotFoundException("Không tìm thấy ID " + request.updateSkillEmployeeCommandView.Id);
         
         }
         var mapSkill = _mapper.Map(request.updateSkillEmployeeCommandView, skill);

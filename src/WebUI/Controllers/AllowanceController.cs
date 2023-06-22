@@ -23,12 +23,12 @@ public class AllowanceController : ApiControllerBase
     }
 
     #region Get List Allowance
-    [HttpGet]
-    public async Task<IActionResult> GetListAllowance()
+    [HttpGet("{page}")]
+    public async Task<IActionResult> GetListAllowance(int page)
     {
         try
         {
-            var listAllowance = await Mediator.Send(new GetAllowanceRequest { Page = 1, Size = 10 });
+            var listAllowance = await Mediator.Send(new GetAllowanceRequest { Page = page, Size = 10 });
             return Ok(new
             {
                 Status = Ok().StatusCode,
@@ -117,8 +117,8 @@ public class AllowanceController : ApiControllerBase
     #endregion
 
     #region Update Allowance
-    [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateAllowance(Guid id, [FromForm] UpdateAllowanceViewModel updateAllowanceViewModel)
+    [HttpPut]
+    public async Task<IActionResult> UpdateAllowance(UpdateAllowanceViewModel updateAllowanceViewModel)
     {
         var validator = new UpdateAllowanceCommandValidator(_context);
         var valResult = await validator.ValidateAsync(updateAllowanceViewModel);
@@ -136,12 +136,7 @@ public class AllowanceController : ApiControllerBase
         {
             var update = await Mediator.Send(new UpdateAllowanceCommand
             {
-                Id = id,
-                Name = updateAllowanceViewModel.Name,
-                AllowanceType = updateAllowanceViewModel.AllowanceType,
-                Amount = updateAllowanceViewModel.Amount,
-                Eligibility_Criteria = updateAllowanceViewModel.Eligibility_Criteria,
-                Requirements = updateAllowanceViewModel.Requirements,
+                updateAllowanceView = updateAllowanceViewModel
             });
             return Ok(new
             {
@@ -187,7 +182,7 @@ public class AllowanceController : ApiControllerBase
             return NotFound(new
             {
                 Status = NotFound().StatusCode,
-                Message = "Xoá thất bại."
+                Message = ex.Message
             });
         }
 

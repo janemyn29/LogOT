@@ -24,6 +24,7 @@ public class UdpateDegreeValidator : AbstractValidator<UpdateDegreeViewModel>
             .NotEmpty().WithMessage("Hình ảnh không được để trống.");
 
         RuleFor(v => v.DegreeType)
-            .NotEmpty().WithMessage("Loại bằng cấp không được để trống.").LessThan(3).WithMessage("DegreeType less than or equal 2").GreaterThan(0).WithMessage("DegreeType greater than or equal to 1.");
+            .NotNull().WithMessage("Loại bằng cấp không được để trống.").GreaterThan(0).WithMessage("Loại bằng cấp phải lớn hơn 0")
+            .LessThan(3).WithMessage("Loại bằng cấp phải bé hơn 3.");
     }
 }

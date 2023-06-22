@@ -1,37 +1,36 @@
-﻿using mentor_v1.Application.Allowance.Commands.CreateAllowance;
-using mentor_v1.Application.Common.Exceptions;
+﻿using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.Interfaces;
-using mentor_v1.Application.Degree.Commands.CreateDegree;
-using mentor_v1.Application.Degree.Commands.DeleteDegree;
-using mentor_v1.Application.Degree.Commands.UpdateDegree;
-using mentor_v1.Application.Degree.Queries.GetDegree;
+using mentor_v1.Application.Dependent.Commands.DeleteDependentCommand;
+using mentor_v1.Application.MaternityEmployee.Commands.CreateMaternityEmployee;
+using mentor_v1.Application.MaternityEmployee.Commands.DeleteMaternityEmployee;
+using mentor_v1.Application.MaternityEmployee.Commands.UpdateMaternityEmployee;
+using mentor_v1.Application.MaternityEmployee.Queries;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.DotNet.Scaffolding.Shared.Messaging;
-using WebUI.Models;
 
 namespace WebUI.Controllers;
 
 [ApiController]
 [Route("[controller]/[action]")]
-public class DegreeController : ApiControllerBase
+public class MaternityEmployeeController : ApiControllerBase
 {
     private readonly IIdentityService _identityService;
     private readonly IApplicationDbContext _context;
 
-    public DegreeController(IIdentityService identityService, IApplicationDbContext context)
+    public MaternityEmployeeController(IIdentityService identityService, IApplicationDbContext context)
     {
         _identityService = identityService;
         _context = context;
     }
 
-
-    #region Get List
+    #region Get
     [HttpGet("{page}")]
-    public async Task<IActionResult> GetListDegree(int page)
+    public async Task<IActionResult> GetListMaternityEmployee(int page)
     {
-        try {
-            var result = await Mediator.Send(new GetDegreeRequest { Page = page, Size = 20 });
-            return Ok(new {
+        try 
+        {
+            var result = await Mediator.Send(new GetMaternityEmployeeRequest { Page = page, Size = 20 });
+            return Ok(new
+            {
                 status = Ok().StatusCode,
                 message = "Lấy danh sách thành công.",
                 result = result
@@ -48,13 +47,13 @@ public class DegreeController : ApiControllerBase
     }
     #endregion
 
-    #region Get id
+    #region Get By id
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetDegreeId(Guid id)
+    public async Task<IActionResult> GetMaternityEmployeeId(Guid id)
     {
         try
         {
-            var result = await Mediator.Send(new GetDegreeIdRequest { id = id });
+            var result = await Mediator.Send(new GetMaternityEmployeeIdRequest { Id = id });
             return Ok(new
             {
                 status = Ok().StatusCode,
@@ -62,8 +61,10 @@ public class DegreeController : ApiControllerBase
                 result = result
             });
         }
-        catch (NotFoundException ex) {
-            return NotFound(new {
+        catch (NotFoundException ex)
+        {
+            return NotFound(new
+            {
                 status = NotFound().StatusCode,
                 message = ex.Message
             });
@@ -73,10 +74,10 @@ public class DegreeController : ApiControllerBase
 
     #region Create
     [HttpPost]
-    public async Task<IActionResult> CreateDegree(CreateDegreeViewModel createDegreeViewModel)
+    public async Task<IActionResult> CreateMaternityEmployee(CreateMaternityEmployeeViewModel createMaternityEmployeeView)
     {
-        var validator = new CreateDegreeCommadValidator(_context);
-        var valResult = await validator.ValidateAsync(createDegreeViewModel);
+        var validator = new CreateMaternityEmployeeValidator();
+        var valResult = await validator.ValidateAsync(createMaternityEmployeeView);
 
         if (valResult.Errors.Count != 0)
         {
@@ -87,12 +88,11 @@ public class DegreeController : ApiControllerBase
             }
             return BadRequest(errors);
         }
-
         try
         {
-            var create = await Mediator.Send(new CreateDegreeCommand
+            var create = await Mediator.Send(new CreateMaternityEmployeeCommand
             {
-                createDegreeViewModel = createDegreeViewModel
+                createMaternityEmployeeViewModel = createMaternityEmployeeView
             });
             return Ok(new
             {
@@ -100,8 +100,18 @@ public class DegreeController : ApiControllerBase
                 message = "Tạo thành công."
             });
         }
-        catch (Exception ex) {
-            return BadRequest(new {
+        catch (ArgumentNullException ex)
+        {
+            return BadRequest(new
+            {
+                status = BadRequest().StatusCode,
+                message = "ApplicationUserId không xuất hiện."
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new
+            {
                 status = BadRequest().StatusCode,
                 message = "Tạo thất bại."
             });
@@ -109,13 +119,12 @@ public class DegreeController : ApiControllerBase
     }
     #endregion
 
-    # region Update
+    #region Update
     [HttpPut]
-    public async Task<IActionResult> Update(UpdateDegreeViewModel updateDegreeViewModel) 
+    public async Task<IActionResult> UpdateMaternityEmployee(UpdateMaternityEmployeeViewModel updateMaternityEmployeeView)
     {
-
-        var validator = new UdpateDegreeValidator(_context);
-        var valResult = await validator.ValidateAsync(updateDegreeViewModel);
+        var validator = new UpdateMaternityEmployeeValidator();
+        var valResult = await validator.ValidateAsync(updateMaternityEmployeeView);
 
         if (valResult.Errors.Count != 0)
         {
@@ -129,9 +138,9 @@ public class DegreeController : ApiControllerBase
 
         try
         {
-            var update = await Mediator.Send(new UpdateDegreeCommand
+            var update = await Mediator.Send(new UpdateMaternityEmployeeCommand
             {
-                _updateDegreeViewModel = updateDegreeViewModel
+                updateMaternityEmployeeView = updateMaternityEmployeeView
             });
             return Ok(new
             {
@@ -139,36 +148,43 @@ public class DegreeController : ApiControllerBase
                 message = "Cập nhật thành công."
             });
 
-        } catch (NotFoundException ex)
-        { 
-            return NotFound(new { 
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(new
+            {
                 staus = NotFound().StatusCode,
                 message = ex.Message
             });
         }
         catch (Exception ex)
         {
-            return BadRequest(new {
+            return BadRequest(new
+            {
                 status = NotFound().StatusCode,
                 message = "Cập nhật thất bại."
             });
         }
     }
-
     #endregion
 
     #region Delete
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteDegree(Guid id)
+    public async Task<IActionResult> DeleteMaternityEmployee(Guid id)
     {
-        try {
-            var result = await Mediator.Send(new DeleteDegreeCommand { Id = id });
-            return Ok(new {
+        try
+        {
+            var result = await Mediator.Send(new DeleteMaternityEmployeeCommand { Id = id });
+            return Ok(new
+            {
                 status = Ok().StatusCode,
                 message = "Xoá thành công"
             });
-        } catch (NotFoundException ex) { 
-            return NotFound(new { 
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(new
+            {
                 staus = NotFound().StatusCode,
                 message = ex.Message
             });
@@ -176,5 +192,4 @@ public class DegreeController : ApiControllerBase
 
     }
     #endregion
-
 }

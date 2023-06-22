@@ -25,12 +25,12 @@ public class SkillEmployeeController : ApiControllerBase
     }
 
     #region Get Skill
-    [HttpGet]
-    public async Task<IActionResult> GetSkillEmployee()
+    [HttpGet("{page}")]
+    public async Task<IActionResult> GetSkillEmployee(int page)
     {
         try
         {
-            var result = await Mediator.Send(new GetSkillEmployeeRequest { Page = 1, Size = 20 });
+            var result = await Mediator.Send(new GetSkillEmployeeRequest { Page = page, Size = 20 });
             return Ok(new
             {
                 staus = Ok().StatusCode,
@@ -120,8 +120,8 @@ public class SkillEmployeeController : ApiControllerBase
     #endregion
 
     #region Update Skill
-    [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateSkillEmployee(Guid id, UpdateSkillEmployeeCommandViewModel updateSkillEmployeeCommandView)
+    [HttpPut]
+    public async Task<IActionResult> UpdateSkillEmployee(UpdateSkillEmployeeCommandViewModel updateSkillEmployeeCommandView)
     {
         var validator = new UpdateSkillEmployeeCommandValidator();
         var valResult = await validator.ValidateAsync(updateSkillEmployeeCommandView);
@@ -139,7 +139,6 @@ public class SkillEmployeeController : ApiControllerBase
         {
             var update = await Mediator.Send(new UpdateSkillEmployeeCommand
             {
-                Id = id,
                 updateSkillEmployeeCommandView = updateSkillEmployeeCommandView
             });
             return Ok(new
