@@ -1,5 +1,6 @@
 ﻿using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.Interfaces;
+using mentor_v1.Application.Common.Security;
 using mentor_v1.Application.Level.Commands.CreateLevel;
 using mentor_v1.Application.Level.Commands.DeleteLevel;
 using mentor_v1.Application.Level.Commands.UpdateLevel;
@@ -21,6 +22,7 @@ public class LevelController : ApiControllerBase
         _context = context;
     }
 
+    #region getListLevel
     //[Authorize(Roles = "Manager")]
     [HttpGet]
     public async Task<IActionResult> GetLevel()
@@ -28,7 +30,26 @@ public class LevelController : ApiControllerBase
         var listLevel = await Mediator.Send(new GetLevelRequest { Page = 1, Size = 20 });
         return Ok(listLevel);
     }
+    #endregion
 
+    #region getLevelById
+    //[Authorize (Roles = "Manager")]
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetLevelById(Guid id)
+    {
+        try
+        {
+            var level = await Mediator.Send(new GetLevelByIdRequest() {Id = id });
+            return Ok(level);
+        }
+        catch (Exception)
+        {
+            return BadRequest("Không tìm thấy cấp độ theo id yêu cầu");
+        }
+    }
+    #endregion
+
+    #region createLevel
     //[Authorize(Roles = "Manager")]
     [HttpPost]
     public async Task<IActionResult> CreateLevel([FromForm] LevelViewModel model)
@@ -65,7 +86,9 @@ public class LevelController : ApiControllerBase
             return BadRequest("Khởi tạo thất bại: " + e.Message );
         }
     }
+    #endregion
 
+    #region updateLevel
     //[Authorize ("Manager")]
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(Guid id, LevelViewModel model)
@@ -97,7 +120,9 @@ public class LevelController : ApiControllerBase
             return BadRequest("Cập nhật không thành công");
         }
     }
+    #endregion
 
+    #region deleteLevel
     //[Authorize ("Manager")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete (Guid id)
@@ -128,4 +153,5 @@ public class LevelController : ApiControllerBase
             });
         }
     }
+    #endregion
 }
