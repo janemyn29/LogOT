@@ -31,7 +31,7 @@ public class UpdateCoefficientCommandHandler : IRequestHandler<UpdateCoefficient
 
         if (current == null)
         {
-            throw new NotFoundException("Không tìm thấy cấu hình hệ số bạn yêu cầu!");
+            throw new NotFoundException("Không tìm thấy cấu hình hệ số lương tăng ca mà bạn yêu cầu!");
         }
         current.AmountCoefficient = request.AmountCoefficient;
         await _context.SaveChangesAsync(cancellationToken);

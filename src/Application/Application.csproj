@@ -43,7 +43,6 @@
       <Folder Include="ConfigDays\Queries\GetByRelatedObject\" />
       <Folder Include="DefaultConfig\Commands\" />
       <Folder Include="DefaultConfig\Queries\GetByRelatedObject\" />
-      <Folder Include="RegionalMinimumWage\Commands\" />
     </ItemGroup>
 
 </Project>
