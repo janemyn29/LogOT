@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Text;
+using Hangfire;
 using mentor_v1.Application.Auth;
 using mentor_v1.Application.Common;
 using mentor_v1.Application.Common.Interfaces;
@@ -27,9 +28,18 @@ public class AuthController : ApiControllerBase
     }
 
 
+   /* [HttpGet]
+    [Route("/test")]
+    public async Task<IActionResult> Test()
+    {
+
+        RecurringJob.AddOrUpdate("myrecurringjob",() => Console.WriteLine("Recurring!"),"16 3 * * *",TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
+        return Ok();
+    }*/
+
     [HttpPost]
     [Route("/Login")]
-    public async Task<IActionResult> Login([FromBody]LoginWithPassword model)
+    public async Task<IActionResult> Login([FromBody] LoginWithPassword model)
     {
         try
         {
@@ -51,16 +61,16 @@ public class AuthController : ApiControllerBase
                 string schema;
                 string host;
                 var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                
+
                 code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                 if (Uri.TryCreate(referer, UriKind.Absolute, out var uri))
                 {
                     schema = uri.Scheme; // Lấy schema (http hoặc https) của frontend
                     host = uri.Host; // Lấy host của frontend
 
-                     
 
-                    callbackUrl = schema+"://" + host + Url.Action("ConfirmEmail", "Auth", new { userId = user.Id, code = code });
+
+                    callbackUrl = schema + "://" + host + Url.Action("ConfirmEmail", "Auth", new { userId = user.Id, code = code });
                 }
                 if (callbackUrl.Equals(""))
                 {
@@ -71,7 +81,7 @@ public class AuthController : ApiControllerBase
 
                 //callbackUrl = Request.Scheme + "://" + Request.Host + Url.Action("ConfirmEmail", "Auth", new { userId = user.Id, code = code });
                 var result = await Mediator.Send(new Login { Username = model.Username, Password = model.Password, callbackUrl = callbackUrl });
-                if (result==null)
+                if (result == null)
                 {
                     return BadRequest("Đăng nhập không thành công!");
                 }

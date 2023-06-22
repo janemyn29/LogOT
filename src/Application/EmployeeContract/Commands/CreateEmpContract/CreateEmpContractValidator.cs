@@ -26,11 +26,8 @@ public class CreateEmpContractValidator : AbstractValidator<CreateEmployeeContra
              .MustAsync(BeUniqueCode).WithMessage("Mã hợp đồng này đã tồn tại!");
         // Add validation for request
         RuleFor(v => v.StartDate)
-            .NotEmpty().WithMessage("Ngày bắt đầu không được để trống.").LessThan(v => v.EndDate).WithMessage("Ngày bắt đầu không thể lớn hơn ngày kết thúc!");
-            ;
+            .NotEmpty().WithMessage("Ngày bắt đầu không được để trống.").GreaterThan(DateTime.Now).WithMessage("Ngày bắt đầu không thể trùng hoặc nhỏ hơn ngày hiện tại!");
         // Add validation for request
-        RuleFor(v => v.EndDate.Value.ToString())
-            .NotEmpty().WithMessage("Ngày kết thúc không được để trống.");
         RuleFor(v => v.Username)
             .NotEmpty().WithMessage("Tên người dùng không được để trống.");
         // Add validation for request
@@ -43,9 +40,6 @@ public class CreateEmpContractValidator : AbstractValidator<CreateEmployeeContra
         // Add validation for request
         RuleFor(v => v.BasicSalary)
             .NotEmpty().WithMessage("Lương cơ bản không được để trống.").GreaterThan(0).WithMessage("Lương cơ bản không được nhỏ hơn hoặc bằng 0.");
-        // Add validation for request
-        RuleFor(v => v.Status)
-            .NotEmpty().WithMessage("Trạng thái hợp đồng không được để trống.");
         RuleFor(v => v.ContractType)
             .NotEmpty().WithMessage("Loại hợp đồng không được để trống.");
         RuleFor(v => v.SalaryType)

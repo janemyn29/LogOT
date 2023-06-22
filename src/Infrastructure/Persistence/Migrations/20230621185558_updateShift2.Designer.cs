@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using mentor_v1.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using mentor_v1.Infrastructure.Persistence;
 namespace mentorv1.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230621185558_updateShift2")]
+    partial class updateShift2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1450,9 +1453,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<double?>("FinalSalary")
                         .HasColumnType("float");
 
-                    b.Property<DateTime>("FromTime")
-                        .HasColumnType("datetime2");
-
                     b.Property<double>("InsuranceAmount")
                         .HasColumnType("float");
 
@@ -1492,9 +1492,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<DateTime?>("Paid_date")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("PaydayCal")
-                        .HasColumnType("datetime2");
-
                     b.Property<double>("PersonalTaxDeductionAmount")
                         .HasColumnType("float");
 
@@ -1518,9 +1515,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
 
                     b.Property<double>("TaxableSalary")
                         .HasColumnType("float");
-
-                    b.Property<DateTime>("ToTime")
-                        .HasColumnType("datetime2");
 
                     b.Property<double?>("TotalContractAllowance")
                         .HasColumnType("float");

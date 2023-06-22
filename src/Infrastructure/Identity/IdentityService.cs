@@ -260,6 +260,10 @@ public class IdentityService : IIdentityService
         {
             throw new KeyNotFoundException($"Tài khoản này hiện tại đang bị khóa. Vui lòng liên hệ quản trị viên để được hỗ trợ");
         }
+        if(user.WorkStatus == WorkStatus.Quit)
+        {
+            throw new KeyNotFoundException($"Tài khoản này hiện tại đang bị khóa. Vui lòng liên hệ quản trị viên để được hỗ trợ");
+        }
         if (user.EmailConfirmed == false)
         {
             throw new KeyNotFoundException($"Email của tài khoản này chưa được xác nhận. Vui lòng nhấn quên mật khẩu!");

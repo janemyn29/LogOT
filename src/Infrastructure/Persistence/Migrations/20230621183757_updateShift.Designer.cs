@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using mentor_v1.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using mentor_v1.Infrastructure.Persistence;
 namespace mentorv1.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230621183757_updateShift")]
+    partial class updateShift
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1450,9 +1453,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<double?>("FinalSalary")
                         .HasColumnType("float");
 
-                    b.Property<DateTime>("FromTime")
-                        .HasColumnType("datetime2");
-
                     b.Property<double>("InsuranceAmount")
                         .HasColumnType("float");
 
@@ -1492,9 +1492,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<DateTime?>("Paid_date")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("PaydayCal")
-                        .HasColumnType("datetime2");
-
                     b.Property<double>("PersonalTaxDeductionAmount")
                         .HasColumnType("float");
 
@@ -1518,9 +1515,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
 
                     b.Property<double>("TaxableSalary")
                         .HasColumnType("float");
-
-                    b.Property<DateTime>("ToTime")
-                        .HasColumnType("datetime2");
 
                     b.Property<double?>("TotalContractAllowance")
                         .HasColumnType("float");
@@ -1756,67 +1750,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.HasIndex("ApplicationUserId");
 
                     b.ToTable("RequestChange");
-                });
-
-            modelBuilder.Entity("mentor_v1.Domain.Entities.ShiftConfig", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("EndTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ShiftEnum")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("StartTime")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ShiftConfigs");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("8caed193-c40e-448b-bdab-cd7cd4f24844"),
-                            Created = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = "Test",
-                            EndTime = new DateTime(2023, 6, 22, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            LastModified = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastModifiedBy = "Test",
-                            ShiftEnum = 0,
-                            StartTime = new DateTime(2023, 6, 22, 8, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("25482772-d7ac-473b-9548-9ef38dfb1be1"),
-                            Created = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = "Test",
-                            EndTime = new DateTime(2023, 6, 22, 17, 30, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            LastModified = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastModifiedBy = "Test",
-                            ShiftEnum = 1,
-                            StartTime = new DateTime(2023, 6, 22, 13, 30, 0, 0, DateTimeKind.Unspecified)
-                        });
                 });
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.SkillEmployee", b =>

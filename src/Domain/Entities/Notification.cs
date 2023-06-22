@@ -11,7 +11,6 @@ public class Notification: BaseAuditableEntity
 {
     [ForeignKey("ApplicationUser")]
     public string ApplicationUserId { get; set; }
-
     public string Title { get; set; }
     public string Description { get; set; }
     public virtual ApplicationUser ApplicationUser { get; set; }

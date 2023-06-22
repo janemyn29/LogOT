@@ -30,6 +30,9 @@ public class DeleteEmpContractCommandHandler : IRequestHandler<DeleteEmpContract
         {
             throw new NotFoundException("Không tìm thấy hợp đồng mà bạn yêu cầu!");
         }
+        else if(CurrentCity.Status == Domain.Enums.EmployeeContractStatus.Expeires || CurrentCity.Status == Domain.Enums.EmployeeContractStatus.Pending) {
+            throw new NotFoundException("Không thể xóa hợp đồng đã hết hạn hoặc đang còn hạn!");
+        }
         CurrentCity.IsDeleted = true;
         await _context.SaveChangesAsync(cancellationToken);
         return true;

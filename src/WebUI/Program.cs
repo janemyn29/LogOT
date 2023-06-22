@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
+using Hangfire;
 using mentor_v1.Application.Common.Models;
 using mentor_v1.Domain.Identity;
 using mentor_v1.Infrastructure;
@@ -62,6 +63,7 @@ builder.Services.AddTransient<IFormatMoney, FormatMoney>();
 builder.Services.AddTransient(typeof(GoogleCaptchaService));
 builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
    opt.TokenLifespan = TimeSpan.FromMinutes(30));
+builder.Services.AddHangfireServer();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -147,6 +149,7 @@ app.UseCookiePolicy(new CookiePolicyOptions
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseHangfireDashboard();
 app.MapDefaultControllerRoute();
 app.MapControllerRoute(
     name: "area",
