@@ -33,7 +33,7 @@ public class DeleteAllowanceCommandHandler : IRequestHandler<DeleteAllowanceComm
 
         if (currentAllowance == null || currentAllowance.IsDeleted == true)
         {
-            throw new NotFoundException(nameof(Domain.Entities.Allowance), request.Id);
+            throw new NotFoundException("Không tìm thấy ID " + request.Id + ". Xoá thất bại.");
         }
         currentAllowance.IsDeleted = true;
         await _context.SaveChangesAsync(cancellationToken);

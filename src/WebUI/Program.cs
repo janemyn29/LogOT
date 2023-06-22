@@ -53,13 +53,11 @@ builder.Services.AddSession(
     opt =>{
         opt.Cookie.HttpOnly = true; 
         opt.Cookie.IsEssential = true;
-
 });
 builder.Services.Configure<GoogleCaptchaConfig>(builder.Configuration.GetSection("GoogleReCaptcha"));
 builder.Services.Configure<MomoServices>(builder.Configuration.GetSection("MomoServices"));
 builder.Services.AddTransient<IFileService, FileService>();
 builder.Services.AddTransient<IFormatMoney, FormatMoney>();
-
 
 builder.Services.AddTransient(typeof(GoogleCaptchaService));
 builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>

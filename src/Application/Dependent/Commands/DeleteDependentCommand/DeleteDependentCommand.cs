@@ -28,7 +28,7 @@ public class DeleteDependentCommandshandler : IRequestHandler<DeleteDependentCom
 
         if (findDegree == null || findDegree.IsDeleted == true)
         {
-            throw new NotFoundException("Không tìm thấy ID " + request.Id);
+            throw new NotFoundException("Không tìm thấy ID " + request.Id + ". Xoá thất bại.");
         }
 
         findDegree.IsDeleted = true;

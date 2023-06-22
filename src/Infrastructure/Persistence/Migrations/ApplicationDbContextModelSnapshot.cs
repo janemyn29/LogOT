@@ -310,11 +310,17 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<double?>("OverTime")
+                        .HasColumnType("float");
+
                     b.Property<int>("ShiftEnum")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<double?>("TimeWork")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
@@ -454,6 +460,40 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("mentor_v1.Domain.Entities.ConfigWifi", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NameWifi")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WifiIpv4")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ConfigWifis");
+                });
+
             modelBuilder.Entity("mentor_v1.Domain.Entities.DefaultConfig", b =>
                 {
                     b.Property<Guid>("Id")
@@ -492,7 +532,7 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DefaultConfig");
+                    b.ToTable("DefaultConfigs");
 
                     b.HasData(
                         new
@@ -702,6 +742,9 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<double>("He_so_tru")
+                        .HasColumnType("float");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -711,7 +754,10 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("Muc_chiu_thue")
+                    b.Property<double>("Muc_chiu_thue_From")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("Muc_chiu_thue_To")
                         .HasColumnType("float");
 
                     b.Property<double>("Thue_suat")
@@ -720,6 +766,98 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("DetailTaxIncomes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("6e64f928-88c8-4b11-8833-108a3246ab61"),
+                            Created = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Hesotru = 0.0,
+                            IsDeleted = false,
+                            LastModified = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastModifiedBy = "",
+                            MucchiuthueFrom = 0.0,
+                            MucchiuthueTo = 5000000.0,
+                            Thuesuat = 5.0
+                        },
+                        new
+                        {
+                            Id = new Guid("3334c3d2-a2cb-41b2-a9ce-10bc284456d1"),
+                            Created = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Hesotru = 250000.0,
+                            IsDeleted = false,
+                            LastModified = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastModifiedBy = "",
+                            MucchiuthueFrom = 5000000.0,
+                            MucchiuthueTo = 10000000.0,
+                            Thuesuat = 10.0
+                        },
+                        new
+                        {
+                            Id = new Guid("d54ee76c-e2d3-44f9-9006-784e481b881e"),
+                            Created = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Hesotru = 750000.0,
+                            IsDeleted = false,
+                            LastModified = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastModifiedBy = "",
+                            MucchiuthueFrom = 10000000.0,
+                            MucchiuthueTo = 18000000.0,
+                            Thuesuat = 15.0
+                        },
+                        new
+                        {
+                            Id = new Guid("66196c62-d126-44df-b94a-a59515e16ce4"),
+                            Created = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Hesotru = 1650000.0,
+                            IsDeleted = false,
+                            LastModified = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastModifiedBy = "",
+                            MucchiuthueFrom = 18000000.0,
+                            MucchiuthueTo = 32000000.0,
+                            Thuesuat = 20.0
+                        },
+                        new
+                        {
+                            Id = new Guid("029fe2a4-4e0c-4008-91c4-03c2753955d5"),
+                            Created = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Hesotru = 3250000.0,
+                            IsDeleted = false,
+                            LastModified = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastModifiedBy = "",
+                            MucchiuthueFrom = 32000000.0,
+                            MucchiuthueTo = 52000000.0,
+                            Thuesuat = 25.0
+                        },
+                        new
+                        {
+                            Id = new Guid("29052a9d-fb7c-42ee-b7c1-dbc159da4069"),
+                            Created = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Hesotru = 5850000.0,
+                            IsDeleted = false,
+                            LastModified = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastModifiedBy = "",
+                            MucchiuthueFrom = 52000000.0,
+                            MucchiuthueTo = 80000000.0,
+                            Thuesuat = 30.0
+                        },
+                        new
+                        {
+                            Id = new Guid("c08eeb41-0955-4f71-a5dc-ec2359a565f3"),
+                            Created = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Hesotru = 9850000.0,
+                            IsDeleted = false,
+                            LastModified = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastModifiedBy = "",
+                            MucchiuthueFrom = 80000000.0,
+                            Thuesuat = 35.0
+                        });
                 });
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.EmployeeContract", b =>
@@ -806,7 +944,7 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double?>("Giam_Tru")
+                    b.Property<double>("Giam_Tru")
                         .HasColumnType("float");
 
                     b.Property<bool>("IsDeleted")
@@ -818,15 +956,110 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double?>("Muc_Quy_Doi")
+                    b.Property<double>("Muc_Quy_Doi_From")
                         .HasColumnType("float");
 
-                    b.Property<double?>("Thue_Suat")
+                    b.Property<double?>("Muc_Quy_Doi_To")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Thue_Suat")
                         .HasColumnType("float");
 
                     b.HasKey("Id");
 
                     b.ToTable("Exchanges");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("084daab6-9d5d-46b5-8cf9-305b62587610"),
+                            Created = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            GiamTru = 0.0,
+                            IsDeleted = false,
+                            LastModified = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastModifiedBy = "",
+                            MucQuyDoiFrom = 0.0,
+                            MucQuyDoiTo = 4750000.0,
+                            ThueSuat = 0.94999999999999996
+                        },
+                        new
+                        {
+                            Id = new Guid("3cae8d06-9386-47f1-ba90-ece556ac66e1"),
+                            Created = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            GiamTru = 250000.0,
+                            IsDeleted = false,
+                            LastModified = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastModifiedBy = "",
+                            MucQuyDoiFrom = 4750000.0,
+                            MucQuyDoiTo = 9250000.0,
+                            ThueSuat = 0.90000000000000002
+                        },
+                        new
+                        {
+                            Id = new Guid("317b9f1b-738b-4c46-b3c2-2861f3db8f2f"),
+                            Created = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            GiamTru = 750000.0,
+                            IsDeleted = false,
+                            LastModified = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastModifiedBy = "",
+                            MucQuyDoiFrom = 9250000.0,
+                            MucQuyDoiTo = 16050000.0,
+                            ThueSuat = 0.84999999999999998
+                        },
+                        new
+                        {
+                            Id = new Guid("3b415c3e-d3de-4869-8d09-2f78ce4490c1"),
+                            Created = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            GiamTru = 1650000.0,
+                            IsDeleted = false,
+                            LastModified = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastModifiedBy = "",
+                            MucQuyDoiFrom = 16050000.0,
+                            MucQuyDoiTo = 27250000.0,
+                            ThueSuat = 0.80000000000000004
+                        },
+                        new
+                        {
+                            Id = new Guid("42021ad4-5806-42fd-a665-0faba74611c4"),
+                            Created = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            GiamTru = 3250000.0,
+                            IsDeleted = false,
+                            LastModified = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastModifiedBy = "",
+                            MucQuyDoiFrom = 27250000.0,
+                            MucQuyDoiTo = 42250000.0,
+                            ThueSuat = 0.75
+                        },
+                        new
+                        {
+                            Id = new Guid("9776d56f-20a8-4054-badf-eb7605d70aef"),
+                            Created = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            GiamTru = 5850000.0,
+                            IsDeleted = false,
+                            LastModified = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastModifiedBy = "",
+                            MucQuyDoiFrom = 42250000.0,
+                            MucQuyDoiTo = 61850000.0,
+                            ThueSuat = 0.69999999999999996
+                        },
+                        new
+                        {
+                            Id = new Guid("9cbde439-bfef-4bf7-9d88-714bfd559cd8"),
+                            Created = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            GiamTru = 9850000.0,
+                            IsDeleted = false,
+                            LastModified = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastModifiedBy = "",
+                            MucQuyDoiFrom = 61850000.0,
+                            ThueSuat = 0.65000000000000002
+                        });
                 });
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.Experience", b =>
@@ -1023,6 +1256,46 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.HasIndex("ApplicationUserId");
 
                     b.ToTable("MaternityEmployee");
+                });
+
+            modelBuilder.Entity("mentor_v1.Domain.Entities.Notification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.OvertimeLog", b =>
@@ -1351,7 +1624,7 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RegionalMinimumWage");
+                    b.ToTable("RegionalMinimumWages");
 
                     b.HasData(
                         new
@@ -1834,11 +2107,13 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.Attendance", b =>
                 {
-                    b.HasOne("mentor_v1.Domain.Identity.ApplicationUser", null)
+                    b.HasOne("mentor_v1.Domain.Identity.ApplicationUser", "ApplicationUser")
                         .WithMany("Attendances")
                         .HasForeignKey("ApplicationUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("ApplicationUser");
                 });
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.Degree", b =>
@@ -1919,6 +2194,17 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                 {
                     b.HasOne("mentor_v1.Domain.Identity.ApplicationUser", "ApplicationUser")
                         .WithMany("MaternityEmployees")
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+                });
+
+            modelBuilder.Entity("mentor_v1.Domain.Entities.Notification", b =>
+                {
+                    b.HasOne("mentor_v1.Domain.Identity.ApplicationUser", "ApplicationUser")
+                        .WithMany()
                         .HasForeignKey("ApplicationUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

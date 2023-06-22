@@ -14,6 +14,8 @@ public class UpdateDependentValidator : AbstractValidator<UpdateDependentViewMod
     {
         _context = context;
 
+        RuleFor(v => v.Id).NotEmpty().WithMessage("Id không được để trống.");
+
         RuleFor(v => v.Name)
             .NotEmpty().WithMessage("Tên không được để trống.");
 
@@ -29,8 +31,9 @@ public class UpdateDependentValidator : AbstractValidator<UpdateDependentViewMod
         RuleFor(v => v.Relationship)
             .NotEmpty().WithMessage("Mối quan hệ không được để trống.");
 
-        RuleFor(v => v.AcceptanceType)
-            .NotEmpty().WithMessage("AcceptanceType không được để trống.").LessThan(4).WithMessage("AcceptanceType less than or equal 3").GreaterThan(0).WithMessage("AcceptanceType greater than or equal to 1.");
+        RuleFor(v => v.AcceptanceType).NotNull().WithMessage("Loại chập nhận không được để trống.").
+            GreaterThan(0).WithMessage("Loại chập nhận phải lớn hơn 0").LessThan(4)
+            .WithMessage("Loại chập nhận phải bé hơn 4.");
     }
 }
 

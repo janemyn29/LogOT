@@ -29,9 +29,7 @@ public class UpdateConfidDayCommandHandler : IRequestHandler<UpdateConfidDayComm
 
     public async Task<Unit> Handle(UpdateConfidDayCommand request, CancellationToken cancellationToken)
     {
-        Guid id = Guid.Parse("ea7cebd4-6de8-40a3-958b-f4d28ee9c843");
-
-        var current = _context.Get<Domain.Entities.ConfigDay>().Where(x => x.Id == id && x.IsDeleted == false).FirstOrDefault();
+        var current = _context.Get<Domain.Entities.ConfigDay>().Where(x=> x.IsDeleted == false).FirstOrDefault();
 
         if (current == null)
         {

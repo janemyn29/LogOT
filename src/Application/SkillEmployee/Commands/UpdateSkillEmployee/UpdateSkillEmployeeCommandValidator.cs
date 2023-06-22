@@ -15,6 +15,8 @@ public class UpdateSkillEmployeeCommandValidator : AbstractValidator<UpdateSkill
 
     public UpdateSkillEmployeeCommandValidator()
     {
+        RuleFor(v => v.Id).NotEmpty().WithMessage("Id không được để trống.");
+
         RuleFor(v => v.Description)
             .NotEmpty().WithMessage("Mô tả không được để trống.");
 
@@ -22,8 +24,8 @@ public class UpdateSkillEmployeeCommandValidator : AbstractValidator<UpdateSkill
             .NotEmpty().WithMessage("Tên không được để trống.");
 
         RuleFor(v => v.Level)
-            .NotEmpty().WithMessage("AcceptanceType không được để trống.").LessThan(3)
-            .WithMessage("AcceptanceType less than or equal 2").GreaterThan(0)
-            .WithMessage("AcceptanceType greater than or equal to 1.");
+            .NotNull().WithMessage("Cấp độ không được để trống.").LessThan(3)
+            .WithMessage("Cấp độ phải bé hơn hoặc bằng 2").GreaterThan(0)
+            .WithMessage("Cấp độ phải lớn hơn hoặc bằng 1.");
     }
 }

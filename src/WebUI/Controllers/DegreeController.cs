@@ -26,11 +26,11 @@ public class DegreeController : ApiControllerBase
 
 
     #region Get List
-    [HttpGet]
-    public async Task<IActionResult> GetListDegree()
+    [HttpGet("{page}")]
+    public async Task<IActionResult> GetListDegree(int page)
     {
         try {
-            var result = await Mediator.Send(new GetDegreeRequest { Page = 1, Size = 20 });
+            var result = await Mediator.Send(new GetDegreeRequest { Page = page, Size = 20 });
             return Ok(new {
                 status = Ok().StatusCode,
                 message = "Lấy danh sách thành công.",
@@ -110,8 +110,8 @@ public class DegreeController : ApiControllerBase
     #endregion
 
     # region Update
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(Guid id, UpdateDegreeViewModel updateDegreeViewModel) 
+    [HttpPut]
+    public async Task<IActionResult> Update(UpdateDegreeViewModel updateDegreeViewModel) 
     {
 
         var validator = new UdpateDegreeValidator(_context);
@@ -131,7 +131,6 @@ public class DegreeController : ApiControllerBase
         {
             var update = await Mediator.Send(new UpdateDegreeCommand
             {
-                Id = id,
                 _updateDegreeViewModel = updateDegreeViewModel
             });
             return Ok(new
