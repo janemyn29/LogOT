@@ -51,6 +51,12 @@ public class ContractService : IContracService
             errors.Add(item);
             return errors;
         }
+        if(user.WorkStatus== WorkStatus.Quit)
+        {
+            var item = "Hiện " + user.Fullname + " - " + user.UserName + " không còn làm việc tại TechGenius. Vì vậy không thể thêm hợp đồng nữa!";
+            errors.Add(item);
+            return errors;
+        }
         var listwait = _context.Get<EmployeeContract>().Where(x => x.ApplicationUserId == user.Id && x.IsDeleted == false && x.Status == EmployeeContractStatus.Waiting).ToList();
         if (listwait != null && listwait.Count > 0)
         {
@@ -139,6 +145,8 @@ public class ContractService : IContracService
 
     public async Task<List<string>> CheckValidatorCreateEmployee(CreateEmployeeContractCommand model)
     {
+
+
         List<string> errors = new List<string>();
         
         //check validation:

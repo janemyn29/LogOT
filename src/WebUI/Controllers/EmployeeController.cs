@@ -116,7 +116,7 @@ public class EmployeeController : ApiControllerBase
         try
         {/*
                 string fileResult = _fileService.SaveImage(model.Image);*/
-            var result = await _identityService.CreateUserAsync(model.Username, model.Email, "Employee1!", model.Fullname, model.Image, model.Address, model.IdentityNumber, model.BirthDay, model.BankAccountNumber, model.BankAccountName, model.BankName, model.PositionId, model.GenderType, model.IsMaternity, mentor_v1.Domain.Enums.WorkStatus.StillWork);
+            var result = await _identityService.CreateUserAsync(model.Username, model.Email, "Employee1!", model.Fullname, model.Image, model.Address, model.IdentityNumber, model.BirthDay, model.BankAccountNumber, model.BankAccountName, model.BankName, model.PositionId, model.GenderType, model.IsMaternity, mentor_v1.Domain.Enums.WorkStatus.StillWork,model.PhoneNumber);
 
             if (result.Result.Succeeded)
             {

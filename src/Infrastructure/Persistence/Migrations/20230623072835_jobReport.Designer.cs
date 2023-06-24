@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using mentor_v1.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using mentor_v1.Infrastructure.Persistence;
 namespace mentorv1.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230623072835_jobReport")]
+    partial class jobReport
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -991,66 +994,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.ToTable("ExcelContracts");
                 });
 
-            modelBuilder.Entity("mentor_v1.Domain.Entities.ExcelEmployeeQuit", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("ActionDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ActionType")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Identity")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("JobReportId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("WorkStatus")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("JobReportId");
-
-                    b.ToTable("ExcelEmployeeQuits");
-                });
-
             modelBuilder.Entity("mentor_v1.Domain.Entities.Exchange", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1243,9 +1186,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("ActionDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ActionType")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
@@ -1271,7 +1211,7 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("JobReports");
+                    b.ToTable("LinkFiles");
                 });
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.LeaveLog", b =>
@@ -1957,24 +1897,24 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                             Id = new Guid("8caed193-c40e-448b-bdab-cd7cd4f24844"),
                             Created = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CreatedBy = "Test",
-                            EndTime = new DateTime(2023, 6, 25, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndTime = new DateTime(2023, 6, 23, 12, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             LastModified = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LastModifiedBy = "Test",
                             ShiftEnum = 0,
-                            StartTime = new DateTime(2023, 6, 25, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                            StartTime = new DateTime(2023, 6, 23, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("25482772-d7ac-473b-9548-9ef38dfb1be1"),
                             Created = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CreatedBy = "Test",
-                            EndTime = new DateTime(2023, 6, 25, 17, 30, 0, 0, DateTimeKind.Unspecified),
+                            EndTime = new DateTime(2023, 6, 23, 17, 30, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             LastModified = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LastModifiedBy = "Test",
                             ShiftEnum = 1,
-                            StartTime = new DateTime(2023, 6, 25, 13, 30, 0, 0, DateTimeKind.Unspecified)
+                            StartTime = new DateTime(2023, 6, 23, 13, 30, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
@@ -2401,17 +2341,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                 {
                     b.HasOne("mentor_v1.Domain.Entities.JobReport", "JobReport")
                         .WithMany("ExcelContracts")
-                        .HasForeignKey("JobReportId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("JobReport");
-                });
-
-            modelBuilder.Entity("mentor_v1.Domain.Entities.ExcelEmployeeQuit", b =>
-                {
-                    b.HasOne("mentor_v1.Domain.Entities.JobReport", "JobReport")
-                        .WithMany()
                         .HasForeignKey("JobReportId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

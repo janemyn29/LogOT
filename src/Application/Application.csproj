@@ -43,6 +43,9 @@
       <Folder Include="ConfigDays\Queries\GetByRelatedObject\" />
       <Folder Include="DefaultConfig\Commands\" />
       <Folder Include="DefaultConfig\Queries\GetByRelatedObject\" />
+      <Folder Include="ExcelContract\Queries\" />
+      <Folder Include="JobReport\Queries\" />
+      <Folder Include="Note\Queries\" />
     </ItemGroup>
 
 </Project>

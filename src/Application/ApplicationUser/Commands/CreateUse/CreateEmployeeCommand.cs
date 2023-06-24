@@ -41,7 +41,7 @@ public class CreateEmployeeCommandHandler : IRequestHandler<CreateEmployeeComman
         {
             var model = _mapper.Map<UserViewModel>(request.EmployeeModel);
             var contract = _mapper.Map<CreateEmployeeContractCommand>(request.EmployeeModel);
-            var result = await _identityService.CreateUserAsync(model.Username, model.Email, "Employee1!", model.Fullname, model.Image, model.Address, model.IdentityNumber, model.BirthDay, model.BankAccountNumber, model.BankAccountName, model.BankName, model.PositionId, model.GenderType, model.IsMaternity, mentor_v1.Domain.Enums.WorkStatus.StillWork);
+            var result = await _identityService.CreateUserAsync(model.Username, model.Email, "Employee1!", model.Fullname, model.Image, model.Address, model.IdentityNumber, model.BirthDay, model.BankAccountNumber, model.BankAccountName, model.BankName, model.PositionId, model.GenderType, model.IsMaternity, mentor_v1.Domain.Enums.WorkStatus.StillWork,model.PhoneNumber);
 
             if (result.Result.Succeeded)
             {

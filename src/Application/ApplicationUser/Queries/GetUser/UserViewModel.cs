@@ -23,4 +23,7 @@ public class UserViewModel :IMapFrom<EmployeeModel>
     public string Email { get; set; }
     public bool IsMaternity { get; set; } = false;
     public string Image { get;set; }
+    public string PhoneNumber { get; set; }
+
+
 }

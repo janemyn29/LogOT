@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using mentor_v1.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using mentor_v1.Infrastructure.Persistence;
 namespace mentorv1.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230624165951_ExcelEmployeeQuit")]
+    partial class ExcelEmployeeQuit
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1017,10 +1020,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Identity")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -1957,24 +1956,24 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                             Id = new Guid("8caed193-c40e-448b-bdab-cd7cd4f24844"),
                             Created = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CreatedBy = "Test",
-                            EndTime = new DateTime(2023, 6, 25, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndTime = new DateTime(2023, 6, 24, 12, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             LastModified = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LastModifiedBy = "Test",
                             ShiftEnum = 0,
-                            StartTime = new DateTime(2023, 6, 25, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                            StartTime = new DateTime(2023, 6, 24, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("25482772-d7ac-473b-9548-9ef38dfb1be1"),
                             Created = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CreatedBy = "Test",
-                            EndTime = new DateTime(2023, 6, 25, 17, 30, 0, 0, DateTimeKind.Unspecified),
+                            EndTime = new DateTime(2023, 6, 24, 17, 30, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             LastModified = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LastModifiedBy = "Test",
                             ShiftEnum = 1,
-                            StartTime = new DateTime(2023, 6, 25, 13, 30, 0, 0, DateTimeKind.Unspecified)
+                            StartTime = new DateTime(2023, 6, 24, 13, 30, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 

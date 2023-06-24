@@ -21,8 +21,9 @@ public class EmployeeModel
         public string Email { get; set; }
         public bool IsMaternity { get; set; } = false;
         public string Image { get; set; }
+        public string PhoneNumber { get; set; }
 
-        public string Role { get; set; }
+    public string Role { get; set; }
 
         // 
         public string ContractCode { get; set; }

@@ -53,7 +53,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
     public DbSet<ConfigWifi> ConfigWifis => Set<ConfigWifi>();
     public DbSet<Notification> Notifications => Set<Notification>();
     public DbSet<ShiftConfig> ShiftConfigs => Set<ShiftConfig>();
-
+    public DbSet<JobReport> JobReports => Set<JobReport>();
+    public DbSet<ExcelContract> ExcelContracts => Set<ExcelContract>();
+    public DbSet<ExcelEmployeeQuit> ExcelEmployeeQuits => Set<ExcelEmployeeQuit>();
 
 
     protected override void OnModelCreating(ModelBuilder builder)
