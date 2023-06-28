@@ -39,7 +39,7 @@ public class AttendanceManagerController : ApiControllerBase
     [Route("/Attendance")]
     public async Task<IActionResult> index(int pg = 1)
     {
-        var listAttendance = await Mediator.Send(new GetListAttendanceRequest { Page = 1, Size = 20 });
+        var listAttendance = await Mediator.Send(new GetListAttendanceRequest { Page = pg, Size = 20 });
         return Ok(listAttendance);
     }
     //Manager
@@ -50,8 +50,51 @@ public class AttendanceManagerController : ApiControllerBase
     //Get list Attendance of current User
     //Get list Attendance from day to day of current User
 
+    [HttpGet]
+    [Route("/Attendance/CreateSeries")]
+    public async Task<IActionResult> CreateSeries(DateTime FromDate, DateTime ToDate)
+    {
+        var distanceDay = ToDate - FromDate;
+        int distance = distanceDay.Days;
+        DateTime tempDate = FromDate;
+        var listUser = await _userManager.GetUsersInRoleAsync("Employee");
+        foreach (var item in listUser)
+        {
+            for(int i = 0; i < distance; i++)
+            {
 
+                var date = tempDate.AddHours(8);
+
+                await Mediator.Send(new CreateAttendanceManualCommand
+                {
+                    ApplicationUserId = item.Id,
+                    Day = tempDate,
+                    StartTime = date,
+                    EndTime = date.AddHours(4),
+
+                    ShiftEnum = mentor_v1.Domain.Enums.ShiftEnum.Morning,
+                     OtHour = 0, WorkHour = 4
+                }) ;
+
+                await Mediator.Send(new CreateAttendanceManualCommand
+                {
+                    ApplicationUserId = item.Id,
+                    Day = tempDate,
+                    StartTime = date.AddHours(5).AddMinutes(30),
+                    EndTime = date.AddHours(9).AddMinutes(30),
+                    ShiftEnum = mentor_v1.Domain.Enums.ShiftEnum.Afternoon,
+                    OtHour = 0,
+                    WorkHour = 4
+                });
+                tempDate = tempDate.AddDays(1);
+            }
+
+        }
+        return Ok();
+    }
     
+    
+
     /*[HttpPut]
     [Route("/Attendance/Update")]
     public async Task<IActionResult> Update(UpdateAttendanceCommand model)
@@ -98,20 +141,20 @@ public class AttendanceManagerController : ApiControllerBase
         }
     }*/
 
-   /* [HttpDelete]
-    [Route("/Attendance/Delete")]
-    public async Task<IActionResult> Delete(Guid id)
-    {
-        try
-        {
-            var result = await Mediator.Send(new DeleteAttendanceCommand { Id = id });
-            return Ok("Xóa kinh nghiệm thành công!");
-        }
-        catch (Exception ex)
-        {
-            return BadRequest("Xóa kinh nghiệm thất bại!");
-        }
-    }*/
+    /* [HttpDelete]
+     [Route("/Attendance/Delete")]
+     public async Task<IActionResult> Delete(Guid id)
+     {
+         try
+         {
+             var result = await Mediator.Send(new DeleteAttendanceCommand { Id = id });
+             return Ok("Xóa kinh nghiệm thành công!");
+         }
+         catch (Exception ex)
+         {
+             return BadRequest("Xóa kinh nghiệm thất bại!");
+         }
+     }*/
 
     [HttpGet]
     [Route("/Attendance/GetListByUser")]
