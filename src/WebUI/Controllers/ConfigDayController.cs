@@ -19,7 +19,7 @@ namespace WebUI.Controllers;
 public class ConfigDayController : ApiControllerBase
 {
     [HttpGet]
-    [Route("/Config/ShiftDay")]
+    [Route("/Config/WorkDay")]
     public async Task<IActionResult> Index()
     {
         var list = await Mediator.Send(new GetListConfigDayRequest { Page = 1, Size = 10 });
@@ -27,7 +27,7 @@ public class ConfigDayController : ApiControllerBase
     }
 
     [HttpPost]
-    [Route("/Config/ShiftDay/Update")]
+    [Route("/Config/WorkDay/Update")]
     public async Task<IActionResult> Update([FromBody] UpdateConfidDayCommand  config)
     {
         try

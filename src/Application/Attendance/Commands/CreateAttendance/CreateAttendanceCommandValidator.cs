@@ -11,7 +11,7 @@ namespace mentor_v1.Application.Attendance.Commands.CreateAttendance;
 
 public class CreateAttendanceCommandValidator : AbstractValidator<CreateAttendanceCommand>
 {
-    private readonly IApplicationDbContext _context;
+   /* private readonly IApplicationDbContext _context;
 
     public CreateAttendanceCommandValidator(IApplicationDbContext context)
     {
@@ -33,7 +33,7 @@ public class CreateAttendanceCommandValidator : AbstractValidator<CreateAttendan
             .WithMessage("Ngày bắt đầu phải nhỏ hơn ngày kết thúc.")
             .Must(v => v.Day < v.EndTime)
             .WithMessage("Ngày phải nhỏ hơn ngày kết thúc.");
-    }
+    }*/
 
 
 

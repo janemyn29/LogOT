@@ -41,11 +41,14 @@
     <ItemGroup>
       <Folder Include="ApplicationUser\Queries\GetUserByRelatedObject\" />
       <Folder Include="ConfigDays\Queries\GetByRelatedObject\" />
+      <Folder Include="ConfigWifis\Commands\" />
+      <Folder Include="ConfigWifis\Queries\GetList\" />
       <Folder Include="DefaultConfig\Commands\" />
       <Folder Include="DefaultConfig\Queries\GetByRelatedObject\" />
       <Folder Include="ExcelContract\Queries\" />
       <Folder Include="JobReport\Queries\" />
       <Folder Include="Note\Queries\" />
+      <Folder Include="ShiftConfig\Commands\" />
     </ItemGroup>
 
 </Project>

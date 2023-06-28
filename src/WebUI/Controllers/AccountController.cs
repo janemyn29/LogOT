@@ -31,13 +31,11 @@ public class AccountController : ApiControllerBase
     [Route("/Account")]
    public async Task<IActionResult> Index()
     {
-
         try
         {
             var username = GetUserName();
-            var result = await _userManager.FindByNameAsync(username);
-            return Ok(result);
-
+            var user = await _userManager.FindByNameAsync(username);
+            return Ok(user);
         }
         catch (Exception ex)
         {
@@ -108,8 +106,9 @@ public class AccountController : ApiControllerBase
         }
         return null;
     }
-    [NonAction]
 
+
+    [NonAction]
     public string GetUserName() {
         string jwt = GetJwtFromHeader();
         if(jwt == null)

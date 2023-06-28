@@ -7,21 +7,33 @@ using mentor_v1.Application.Attendance.Queries.GetAttendanceWithRelativeObject;
 using mentor_v1.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using System.Net;
+using Newtonsoft.Json;
+using WebUI.Models;
+using mentor_v1.Application.ConfigWifis.Queries.GetByRelatedObject;
+using mentor_v1.Application.ShiftConfig.Queries;
+using mentor_v1.Domain.Entities;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 
 namespace WebUI.Controllers;
 
-public class AttendanceController : ApiControllerBase
+public class AttendanceManagerController : ApiControllerBase
 {
 
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IConfiguration _configuration;
     private readonly IApplicationDbContext _context;
 
-    public AttendanceController(UserManager<ApplicationUser> userManager)
+    public AttendanceManagerController(UserManager<ApplicationUser> userManager, IConfiguration configuration)
     {
         _userManager = userManager;
+        _configuration = configuration;
     }
 
+    /*[Authorize (Roles ="Manager") ]*/
     //get list department
     [HttpGet]
     [Route("/Attendance")]
@@ -30,45 +42,17 @@ public class AttendanceController : ApiControllerBase
         var listAttendance = await Mediator.Send(new GetListAttendanceRequest { Page = 1, Size = 20 });
         return Ok(listAttendance);
     }
+    //Manager
+    //Get List attendence of user / from day to day
 
-    [HttpPost]
-    [Route("/Attendance/Create")]
-    public async Task<IActionResult> Create(CreateAttendanceCommand model)
-    {
-        var validator = new CreateAttendanceCommandValidator(_context);
-        var valResult = await validator.ValidateAsync(model);
-        if (valResult.Errors.Count != 0)
-        {
 
-            List<string> errors = new List<string>();
-            foreach (var error in valResult.Errors)
-            {
-                var item = error.ErrorMessage;
-                errors.Add(item);
-            }
-            return BadRequest(errors);
+    ///User
+    //Get list Attendance of current User
+    //Get list Attendance from day to day of current User
 
-        }
-        try
-        {
-            var Attendance = await Mediator.Send(new CreateAttendanceCommand
-            {
-                ApplicationUserId = model.ApplicationUserId,
-                Day = model.Day,
-                StartTime = model.StartTime,
-                EndTime = model.EndTime,
-                ShiftEnum = model.ShiftEnum,
 
-            });
-            return Ok("Tạo tham gia thành công!");
-        }
-        catch (Exception ex)
-        {
-            return BadRequest("Tạo tham gia thất bại!");
-        }
-    }
-
-    [HttpPut]
+    
+    /*[HttpPut]
     [Route("/Attendance/Update")]
     public async Task<IActionResult> Update(UpdateAttendanceCommand model)
     {
@@ -112,9 +96,9 @@ public class AttendanceController : ApiControllerBase
             return BadRequest("Không tìm thấy tham gia yêu cầu!");
 
         }
-    }
+    }*/
 
-    [HttpDelete]
+   /* [HttpDelete]
     [Route("/Attendance/Delete")]
     public async Task<IActionResult> Delete(Guid id)
     {
@@ -127,20 +111,20 @@ public class AttendanceController : ApiControllerBase
         {
             return BadRequest("Xóa kinh nghiệm thất bại!");
         }
-    }
+    }*/
 
     [HttpGet]
     [Route("/Attendance/GetListByUser")]
-    public async Task<IActionResult> GetByUser(string id)
+    public async Task<IActionResult> GetByUser(string username, int pg = 1)
     {
         try
         {
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await _userManager.FindByNameAsync(username);
             if (user == null)
             {
                 return BadRequest("Không tìm thấy người dùng bạn yêu cầu");
             }
-            var listAttendance = await Mediator.Send(new GetListAttendanceByApplicationUserIdRequest { Id = id, Page = 1, Size = 20 });
+            var listAttendance = await Mediator.Send(new GetListAttendanceByApplicationUserIdRequest { Id = user.Id, Page = pg , Size = 20 });
             return Ok(listAttendance);
         }
         catch (Exception)
