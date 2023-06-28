@@ -1,24 +1,21 @@
-﻿using FluentValidation;
+﻿using MediatR;
 using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.Interfaces;
-using mentor_v1.Application.Level.Commands.CreateLevel;
-using mentor_v1.Application.OvertimeLog.Commands.CreateOvertimeLog;
-using mentor_v1.Application.OvertimeLog.Commands.UpdateOvertimeLog;
-using mentor_v1.Application.OvertimeLog.Queries.GetOvertimeLog;
-using mentor_v1.Application.OvertimeLog.Queries.GetOvertimeLogByRelativeObject;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+using mentor_v1.Application.LeaveLog.Commands.CreateLeaveLog;
+using mentor_v1.Application.LeaveLog.Commands.UpdateLeaveLog;
+using mentor_v1.Application.LeaveLog.Queries.GetLeaveLog;
+using mentor_v1.Application.LeaveLog.Queries.GetLeaveLogByRelativeObject;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers;
 
 [ApiController]
 [Route("[controller]/[action]")]
-public class OvertimeLogController : ApiControllerBase
+public class LeaveLogController : ApiControllerBase
 {
     private readonly IApplicationDbContext _context;
 
-    public OvertimeLogController(IApplicationDbContext context)
+    public LeaveLogController(IApplicationDbContext context)
     {
         _context = context;
     }
@@ -26,29 +23,29 @@ public class OvertimeLogController : ApiControllerBase
     #region [getList]
     //[Authorize(Roles = "Manager")]
     [HttpGet]
-    public async Task<IActionResult> GetOvertimeLog()
+    public async Task<IActionResult> GetLeaveLog()
     {
         try
         {
-            var listOTLog = await Mediator.Send(new GetOvertimeLogRequest() { Page = 1, Size = 20 });
-            return Ok(listOTLog);
+            var listLeaveLog = await Mediator.Send(new GetLeaveLogRequest() { Page = 1, Size = 20 });
+            return Ok(listLeaveLog);
 
         }
         catch (Exception)
         {
-            return BadRequest("Không thể lấy danh sách tăng ca");
+            return BadRequest("Không thể lấy danh sách nghỉ");
         }
     }
     #endregion
 
-    #region getOvertimeLogById
+    #region getLeaveLogById
     //[Authorize (Roles = "Manager")]
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetOvertimeLogById(Guid id)
+    public async Task<IActionResult> GetLeaveLogById(Guid id)
     {
         try
         {
-            var OTLog = Mediator.Send(new GetOvertimeLogByIdRequest() { Id = id });
+            var OTLog = Mediator.Send(new GetLeaveLogByIdRequest() { Id = id });
             return Ok(OTLog);
         }
         catch (Exception)
@@ -65,13 +62,13 @@ public class OvertimeLogController : ApiControllerBase
     #region [create]
     //[Authorize (Roles = "Manager")]
     [HttpPost]
-    public async Task<IActionResult> CreateOvertimeLog([FromBody] CreateOvertimeLogViewModel model)
+    public async Task<IActionResult> CreateLeaveLog([FromBody] CreateLeaveLogViewModel model)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest("Vui lòng điền đầy đủ các thông tin được yêu cầu");
         }
-        var validator = new CreateOvertimeLogCommandValidator(_context);
+        var validator = new CreateLeaveLogCommandValidator(_context);
         var valResult = await validator.ValidateAsync(model);
 
         if (valResult.Errors.Count != 0)
@@ -86,7 +83,7 @@ public class OvertimeLogController : ApiControllerBase
 
         try
         {
-            var create = Mediator.Send(new CreateOvertimeLogCommand() { createOvertimeLogViewModel = model });
+            var create = Mediator.Send(new CreateLeaveLogCommand() { createLeaveLogViewModel = model });
             return Ok(new
             {
                 id = create,
@@ -100,10 +97,10 @@ public class OvertimeLogController : ApiControllerBase
     }
     #endregion
 
-    #region updateOvertimeLog
+    #region updateLeaveLog
     //[Authorize (Roles = "Manager")]
     [HttpPut]
-    public async Task<IActionResult> UpdateOvertimeLog(Guid id, UpdateOvertimeLogViewModel model)
+    public async Task<IActionResult> UpdateLeaveLog(Guid id, UpdateLeaveLogViewModel model)
     {
         if (id.Equals(Guid.Empty)) return BadRequest("Vui lòng nhập id");
 
@@ -111,7 +108,7 @@ public class OvertimeLogController : ApiControllerBase
         {
             return BadRequest("Vui lòng điền đầy đủ các thông tin được yêu cầu");
         }
-        var validator = new UpdateOvertimeLogCommandValidator(_context);
+        var validator = new UpdateLeaveLogCommandValidator(_context);
         var valResult = await validator.ValidateAsync(model);
 
         if (valResult.Errors.Count != 0)
@@ -126,10 +123,10 @@ public class OvertimeLogController : ApiControllerBase
 
         try
         {
-            var currentOTLog = await Mediator.Send(new GetOvertimeLogByIdRequest() { Id = id });
+            var currentOTLog = await Mediator.Send(new GetLeaveLogByIdRequest() { Id = id });
             if (currentOTLog.Status.ToString().ToLower().Equals("request"))
             {
-                var update = await Mediator.Send(new UpdateOvertimeLogCommand() { Id = id, updateOvertimeLogViewModel = model });
+                var update = await Mediator.Send(new UpdateLeaveLogCommand() { Id = id, updateLeaveLogViewModel = model });
                 return Ok("Cập nhật yêu cầu thành công");
             }
             else
@@ -152,16 +149,16 @@ public class OvertimeLogController : ApiControllerBase
     }
     #endregion
 
-    #region approveOvertimeRequest
+    #region approveLeaveRequest
     //[Authorize (Roles = "Manager")]
     [HttpPut]
-    public async Task<IActionResult> UpdateStatusOvertimeLogRequest(Guid id, string status, string? cancelReason)
+    public async Task<IActionResult> UpdateStatusLeaveLogRequest(Guid id, string status, string? cancelReason)
     {
         /*if (!ModelState.IsValid)
         {
             return BadRequest("Vui lòng điền đầy đủ các thông tin được yêu cầu");
         }
-        var validator = new UpdateOvertimeLogCommandValidator(_context);
+        var validator = new UpdateLeaveLogCommandValidator(_context);
         var valResult = await validator.ValidateAsync(model);
 
         if (valResult.Errors.Count != 0)
@@ -179,11 +176,12 @@ public class OvertimeLogController : ApiControllerBase
         {
             if (status.ToLower().Equals("approve"))
             {
-                var update = await Mediator.Send(new UpdateOvertimeLogRequestStatusCommand() { Id = id, status = mentor_v1.Domain.Enums.LogStatus.Approved });
+                var update = await Mediator.Send(new UpdateLeaveLogRequestStatusCommand() { Id = id, status = mentor_v1.Domain.Enums.LogStatus.Approved });
                 return Ok("Xác nhận yêu cầu thành công");
-            } else if (status.ToLower().Equals("cancel"))
+            }
+            else if (status.ToLower().Equals("cancel"))
             {
-                var update = await Mediator.Send(new UpdateOvertimeLogRequestStatusCommand()
+                var update = await Mediator.Send(new UpdateLeaveLogRequestStatusCommand()
                 {
                     Id = id,
                     status = mentor_v1.Domain.Enums.LogStatus.Cancel,
