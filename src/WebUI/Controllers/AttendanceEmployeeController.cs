@@ -19,18 +19,21 @@ using System.Text;
 using mentor_v1.Application.Attendance.Queries.GetAttendance;
 using mentor_v1.Domain.Enums;
 using mentor_v1.Application.Common.PagingUser;
+using WebUI.Services.AttendanceServices;
 
 namespace WebUI.Controllers;
 public class AttendanceEmployeeController : ApiControllerBase
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IConfiguration _configuration;
+    private readonly IAttendanceService _attendance;
     private readonly IApplicationDbContext _context;
 
-    public AttendanceEmployeeController(UserManager<ApplicationUser> userManager, IConfiguration configuration)
+    public AttendanceEmployeeController(UserManager<ApplicationUser> userManager, IConfiguration configuration,IAttendanceService attendanceService)
     {
         _userManager = userManager;
         _configuration = configuration;
+        _attendance = attendanceService;
     }
 
     [HttpGet]
@@ -55,7 +58,7 @@ public class AttendanceEmployeeController : ApiControllerBase
         //lấy xem coi ngày đó có làm ko.
 
         //lấy là Ktr IP wifi
-        var urlExteranlAPI = string.Format("https://api-bdc.net/data/client-ip");
+        var urlExteranlAPI = string.Format("https://api.bigdatacloud.net/data/client-info");
         WebRequest request = WebRequest.Create(urlExteranlAPI);
         request.Method = "GET";
         HttpWebResponse response = null;
@@ -87,103 +90,21 @@ public class AttendanceEmployeeController : ApiControllerBase
         ShiftConfig shift;
         //var now = DateTime.Now;
         var now = tempNow;
-        var time = now.TimeOfDay;
-
-        //lấy cấu hình ca làm:
-        var listShift = await Mediator.Send(new GetListShiftRequest { });
-        TimeSpan start1 = listShift.Where(x => x.IsDeleted == false && x.ShiftEnum == mentor_v1.Domain.Enums.ShiftEnum.Morning).FirstOrDefault().StartTime.Value.AddMinutes(-30).TimeOfDay;
-        TimeSpan end1 = listShift.Where(x => x.IsDeleted == false && x.ShiftEnum == mentor_v1.Domain.Enums.ShiftEnum.Morning).FirstOrDefault().EndTime.Value.TimeOfDay;
-        TimeSpan start2 = listShift.Where(x => x.IsDeleted == false && x.ShiftEnum == mentor_v1.Domain.Enums.ShiftEnum.Afternoon).FirstOrDefault().StartTime.Value.AddMinutes(-30).TimeOfDay;
-        TimeSpan end2 = listShift.Where(x => x.IsDeleted == false && x.ShiftEnum == mentor_v1.Domain.Enums.ShiftEnum.Afternoon).FirstOrDefault().EndTime.Value.TimeOfDay;
 
         //lấy user
         var username = GetUserName();
         var user = await _userManager.FindByNameAsync(username);
 
-        //bắt dầu phân loại ca.
-        if (time >= start1 && time < end1)
+        try
         {
-            try
-            {
-                var attendace = await Mediator.Send(new GetAttendaceByUserAndShift { Day = now, ShiftEnum = mentor_v1.Domain.Enums.ShiftEnum.Morning, userId = user.Id });
-                return BadRequest("Bạn đã chấm công Ca Sáng Ngày " + DateTime.Now.ToString("dd/MM/yyyy") + " vì vậy không thể tiếp tục chấm công ca Sáng!");
-            }
-            catch (Exception)
-            {
-                try
-                {
-                    var Attendance = await Mediator.Send(new CreateAttendanceCommand
-                    {
-                        ApplicationUserId = user.Id,
-                        Day = now,
-                        StartTime = now,
-                        ShiftEnum = mentor_v1.Domain.Enums.ShiftEnum.Morning
-                    });
-                    return Ok("Chấm công ca Sáng ngày " + DateTime.Now.ToString("dd/MM/yyyy") + " thành công!");
-                }
-                catch (Exception ex)
-                {
-                    return BadRequest("Chấm công ca Sáng ngày " + DateTime.Now.ToString("dd/MM/yyyy") + " thất bại!");
-                }
-            }
+            string result = await _attendance.AttendanceFullDay(now, user);
+            return Ok(result);
         }
-        else if (time >= end1 && time < start2)
+        catch (Exception ex)
         {
-            try
-            {
-                await Mediator.Send(new UpdateEndTimeCommand { DayTime = now, Shift = mentor_v1.Domain.Enums.ShiftEnum.Morning });
-                return Ok("Chấm công kết thúc ca Sáng ngày " + DateTime.Now.ToString("dd/MM/yyyy") + " thành công!");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            //chấm công kết ca 1.
+            return BadRequest(ex.Message);
         }
-        else if (time >= start2 && time < end2)
-        {
-            try
-            {
-                var attendace = await Mediator.Send(new GetAttendaceByUserAndShift { Day = now, ShiftEnum = mentor_v1.Domain.Enums.ShiftEnum.Afternoon, userId = user.Id });
-                return BadRequest("Bạn đã chấm công Ca Chiều Ngày " + DateTime.Now.ToString("dd/MM/yyyy") + " vì vậy không thể tiếp tục chấm công ca Chiều!");
-            }
-            catch (Exception)
-            {
-                try
-                {
-                    var Attendance = await Mediator.Send(new CreateAttendanceCommand
-                    {
-                        ApplicationUserId = user.Id,
-                        Day = now,
-                        StartTime = now,
-                        ShiftEnum = mentor_v1.Domain.Enums.ShiftEnum.Afternoon
 
-                    });
-                    return Ok("Chấm công ca Chiều ngày " + DateTime.Now.ToString("dd/MM/yyyy") + " thành công!");
-                }
-                catch (Exception ex)
-                {
-                    return BadRequest("Chấm công ca Chiều ngày " + DateTime.Now.ToString("dd/MM/yyyy") + " thất bại!");
-                }
-            }
-        }
-        else if (time >= end2 && time <= TimeSpan.Parse("23:30:00"))
-        {
-            //chấm công kết ca 2
-            try
-            {
-                await Mediator.Send(new UpdateEndTimeCommand { DayTime = now, Shift = mentor_v1.Domain.Enums.ShiftEnum.Afternoon });
-                return Ok("Chấm công kết thúc ca Chiều ngày " + DateTime.Now.ToString("dd/MM/yyyy") + " thành công!");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-        else
-        {
-            return BadRequest("Hiện đang không trong ca làm việc nên bạn không thể chấm công được!");
-        }
         /*
                 try
                 {

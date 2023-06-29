@@ -1,7 +1,9 @@
 ﻿using System.Data;
+using System.Threading;
 using ClosedXML.Excel;
 using Hangfire.Common;
 using MediatR;
+using mentor_v1.Application.AnnualWorkingDays.Commands;
 using mentor_v1.Application.ApplicationUser.Commands.UpdateUser;
 using mentor_v1.Application.Common.Models;
 using mentor_v1.Application.EmployeeContract.Commands.UpdateEmpContract;
@@ -15,6 +17,7 @@ using mentor_v1.Domain.Identity;
 using mentor_v1.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace WebUI.Services.JobServices;
 
@@ -29,6 +32,17 @@ public class JobService : IJobService
         _context = context;
         _userManager = userManager;
         _mediator = mediator;
+    }
+
+    public async Task<int> FillEmptyWorkDay()
+    {
+        var now = DateTime.Now;
+        var workday = await _context.Get<AnnualWorkingDay>().Where(x => x.Day.Date == now.Date).FirstOrDefaultAsync();
+        if (workday == null)
+        {
+            await _mediator.Send(new CreateNormalDayCommand { Day = now.Date });
+        }
+        return 200;
     }
 
     public async Task<int> NoticeContractExpire()
@@ -83,6 +97,23 @@ public class JobService : IJobService
             return listUser.Count;
 
         }
+    }
+
+    public async Task<int> NoticeEmptyWorkday()
+    {
+        var now = DateTime.Now;
+        var workday= await _context.Get<AnnualWorkingDay>().Where(x=> x.Day.Date == now.Date.AddDays(1)).FirstOrDefaultAsync();
+        if(workday == null)
+        {
+            string title = "Thiếu cấu hình ngày làm việc cho ngày " + now.AddDays(1).ToString("dd/MM/yyyy");
+            string des = "Vui lòng bổ sung cấu hình ngày làm việc cho ngày " + now.AddDays(1).ToString("dd/MM/yyyy") + " để việc chấm công và tính lương được thực hiện chính xác nhất!";
+            var listManager = await _userManager.GetUsersInRoleAsync("Manager");
+            foreach (var item in listManager)
+            {
+                await _mediator.Send(new CreateNotiCommand { ApplicationUserId = item.Id, Title = title, Description = des });
+            }
+        }
+        return 200;
     }
 
     /*    public async Task<int> NoticeContractExpire()
@@ -212,4 +243,6 @@ public class JobService : IJobService
             return 200;
         }
     }
+
+
 }
