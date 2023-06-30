@@ -11,7 +11,7 @@ using mentor_v1.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace mentor_v1.Application.Attendance.Queries.GetAttendanceWithRelativeObject;
-public class GetAttendaceByUserAndShift : IRequest<GetAttendance.AttendanceViewModel>
+public class GetAttendaceByUserAndShift : IRequest<Domain.Entities.Attendance>
 {
     public string  userId { get; set; }
     public ShiftEnum ShiftEnum { get; set; }
@@ -19,7 +19,7 @@ public class GetAttendaceByUserAndShift : IRequest<GetAttendance.AttendanceViewM
 }
 
 // IRequestHandler<request type, return type>
-public class GetAttendaceByUserAndShiftHandler : IRequestHandler<GetAttendaceByUserAndShift, GetAttendance.AttendanceViewModel>
+public class GetAttendaceByUserAndShiftHandler : IRequestHandler<GetAttendaceByUserAndShift, Domain.Entities.Attendance>
 {
     private readonly IApplicationDbContext _context;
     private readonly IMapper _mapper;
@@ -31,20 +31,16 @@ public class GetAttendaceByUserAndShiftHandler : IRequestHandler<GetAttendaceByU
         _mapper = mapper;
     }
 
-    public Task<GetAttendance.AttendanceViewModel> Handle(GetAttendaceByUserAndShift request, CancellationToken cancellationToken)
+    public Task<Domain.Entities.Attendance> Handle(GetAttendaceByUserAndShift request, CancellationToken cancellationToken)
     {
         var Attendance = _context.Get<Domain.Entities.Attendance>()
             .Where(x => x.IsDeleted == false && x.ApplicationUserId.Equals(request.userId) && x.ShiftEnum == request.ShiftEnum && x.Day.Date == request.Day.Date)
             .AsNoTracking().FirstOrDefault();
-        if (Attendance == null)
-        {
-            throw new NotFoundException("Không tìm thấy");
-        }
+        
 
-        // AsNoTracking to remove default tracking on entity framework
-        var map = _mapper.Map<GetAttendance.AttendanceViewModel>(Attendance);
+       
 
         // Paginate data
-        return Task.FromResult(map); //Task.CompletedTask;
+        return Task.FromResult(Attendance); //Task.CompletedTask;
     }
 }

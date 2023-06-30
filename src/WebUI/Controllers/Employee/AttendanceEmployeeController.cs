@@ -21,7 +21,7 @@ using mentor_v1.Domain.Enums;
 using mentor_v1.Application.Common.PagingUser;
 using WebUI.Services.AttendanceServices;
 
-namespace WebUI.Controllers;
+namespace WebUI.Controllers.Employee;
 public class AttendanceEmployeeController : ApiControllerBase
 {
     private readonly UserManager<ApplicationUser> _userManager;
@@ -55,7 +55,7 @@ public class AttendanceEmployeeController : ApiControllerBase
     [Route("/AttendanceEmployee/Create")]
     public async Task<IActionResult> Create(DateTime tempNow)
     {
-        //lấy xem coi ngày đó có làm ko.
+        //lấy configday xem coi ngày đó có làm ko.
 
         //lấy là Ktr IP wifi
         var urlExteranlAPI = string.Format("https://api.bigdatacloud.net/data/client-info");
@@ -97,6 +97,7 @@ public class AttendanceEmployeeController : ApiControllerBase
 
         try
         {
+            //string result = await _attendance.AttendanceMorningOnly(now, user);
             string result = await _attendance.AttendanceFullDay(now, user);
             return Ok(result);
         }
@@ -104,34 +105,6 @@ public class AttendanceEmployeeController : ApiControllerBase
         {
             return BadRequest(ex.Message);
         }
-
-        /*
-                try
-                {
-                    shift = await Mediator.Send(new GetShiftDayByShiftRequest { AttendanceTime = now });
-                }
-                catch (Exception ex)
-                {
-                    return BadRequest(ex.Message);
-                }*/
-
-        /*try
-        {
-            var Attendance = await Mediator.Send(new CreateAttendanceCommand
-            {
-                ApplicationUserId = model.ApplicationUserId,
-                Day = model.Day,
-                StartTime = model.StartTime,
-                EndTime = model.EndTime,
-                ShiftEnum = model.ShiftEnum,
-
-            });
-            return Ok("Tạo tham gia thành công!");
-        }
-        catch (Exception ex)
-        {
-            return BadRequest("Chấm công ngày "+DateTime.Now.ToString("dd/MM/yyyy")+" thất bại!");
-        }*/
     }
 
 

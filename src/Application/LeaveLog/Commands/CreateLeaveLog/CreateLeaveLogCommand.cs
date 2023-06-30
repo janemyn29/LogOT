@@ -39,12 +39,12 @@ public class CreateLeaveLogCommandHandler : IRequestHandler<CreateLeaveLogComman
         // create new LeaveLog from request data
         var LeaveLog = new Domain.Entities.LeaveLog()
         {
-            ApplicationUserId = request.createLeaveLogViewModel.ApplicationUserId,
+            /*ApplicationUserId = request.createLeaveLogViewModel.ApplicationUserId,
             StartDate = request.createLeaveLogViewModel.StartDate,
             EndDate = request.createLeaveLogViewModel.EndDate,
             LeaveHours = request.createLeaveLogViewModel.LeaveHours,
             Reason = request.createLeaveLogViewModel.Reason,
-            Status = Domain.Enums.LogStatus.Request
+            Status = Domain.Enums.LogStatus.Request*/
         };
 
         // add new LeaveLog

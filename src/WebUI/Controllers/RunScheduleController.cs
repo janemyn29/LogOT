@@ -57,7 +57,17 @@ public class RunScheduleController : ApiControllerBase
     {
         RecurringJob.RemoveIfExists("FillEmptyWorkDay");
         RecurringJob.AddOrUpdate("FillEmptyWorkDay", () => _jobService.FillEmptyWorkDay(), "30 0 * * *", TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
-        //await _jobService.NoticeContractExpire();
+        //await _jobService.FillEmptyWorkDay();
+        return Ok();
+    }
+
+    [HttpGet]
+    [Route("/ScheduleNoticeFillWorkDay")]
+    public async Task<IActionResult> ScheduleNoticeFillWorkDay()
+    {
+        RecurringJob.RemoveIfExists("NoticeFillAnnualWorkingDay");
+        RecurringJob.AddOrUpdate("NoticeFillAnnualWorkingDay", () => _jobService.NoticeFillAnnualWorkingDay(), "5 8 27 * *", TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
+        //await _jobService.FillEmptyWorkDay();
         return Ok();
     }
 }

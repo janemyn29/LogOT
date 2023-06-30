@@ -37,7 +37,7 @@ public class JobService : IJobService
     public async Task<int> FillEmptyWorkDay()
     {
         var now = DateTime.Now;
-        var workday = await _context.Get<AnnualWorkingDay>().Where(x => x.Day.Date == now.Date).FirstOrDefaultAsync();
+        var workday = await _context.Get<AnnualWorkingDay>().Where(x => x.Day.Date == now.Date && x.IsDeleted==false).FirstOrDefaultAsync();
         if (workday == null)
         {
             await _mediator.Send(new CreateNormalDayCommand { Day = now.Date });
@@ -116,6 +116,20 @@ public class JobService : IJobService
         return 200;
     }
 
+    public async Task<int> NoticeFillAnnualWorkingDay()
+    {
+        var nextMonth = DateTime.Now.AddMonths(1);
+            string title = "Thông báo thêm bổ sung cấu hình ngày làm việc cho tháng " + nextMonth.ToString("MM/yyyy");
+            string des = "Vui lòng bổ sung bổ sung cấu hình ngày làm việc cho tháng " + nextMonth.ToString("MM/yyyy") + " để việc chấm công và tính lương được thực hiện chính xác nhất!";
+            var listManager = await _userManager.GetUsersInRoleAsync("Manager");
+            foreach (var item in listManager)
+            {
+                await _mediator.Send(new CreateNotiCommand { ApplicationUserId = item.Id, Title = title, Description = des });
+            }
+        return 200;
+        
+    }
+
     /*    public async Task<int> NoticeContractExpire()
         {
             var listUser = await _userManager.Users.ToListAsync();
@@ -185,7 +199,10 @@ public class JobService : IJobService
                 }
             }
 
+
             var manager = await _userManager.GetUsersInRoleAsync("Manager");
+
+
             foreach (var item in manager)
             {
                 if (check)

@@ -9,6 +9,7 @@ using mentor_v1.Application.Common.Interfaces;
 using mentor_v1.Domain.Entities;
 using mentor_v1.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace mentor_v1.Application.AnnualWorkingDays.Commands;
 public class CreateNormalDayCommand : IRequest<Guid>
@@ -30,26 +31,82 @@ public class CreateNormalDayCommandHandler : IRequestHandler<CreateNormalDayComm
 
     public async Task<Guid> Handle(CreateNormalDayCommand request, CancellationToken cancellationToken)
     {
-        var shiftType = _context.ConfigDays.FirstOrDefault().Normal;
-        var typeDate = TypeDate.Normal;
-        var coeId = _context.Coefficients.Where(x => x.TypeDate == typeDate).FirstOrDefault().Id;
-        var city = new AnnualWorkingDay()
+        TypeDate typeDate;
+        ShiftType shiftType;
+        Guid coeId;
+        if (request.Day.DayOfWeek == DayOfWeek.Saturday)
         {
-            Day = request.Day.Date,
-            CoefficientId = coeId,
-            TypeDate = typeDate,
-            ShiftType = shiftType,
+            shiftType = _context.ConfigDays.FirstOrDefault().Saturday;
+            typeDate = TypeDate.Saturday;
+            coeId = _context.Coefficients.Where(x => x.TypeDate == typeDate).FirstOrDefault().Id;
+            var city = new Domain.Entities.AnnualWorkingDay()
+            {
+                Day = request.Day,
+                CoefficientId = coeId,
+                TypeDate = typeDate,
+                ShiftType = shiftType,
 
-        };
-        // add new category
-        _context.Get<AnnualWorkingDay>().Add(city);
+            };
+            // add new category
+            _context.Get<Domain.Entities.AnnualWorkingDay>().Add(city);
 
-        // commit change to database
-        // because the function is async so we await it
-        await _context.SaveChangesAsync(cancellationToken);
+            // commit change to database
+            // because the function is async so we await it
+            await _context.SaveChangesAsync(cancellationToken);
 
-        // return the Guid
-        return city.Id;
+            // return the Guid
+            return city.Id;
+        }
+        else if (request.Day.DayOfWeek == DayOfWeek.Sunday)
+        {
+            shiftType = _context.ConfigDays.FirstOrDefault().Sunday;
+            typeDate = TypeDate.Sunday;
+            coeId = _context.Coefficients.Where(x => x.TypeDate == typeDate).FirstOrDefault().Id;
+
+
+            var city = new Domain.Entities.AnnualWorkingDay()
+            {
+                Day = request.Day,
+                CoefficientId = coeId,
+                TypeDate = typeDate,
+                ShiftType = shiftType,
+
+            };
+            // add new category
+            _context.Get<Domain.Entities.AnnualWorkingDay>().Add(city);
+
+            // commit change to database
+            // because the function is async so we await it
+            await _context.SaveChangesAsync(cancellationToken);
+
+            // return the Guid
+            return city.Id;
+        }
+        else
+        {
+
+            shiftType = _context.ConfigDays.FirstOrDefault().Normal;
+            typeDate = TypeDate.Normal;
+            coeId = _context.Coefficients.Where(x => x.TypeDate == typeDate).FirstOrDefault().Id;
+            var city = new Domain.Entities.AnnualWorkingDay()
+            {
+                Day = request.Day,
+                CoefficientId = coeId,
+                TypeDate = typeDate,
+                ShiftType = shiftType,
+
+            };
+            // add new category
+            _context.Get<Domain.Entities.AnnualWorkingDay>().Add(city);
+
+            // commit change to database
+            // because the function is async so we await it
+            await _context.SaveChangesAsync(cancellationToken);
+
+            // return the Guid
+            return city.Id;
+        }
+
     }
 }
 

@@ -89,7 +89,7 @@ public class CreateAnnualWorkingDayExCommandHandler : IRequestHandler<CreateAnnu
                                     shiftType = configDay.Normal;
                                 }
                                 
-                                var coefficient = coefficientList.Where(x=>x.TypeDate == typeDate).FirstOrDefault();
+                                var coefficient = coefficientList.Where(x=>x.TypeDate == typeDate && x.IsDeleted == false).FirstOrDefault();
 
 
                                 var entity = new AnnualWorkingDay
@@ -112,7 +112,7 @@ public class CreateAnnualWorkingDayExCommandHandler : IRequestHandler<CreateAnnu
                                 {
                                     continue; // Bỏ qua hàng này và chuyển sang hàng tiếp theo
                                 }
-                                var coefficient = coefficientList.Where(x => x.TypeDate == TypeDate.Holiday).FirstOrDefault();
+                                var coefficient = coefficientList.Where(x => x.TypeDate == TypeDate.Holiday && x.IsDeleted == false).FirstOrDefault();
 
 
                                 var entity = new AnnualWorkingDay

@@ -6,5 +6,6 @@ public interface IAttendanceService
 {
     Task<string> AttendanceFullDay(DateTime now,ApplicationUser user);
     //Task<string> AttendanceDay(DateTime now, ApplicationUser user);
+    Task<string> AttendanceMorningOnly(DateTime now, ApplicationUser user);
 
 }

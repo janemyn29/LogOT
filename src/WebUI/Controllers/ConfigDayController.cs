@@ -32,6 +32,7 @@ public class ConfigDayController : ApiControllerBase
     {
         try
         {
+            //nếu cập nhật thì xóa hết các annual sau ngày sau ngày sửa. thêm thông báo thêm lại annual.
             await Mediator.Send(new UpdateConfidDayCommand { Normal = config.Normal, Holiday = config.Holiday, Saturday = config.Saturday, Sunday = config.Sunday });
             return Ok("Cập nhật cấu hình ca làm việc thành công!");
 
