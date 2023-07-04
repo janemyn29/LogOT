@@ -54,7 +54,7 @@ public class AttendanceEmployeeController : ApiControllerBase
     [HttpPost]
     [Authorize(Roles = "Employee")]
     [Route("/AttendanceEmployee/Create")]
-    public async Task<IActionResult> Create(DateTime tempNow)
+    public async Task<IActionResult> Create(/*DateTime tempNow*/)
     {
         //lấy configday xem coi ngày đó có làm ko.
 
@@ -76,8 +76,8 @@ public class AttendanceEmployeeController : ApiControllerBase
         //kết thúc ktr IP wify
 
         ShiftConfig shift;
-        //var now = DateTime.Now;
-        var now = tempNow;
+        var now = DateTime.Now;
+        //var now = tempNow;
 
         //lấy user
         var username = GetUserName();
