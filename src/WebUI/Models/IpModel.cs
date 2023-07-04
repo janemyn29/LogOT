@@ -3,7 +3,7 @@
 public class IpModel
 {
     public string ipString { get; set; }
-    public int ipNumeric { get; set; }
+    public string ipNumeric { get; set; }
     public string ipType { get; set; }
     public bool isBehindProxy { get; set; }
     public string device { get; set; }
@@ -17,5 +17,5 @@ public class IpModel
     public bool isMobile { get; set; }
     public string userAgentDisplay { get; set; }
     public string userAgentRaw { get; set; }
-
+    public List<string> userLanguages { get; set; }
 }

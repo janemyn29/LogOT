@@ -20,6 +20,7 @@ using mentor_v1.Application.Attendance.Queries.GetAttendance;
 using mentor_v1.Domain.Enums;
 using mentor_v1.Application.Common.PagingUser;
 using WebUI.Services.AttendanceServices;
+using mentor_v1.Application.AnnualWorkingDays.Queries.GetByRelatedObject;
 
 namespace WebUI.Controllers.Employee;
 public class AttendanceEmployeeController : ApiControllerBase
@@ -57,25 +58,12 @@ public class AttendanceEmployeeController : ApiControllerBase
     {
         //lấy configday xem coi ngày đó có làm ko.
 
-        //lấy là Ktr IP wifi
-        var urlExteranlAPI = string.Format("https://api.bigdatacloud.net/data/client-info");
-        WebRequest request = WebRequest.Create(urlExteranlAPI);
-        request.Method = "GET";
-        HttpWebResponse response = null;
-        response = (HttpWebResponse)request.GetResponse();
-
-        string ip = null;
-        using (Stream stream = response.GetResponseStream())
-        {
-            StreamReader sr = new StreamReader(stream);
-            ip = sr.ReadToEnd();
-            sr.Close();
-        }
-        if (ip == null)
+       string ip = GetIPWifi();
+        if(ip == null)
         {
             return BadRequest("Vui lòng kiểm tra lại kết nối Wifi chấm công để thực hiện chấm công!");
         }
-        var IpWifi = JsonConvert.DeserializeObject<IpModel>(ip);
+       var IpWifi = JsonConvert.DeserializeObject<IpModel>(ip);
 
         try
         {
@@ -94,11 +82,23 @@ public class AttendanceEmployeeController : ApiControllerBase
         //lấy user
         var username = GetUserName();
         var user = await _userManager.FindByNameAsync(username);
-
         try
         {
-            //string result = await _attendance.AttendanceMorningOnly(now, user);
-            string result = await _attendance.AttendanceFullDay(now, user);
+            //test result: Morning (pass: đã test kỹ)
+            //test result: Full (pass: đã test )
+            var annualDay = await Mediator.Send(new GetAnnualByDayRequest { Date = now });
+            if(annualDay.ShiftType == ShiftType.Full)
+            {
+                string result = await _attendance.AttendanceFullDay(now, user);
+            }else if(annualDay.ShiftType == ShiftType.Morning)
+            {
+                string result = await _attendance.AttendanceMorningOnly(now, user);
+            }else if(annualDay.ShiftType == ShiftType.Afternoon)
+            {
+                string result = await _attendance.AttendanceAfternoonOnly(now, user);
+            }else if(annualDay.ShiftType == ShiftType.NotWork) {
+                string result = await _attendance.AttendanceNotWork(now, user);
+            }
             return Ok(result);
         }
         catch (Exception ex)
@@ -173,4 +173,30 @@ public class AttendanceEmployeeController : ApiControllerBase
         }
     }
 
+
+
+    [NonAction]
+    public string GetIPWifi()
+    {
+        //lấy là Ktr IP wifi
+        var urlExteranlAPI = string.Format("https://api-bdc.net/data/client-info");
+        WebRequest request = WebRequest.Create(urlExteranlAPI);
+        request.Method = "GET";
+        HttpWebResponse response = null;
+        response = (HttpWebResponse)request.GetResponse();
+
+        string ip = null;
+        using (Stream stream = response.GetResponseStream())
+        {
+            StreamReader sr = new StreamReader(stream);
+            ip = sr.ReadToEnd();
+            sr.Close();
+        }
+        if (ip == null)
+        {
+
+            return null;
+        }
+        return ip;
+    }
 }

@@ -135,6 +135,7 @@ public class UpdateEndTimeCommandHandler : IRequestHandler<UpdateEndTimeCommand>
                 else
                 {
                     timework = end2 - start2;
+                    tempOT = time - end2;
                 }
             }
             double final = 0;

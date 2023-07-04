@@ -10,21 +10,21 @@ using mentor_v1.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace mentor_v1.Application.Attendance.Commands.UpdateAttendance;
-public record UpdateAttendanceForWorkAfternoon : IRequest
+public record UpdateAttendanceNotWork : IRequest
 {
     public DateTime DayTime { get; set; }
     public ShiftEnum Shift { get; set; }
 }
-public class UpdateAttendanceForWorkAfternoonHandler : IRequestHandler<UpdateAttendanceForWorkAfternoon>
+public class UpdateAttendanceNotWorkHandler : IRequestHandler<UpdateAttendanceNotWork>
 {
     private readonly IApplicationDbContext _context;
 
-    public UpdateAttendanceForWorkAfternoonHandler(IApplicationDbContext context)
+    public UpdateAttendanceNotWorkHandler(IApplicationDbContext context)
     {
         _context = context;
     }
 
-    public async Task<Unit> Handle(UpdateAttendanceForWorkAfternoon request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(UpdateAttendanceNotWork request, CancellationToken cancellationToken)
     {
         var CurrentAttendance = await _context.Get<Domain.Entities.Attendance>().Where(x => x.IsDeleted == false && x.Day.Date == request.DayTime.Date && x.ShiftEnum == request.Shift).FirstOrDefaultAsync();
 
@@ -118,9 +118,10 @@ public class UpdateAttendanceForWorkAfternoonHandler : IRequestHandler<UpdateAtt
                 && x.Status == LogStatus.Approved).AsNoTracking()
                 .FirstOrDefaultAsync();
 
+
             var attendance = await _context.Get<Domain.Entities.Attendance>()
-                .Where(x => x.IsDeleted == false && x.Day.Date == request.DayTime.Date && x.ShiftEnum == ShiftEnum.Morning && x.EndTime !=null).AsNoTracking().FirstOrDefaultAsync();
-            if( attendance == null )
+                .Where(x => x.IsDeleted == false && x.Day.Date == request.DayTime.Date && x.ShiftEnum == ShiftEnum.Morning && x.EndTime != null).AsNoTracking().FirstOrDefaultAsync();
+            if (attendance == null) //nếu buổi sáng ko đi làm
             {
                 var defaultTime = (end2 - start2);
 
@@ -130,55 +131,27 @@ public class UpdateAttendanceForWorkAfternoonHandler : IRequestHandler<UpdateAtt
                 //nếu tới muộn
                 if (CurrentAttendance.StartTime.TimeOfDay > start2)
                 {
-                    //nếu về sớm
-                    if (end2 > time)
-                    {
-                        timework = time - CurrentAttendance.StartTime.TimeOfDay;
-                    }
-                    else
-                    {
-                        timework = end2 - CurrentAttendance.StartTime.TimeOfDay;
-                        tempOT = time - end2;
-                    }
-                        
+                    tempOT = time - CurrentAttendance.StartTime.TimeOfDay;
                 }
                 else
                 {
-                    //nếu về sớm
-                    if (end2 > time)
-                    {
-                        timework = time - start2;
-
-                    }
-                    else
-                    {
-                        timework = end2 - start2;
-                        tempOT = time - end2;
-                    }
-
+                    tempOT = time - start2;
                 }
-                double final = 0;
+
                 double OtHour = 0;
-                if (OtRequest == null) //nếu KO có yêu cầu làm thêm giờ
-                {
-                    final = timework.TotalSeconds / 3600.0;
-                }
-                else //nếu có yêu cầu làm thêm giờ
-                {
-                    final = timework.TotalSeconds / 3600.0;
-                    OtHour = tempOT.TotalSeconds / 3600.0;
 
-                    if (OtHour > OtRequest.Hours)
-                    {
-                        OtHour = OtRequest.Hours;
-                    }
+                OtHour = tempOT.TotalSeconds / 3600.0;
 
+                if (OtHour > OtRequest.Hours)
+                {
+                    OtHour = OtRequest.Hours;
                 }
+
                 CurrentAttendance.EndTime = request.DayTime;
-                CurrentAttendance.TimeWork = final;
+                CurrentAttendance.TimeWork = 0;
                 CurrentAttendance.OverTime = OtHour;
             }
-            //nếu buối sáng ko tăng ca:
+            //nếu buối sáng có tăng ca:
             else
             {
                 var defaultTime = (end2 - start2);
@@ -188,52 +161,25 @@ public class UpdateAttendanceForWorkAfternoonHandler : IRequestHandler<UpdateAtt
 
                 if (CurrentAttendance.StartTime.TimeOfDay > start2)
                 {
-                    //nếu về sớm
-                    if (end2 > time)
-                    {
-                        timework = time - CurrentAttendance.StartTime.TimeOfDay;
-                    }
-                    else
-                    {
-                        timework = end2 - CurrentAttendance.StartTime.TimeOfDay;
-                        tempOT = time - end2;
-                    }
+                    tempOT = time - CurrentAttendance.StartTime.TimeOfDay;
                 }
                 else
                 {
-
-                    //nếu về sớm
-                    if (end2 > time)
-                    {
-                        timework = time - start2;
-
-                    }
-                    else
-                    {
-                        timework = end2 - start2;
-                        tempOT = time - end2;
-                    }
+                    tempOT = time - start2;
                 }
-                double final = 0;
+                
                 double OtHour = 0;
-                if (OtRequest == null) //nếu KO có yêu cầu làm thêm giờ
-                {
-                    final = timework.TotalSeconds / 3600.0;
-                }
-                else //nếu có yêu cầu làm thêm giờ
-                {
-                    final = timework.TotalSeconds / 3600.0;
+               
                     OtHour = tempOT.TotalSeconds / 3600.0;
                     if (OtHour > OtRequest.Hours)
                     {
                         OtHour = OtRequest.Hours;
                     }
-                }
 
                 //ở đây thì h OT đã làm không thể lớn hơn được H yêu cầu đc vì đã bắt ở ca sáng rồi.
-                if(OtRequest.Hours >= attendance.OverTime)
+                if (OtRequest.Hours >= attendance.OverTime)
                 {
-                    if(OtHour>= OtRequest.Hours - (double)attendance.OverTime)
+                    if (OtHour >= OtRequest.Hours - (double)attendance.OverTime)
                     {
                         OtHour = OtRequest.Hours - (double)attendance.OverTime;
                     }
@@ -243,10 +189,10 @@ public class UpdateAttendanceForWorkAfternoonHandler : IRequestHandler<UpdateAtt
                     OtHour = 0;
                 }
                 CurrentAttendance.EndTime = request.DayTime;
-                CurrentAttendance.TimeWork = final;
+                CurrentAttendance.TimeWork = 0;
                 CurrentAttendance.OverTime = OtHour;
             }
-            
+
         }
         else
         {
@@ -256,3 +202,4 @@ public class UpdateAttendanceForWorkAfternoonHandler : IRequestHandler<UpdateAtt
         return Unit.Value;
     }
 }
+
