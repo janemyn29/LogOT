@@ -84,20 +84,21 @@ public class AttendanceEmployeeController : ApiControllerBase
         var user = await _userManager.FindByNameAsync(username);
         try
         {
+            string result = null;
             //test result: Morning (pass: đã test kỹ)
             //test result: Full (pass: đã test )
             var annualDay = await Mediator.Send(new GetAnnualByDayRequest { Date = now });
             if(annualDay.ShiftType == ShiftType.Full)
             {
-                string result = await _attendance.AttendanceFullDay(now, user);
+                result = await _attendance.AttendanceFullDay(now, user);
             }else if(annualDay.ShiftType == ShiftType.Morning)
             {
-                string result = await _attendance.AttendanceMorningOnly(now, user);
+                 result = await _attendance.AttendanceMorningOnly(now, user);
             }else if(annualDay.ShiftType == ShiftType.Afternoon)
             {
-                string result = await _attendance.AttendanceAfternoonOnly(now, user);
+                 result = await _attendance.AttendanceAfternoonOnly(now, user);
             }else if(annualDay.ShiftType == ShiftType.NotWork) {
-                string result = await _attendance.AttendanceNotWork(now, user);
+                 result = await _attendance.AttendanceNotWork(now, user);
             }
             return Ok(result);
         }
