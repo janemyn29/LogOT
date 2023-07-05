@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 namespace mentor_v1.Domain.Enums;
 public enum RequestStatus
 {
-    Pending = 0,
-    Done = 1,
-    Deny = 2,
+    Pending = 1,
+    Done = 2,
+    Deny = 3,
 
 }
 
