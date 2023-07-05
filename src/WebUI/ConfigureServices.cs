@@ -11,6 +11,7 @@ using Serilog;
 using Hangfire;
 using WebUI.Services.ContractServices;
 using WebUI.Services.JobServices;
+using WebUI.Services.AttendanceServices;
 
 namespace WebUI;
 
@@ -42,6 +43,8 @@ public static class ConfigureServices
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddTransient<IContracService, ContractService>();
         services.AddTransient<IJobService, JobService>();
+        services.AddTransient<IAttendanceService, AttendanceService>();
+
         services.AddDistributedMemoryCache();
         services.AddHealthChecks()
             .AddDbContextCheck<ApplicationDbContext>();

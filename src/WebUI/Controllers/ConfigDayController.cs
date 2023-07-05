@@ -19,7 +19,7 @@ namespace WebUI.Controllers;
 public class ConfigDayController : ApiControllerBase
 {
     [HttpGet]
-    [Route("/Config/ShiftDay")]
+    [Route("/Config/WorkDay")]
     public async Task<IActionResult> Index()
     {
         var list = await Mediator.Send(new GetListConfigDayRequest { Page = 1, Size = 10 });
@@ -27,11 +27,12 @@ public class ConfigDayController : ApiControllerBase
     }
 
     [HttpPost]
-    [Route("/Config/ShiftDay/Update")]
+    [Route("/Config/WorkDay/Update")]
     public async Task<IActionResult> Update([FromBody] UpdateConfidDayCommand  config)
     {
         try
         {
+            //nếu cập nhật thì xóa hết các annual sau ngày sau ngày sửa. thêm thông báo thêm lại annual.
             await Mediator.Send(new UpdateConfidDayCommand { Normal = config.Normal, Holiday = config.Holiday, Saturday = config.Saturday, Sunday = config.Sunday });
             return Ok("Cập nhật cấu hình ca làm việc thành công!");
 

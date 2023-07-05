@@ -122,7 +122,7 @@ public class AnnualWorkingDayController : ApiControllerBase
     [Route("/Annual/GetByMonth")]
 
     //[Authorize(Policy = "Manager")]
-    public async Task<IActionResult> GetByMonth([FromBody] int Month, int Year)
+    public async Task<IActionResult> GetByMonth( int Month, int Year)
     {
         try
         {

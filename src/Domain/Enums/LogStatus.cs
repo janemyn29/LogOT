@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 namespace mentor_v1.Domain.Enums;
 public enum LogStatus
 {
-    Request = 0,
-    Approved = 1,
-    Cancel = 2
+    Request = 1,
+    Approved = 2,
+    Cancel = 3,
+    NoAction = 4
 }
 

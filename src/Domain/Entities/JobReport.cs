@@ -14,5 +14,7 @@ public class JobReport :BaseAuditableEntity
     public ActionType ActionType { get; set; }
 
     public IList<ExcelContract> ExcelContracts { get; init; }
+    public IList<ExcelEmployeeQuit> ExcelEmployeeQuits { get; init; }
+
 
 }

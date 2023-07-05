@@ -44,10 +44,10 @@ public class UpdateLeaveLogCommandHandler : IRequestHandler<UpdateLeaveLogComman
             throw new NotFoundException(nameof(Domain.Entities.LeaveLog), request.Id);
         }
 
-        CurrentLeaveLog.StartDate = request.updateLeaveLogViewModel.StartDate;
+       /* CurrentLeaveLog.StartDate = request.updateLeaveLogViewModel.StartDate;
         CurrentLeaveLog.EndDate = request.updateLeaveLogViewModel.EndDate;
         CurrentLeaveLog.LeaveHours = request.updateLeaveLogViewModel.LeaveHours;
-        CurrentLeaveLog.Reason = request.updateLeaveLogViewModel.Reason;
+        CurrentLeaveLog.Reason = request.updateLeaveLogViewModel.Reason;*/
         await _context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;
