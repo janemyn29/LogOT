@@ -5,6 +5,8 @@ using mentor_v1.Application.Department.Queries.GetDepartment;
 using mentor_v1.Application.DepartmentAllowance.Queries.GetDepartmentAllowanceWithRelativeObject;
 using mentor_v1.Application.Dependent.Queries;
 using mentor_v1.Application.Payday.Queries;
+using mentor_v1.Application.Payslip.Commands.Create;
+using mentor_v1.Application.Payslip.Queries;
 using mentor_v1.Application.Payslip.Queries.GetList;
 using mentor_v1.Application.ShiftConfig.Queries;
 using mentor_v1.Domain.Entities;
@@ -31,7 +33,7 @@ public class PayslipService : IPayslipService
 
         return null;
     }
-    public async Task<string> GrossToNet(ApplicationUser user, DefaultConfig defaultConfig, List<DetailTaxIncome> taxIncome, List<Exchange> exchange, RegionalMinimumWage regional, InsuranceConfig insuranceConfig , DateTime tempNow, List<ShiftConfig> shiftConfig,EmployeeContract contract)
+    public async Task<string> GrossToNetPending(ApplicationUser user, DefaultConfig defaultConfig, List<DetailTaxIncome> taxIncome, List<Exchange> exchange, RegionalMinimumWage regional, InsuranceConfig insuranceConfig, DateTime tempNow, List<ShiftConfig> shiftConfig, EmployeeContract contract)
     {
         //lấy ngày trả lương trước hoặc ngày bắt đầu hợp đồng hoặc payday
 
@@ -47,7 +49,6 @@ public class PayslipService : IPayslipService
         double BHXH_Comp_Amount = 0;
         double BHYT_Comp_Amount = 0;
         double BHTN_Comp_Amount = 0;
-        double BHCD_Comp_Amount = 0;
 
         double PersonalDeduction = 0;
         double DependanceDeduction = 0;
@@ -82,25 +83,34 @@ public class PayslipService : IPayslipService
         }
         DateTime lastPay = now.AddMonths(-1); //này bắt đầu tisng lương = lastPay + 1 ngày;
         var listPayday = await _mediator.Send(new GetListPaydayRequest { });
-        var lastPayday = listPayday.OrderByDescending(x=>x.PaymentDay).FirstOrDefault();
-        if(lastPayday != null)
+        var lastPayday = listPayday.OrderByDescending(x => x.PaymentDay).FirstOrDefault();
+        if (lastPayday != null)
         {
             if (now.Date <= lastPayday.PaymentDay.Date || now.Date <= contract.StartDate)
             {
                 throw new Exception("Ngày tính lương không thể trùng với ngày trả lương lần trước hoặc ngày bắt đầu hợp đồng");
             }
         }
-        var listAnnualDay = await _mediator.Send(new GetListAnnualByDayToDayRequest { FromDate = lastPay, ToDate = yesterday });
+        //nếu ngày bắt đầu của hợp đồng là giữa tháng.
+        if (contract.StartDate.Value.Day > lastPay.Day && contract.StartDate.Value.Month == lastPay.Month && contract.StartDate.Value.Year == lastPay.Year)
+        {
+            lastPay = contract.StartDate.Value.Date;
+        }
+        var listAnnualDay = await _mediator.Send(new GetListAnnualByDayToDayRequest { FromDate = lastPay.Date, ToDate = yesterday.Date });
         double defaultWorkingHour = 0;
         double totalWorkingHour = 0;
         double OTHour = 0;
+        double LeaveHour = 0;
+
+        double CofieOT = 0;
+
 
         var listAttendance = await _mediator.Send(new GetListAttendanceByUserNoVm { UserId = user.Id });
         var finalList = listAttendance.Where(x => x.Day.Date >= lastPay.Date && x.Day.Date <= yesterday.Date).ToList();
 
         foreach (var item in listAnnualDay)
         {
-            var morningAttendance = finalList.Where(x=>x.Day.Date == item.Day.Date && x.ShiftEnum == ShiftEnum.Morning).FirstOrDefault();
+            var morningAttendance = finalList.Where(x => x.Day.Date == item.Day.Date && x.ShiftEnum == ShiftEnum.Morning).FirstOrDefault();
             var affternoonAttendance = finalList.Where(x => x.Day.Date == item.Day.Date && x.ShiftEnum == ShiftEnum.Afternoon).FirstOrDefault();
 
             var morning = shiftConfig.Where(x => x.ShiftEnum == ShiftEnum.Morning).FirstOrDefault();
@@ -120,6 +130,7 @@ public class PayslipService : IPayslipService
                     totalWorkingHour = (double)(totalWorkingHour + affternoonAttendance.TimeWork);
                     OTHour = (double)(OTHour + affternoonAttendance.OverTime);
                 }
+                CofieOT = CofieOT + TotalOTWage(item, morningAttendance, affternoonAttendance);
             }
             else if (item.ShiftType == ShiftType.Morning)
             {
@@ -132,6 +143,8 @@ public class PayslipService : IPayslipService
                 {
                     OTHour = (double)(OTHour + affternoonAttendance.OverTime);
                 }
+                CofieOT = CofieOT + TotalOTWage(item, morningAttendance, affternoonAttendance);
+
             }
             else if (item.ShiftType == ShiftType.Afternoon)
             {
@@ -145,10 +158,11 @@ public class PayslipService : IPayslipService
                     totalWorkingHour = (double)(totalWorkingHour + affternoonAttendance.TimeWork);
                     OTHour = (double)(OTHour + affternoonAttendance.OverTime);
                 }
+                CofieOT = CofieOT + TotalOTWage(item, morningAttendance, affternoonAttendance);
+
             }
-            else if (item.ShiftType == ShiftType.Afternoon)
+            else if (item.ShiftType == ShiftType.NotWork)
             {
-                defaultWorkingHour = defaultWorkingHour + afternoonHour;
                 if (morningAttendance != null && morningAttendance.OverTime != null)
                 {
                     OTHour = (double)(OTHour + morningAttendance.OverTime);
@@ -157,6 +171,8 @@ public class PayslipService : IPayslipService
                 {
                     OTHour = (double)(OTHour + affternoonAttendance.OverTime);
                 }
+                CofieOT = CofieOT + TotalOTWage(item, morningAttendance, affternoonAttendance);
+
             }
         }
 
@@ -176,14 +192,18 @@ public class PayslipService : IPayslipService
         }
 
         var finalHour = totalWorkingHour + MaternityHour;
-        double salaryPerHour =(double)(contract.BasicSalary / defaultWorkingHour);
+        double salaryPerHour = (double)(contract.BasicSalary / defaultWorkingHour);
         double totalSalary = Math.Round(salaryPerHour * finalHour);
         double leaveDeduction = (double)(contract.BasicSalary - totalSalary);
-        if(leaveDeduction <=1)
+        if (leaveDeduction <= 1)
         {
             leaveDeduction = 0;
         }
-
+        LeaveHour = defaultWorkingHour - totalWorkingHour;
+        if (LeaveHour == 0)
+        {
+            leaveDeduction = 0;
+        }
         //tính bảo hiểm:
         BHXH_Emp_Amount = Math.Round((salaryTax * insuranceConfig.BHXH_Emp / 100));
         BHYT_Emp_Amount = Math.Round((salaryTax * insuranceConfig.BHYT_Emp / 100));
@@ -205,23 +225,23 @@ public class PayslipService : IPayslipService
         int numOfDependance = 0;
         if (listDependance != null)
         {
-            numOfDependance = listDependance.Where(x=>x.AcceptanceType == AcceptanceType.Accept).Count();
+            numOfDependance = listDependance.Where(x => x.AcceptanceType == AcceptanceType.Accept).Count();
         }
 
-        if (numOfDependance>0)
+        if (numOfDependance > 0)
         {
             DependanceDeduction = Math.Round(defaultConfig.DependentTaxDeduction * numOfDependance);
         }
 
         // thu nhập chịu thuế = thu nhập trước thuế - giảm trừ gia cảnh bản thân và giảm trừ người phụ thuộc
-        var TNCT =(double) TNTT - PersonalDeduction - DependanceDeduction;
+        var TNCT = (double)TNTT - PersonalDeduction - DependanceDeduction;
         if (TNCT < 0)
         {
             TNCT = 0;
         }
         DetailTaxIncome tax;
-        var listTax = taxIncome.Where(x => x.Muc_chiu_thue_From < TNCT ).ToList();
-        if (listTax.Count >1)
+        var listTax = taxIncome.Where(x => x.Muc_chiu_thue_From < TNCT).ToList();
+        if (listTax.Count > 1)
         {
             tax = taxIncome.Where(x => x.Muc_chiu_thue_From < TNCT && x.Muc_chiu_thue_To >= TNCT).FirstOrDefault();
         }
@@ -231,16 +251,21 @@ public class PayslipService : IPayslipService
         }
         // double TotalTaxIncome =Math.Round( (TNCT * tax.Thue_suat/100) - tax.He_so_tru);
         double TotalTaxIncome = 0;
-        List <DetailTax> DetailTaxs = new List<DetailTax>();
-        foreach (var item in taxIncome.OrderBy(x=>x.Thue_suat))
+
+        List<DetailTax> DetailTaxs = new List<DetailTax>();
+        if (TNCT == 0)
+        {
+            tax = taxIncome.OrderBy(x => x.Thue_suat).FirstOrDefault();
+        }
+        foreach (var item in taxIncome.OrderBy(x => x.Thue_suat))
         {
             var taxDetail = new DetailTax();
-            if(item.Thue_suat < tax.Thue_suat)
+            if (item.Thue_suat < tax.Thue_suat)
             {
                 taxDetail.Muc_chiu_thue_From = item.Muc_chiu_thue_From;
-                taxDetail.Muc_chiu_thue_To =item.Muc_chiu_thue_To;
+                taxDetail.Muc_chiu_thue_To = item.Muc_chiu_thue_To;
                 taxDetail.Thue_suat = item.Thue_suat;
-                if(taxDetail.Muc_chiu_thue_To != null)
+                if (taxDetail.Muc_chiu_thue_To != null)
                 {
                     taxDetail.TaxAmount = Math.Round((double)((item.Muc_chiu_thue_To - item.Muc_chiu_thue_From) * item.Thue_suat / 100));
                 }
@@ -250,7 +275,7 @@ public class PayslipService : IPayslipService
                 taxDetail.Muc_chiu_thue_From = item.Muc_chiu_thue_From;
                 taxDetail.Muc_chiu_thue_To = item.Muc_chiu_thue_To;
                 taxDetail.Thue_suat = item.Thue_suat;
-                taxDetail.TaxAmount =0;
+                taxDetail.TaxAmount = 0;
             }
             else
             {
@@ -263,10 +288,9 @@ public class PayslipService : IPayslipService
             DetailTaxs.Add(taxDetail);
         }
 
-
         //tính cấc khoản trợ cấp , phụ cấp + tính các khoản
         var listAllowance = contract.AllowanceEmployees;
-        double  totalAllowance= 0;
+        double totalAllowance = 0;
         if (listAllowance != null)
         {
             foreach (var item in listAllowance)
@@ -277,21 +301,100 @@ public class PayslipService : IPayslipService
         double totalDepartmentAllowance = 0;
 
         var departmentAllowance = await _mediator.Send(new GetDepartmentAllowanceByDepartmentIdRequest { Id = user.Position.DepartmentId });
-        if(departmentAllowance != null)
+        if (departmentAllowance != null)
         {
             foreach (var item in departmentAllowance)
             {
                 totalDepartmentAllowance = totalDepartmentAllowance + item.Subsidize.Amount;
             }
         }
+        /*        double OTWage = Math.Round(OTHour * salaryPerHour );*/
+        double TNST = TNCT - TotalTaxIncome;
+        double OTwage = Math.Round(CofieOT * salaryPerHour);
+        double netSalary = (double)(TNTT - TotalTaxIncome + totalAllowance + totalDepartmentAllowance + OTwage);
 
-        double netSalary = TNCT - TotalTaxIncome + totalAllowance + totalDepartmentAllowance;
+        //tính bảo hiểm:
+        BHXH_Comp_Amount = Math.Round((salaryTax * insuranceConfig.BHXH_Comp / 100));
+        BHYT_Comp_Amount = Math.Round((salaryTax * insuranceConfig.BHYT_Comp / 100));
+        BHTN_Comp_Amount = Math.Round((salaryTax * insuranceConfig.BHTN_Comp / 100));
 
-        return netSalary.ToString();
+        var totalBH_Comp = BHXH_Comp_Amount + BHYT_Comp_Amount + BHTN_Comp_Amount;
+
+        PayslipViewModel payslip = new PayslipViewModel();
+        payslip.EmployeeContractId = contract.Id;
+        payslip.Code = contract.ContractCode;
+        payslip.FromTime = lastPay.Date;
+        payslip.ToTime = yesterday.Date;
+        payslip.PaydayCal = now;
+        payslip.SalaryPerHour = salaryPerHour;
+        payslip.Standard_Work_Hours = defaultWorkingHour;
+        payslip.Actual_Work_Hours = totalWorkingHour;
+        payslip.Ot_Hours = OTHour;
+        payslip.Leave_Hours = LeaveHour;
+        payslip.DefaultSalary = contract.BasicSalary;
+        payslip.SalaryType = contract.SalaryType;
+        payslip.InsuranceType = contract.InsuranceType;
+        payslip.InsuranceAmount = salaryTax;
+        payslip.isPersonalTaxDeduction = contract.isPersonalTaxDeduction;
+        payslip.PersonalTaxDeductionAmount = PersonalDeduction;
+        payslip.DependentTaxDeductionAmount = DependanceDeduction;
+        payslip.RegionType = regional.RegionType;
+        payslip.RegionMinimumWage = regional.Amount;
+        payslip.IsMaternity = user.IsMaternity;
+        payslip.MaternityHour = MaternityHour;
+
+        payslip.BHXH_Emp_Amount = BHXH_Emp_Amount;
+        payslip.BHYT_Emp_Amount = BHYT_Emp_Amount;
+        payslip.BHTN_Emp_Amount = BHTN_Emp_Amount;
+        payslip.BHXH_Emp_Percent = insuranceConfig.BHXH_Emp;
+        payslip.BHYT_Emp_Percent = insuranceConfig.BHYT_Emp;
+        payslip.BHTN_Emp_Percent = insuranceConfig.BHTN_Emp;
+
+        payslip.BHXH_Comp_Amount = BHXH_Comp_Amount;
+        payslip.BHYT_Comp_Amount = BHYT_Comp_Amount;
+        payslip.BHTN_Comp_Amount = BHTN_Comp_Amount;
+        payslip.BHXH_Comp_Percent = insuranceConfig.BHXH_Comp;
+        payslip.BHYT_Comp_Percent = insuranceConfig.BHYT_Comp;
+        payslip.BHTN_Comp_Percent = insuranceConfig.BHTN_Comp;
+
+        payslip.TotalInsuranceEmp = totalBH_Emp;
+        payslip.TotalInsuranceComp = totalBH_Comp;
+
+        payslip.LeaveWageDeduction = leaveDeduction;
+        payslip.TaxableSalary = TNCT;
+        payslip.NumberOfDependent = numOfDependance;
+        payslip.TotalDependentAmount = DependanceDeduction;
+        payslip.TNTT = TNTT;
+        payslip.TotalTaxIncome = TotalTaxIncome;
+
+        payslip.AfterTaxSalary = TNST;
+        payslip.TotalDepartmentAllowance = totalDepartmentAllowance;
+        payslip.TotalContractAllowance = totalAllowance;
+
+        payslip.OTWage = OTwage;
+        payslip.FinalSalary = netSalary;
+        payslip.Note = "Bảng lương nhân viên từ ngày " + lastPay.Date.ToString("dd/MM/yyy") + " đến ngày " + yesterday.ToString("dd/MM/yyyy") + ".";
+
+        payslip.BankName = user.BankName;
+        payslip.BankAcountName = user.BankAccountName;
+        payslip.BankAcountNumber = user.BankAccountNumber;
+
+        try
+        {
+            await _mediator.Send(new CreatePayslipCommand { payslip = payslip });
+
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+
+        return "Tạo thành công";
+
     }
 
 
-    public int CountDay(DateTime fromDate , DateTime toDate)
+    public int CountDay(DateTime fromDate, DateTime toDate)
     {
 
         // Tính số ngày giữa hai ngày
@@ -300,7 +403,7 @@ public class PayslipService : IPayslipService
         return soNgay;
     }
 
-    public double CountHour (DateTime fromDate , DateTime toDate)
+    public double CountHour(DateTime fromDate, DateTime toDate)
     {
         // Tính khoảng thời gian giữa hai thời điểm
         TimeSpan khoangThoiGian = toDate - fromDate;
@@ -308,5 +411,164 @@ public class PayslipService : IPayslipService
         // Chuyển đổi số giờ thành dạng double
         double soGio = khoangThoiGian.TotalHours;
         return soGio;
+    }
+
+    public double TotalOTWage(AnnualWorkingDay item, Attendance morning, Attendance afternoon)
+    {
+        double OTNormal = 0;
+        double OTSaturday = 0;
+        double OTSunday = 0;
+        double OTHoliday = 0;
+
+        if (item.TypeDate == TypeDate.Normal)
+        {
+            if (morning != null && morning.OverTime != null)
+            {
+                OTNormal = morning.OverTime.Value;
+            }
+            if (afternoon != null && afternoon.OverTime != null)
+            {
+                OTNormal = OTNormal +  afternoon.OverTime.Value;
+            }
+
+        }
+        else if (item.TypeDate == TypeDate.Saturday)
+        {
+            if (morning != null && morning.OverTime != null)
+            {
+                OTSaturday = morning.OverTime.Value;
+            }
+            if (afternoon != null && afternoon.OverTime != null)
+            {
+                OTSaturday = OTSaturday +  afternoon.OverTime.Value;
+            }
+        }
+        else if (item.TypeDate == TypeDate.Sunday)
+        {
+            if (morning != null && morning.OverTime != null)
+            {
+                OTSunday = morning.OverTime.Value;
+            }
+            if (afternoon != null && afternoon.OverTime != null)
+            {
+                OTSunday = OTSunday + afternoon.OverTime.Value;
+            }
+        }
+        else
+        {
+            if (morning != null && morning.OverTime != null)
+            {
+                OTHoliday = morning.OverTime.Value;
+            }
+            if (afternoon != null && afternoon.OverTime != null)
+            {
+                OTHoliday = OTHoliday + afternoon.OverTime.Value;
+            }
+        }
+
+        double final = OTNormal * item.Coefficient.AmountCoefficient + OTSaturday * item.Coefficient.AmountCoefficient + OTSunday * item.Coefficient.AmountCoefficient + OTHoliday * item.Coefficient.AmountCoefficient;
+        return final;
+    }
+
+
+
+    public async Task<double> ExchangeFromNetToGross(List<Exchange> exchanges, InsuranceConfig insuranceConfig, EmployeeContract contract, ApplicationUser user, RegionalMinimumWage regional, DefaultConfig defaultConfig)
+    {
+        if(contract.SalaryType == SalaryType.Gross)
+        {
+            throw new Exception("Lương Gross rồi!");
+        }
+        else
+        {
+            //tính người phụ thuộc.
+            double DependanceDeduction = 0;
+            var listDependance = await _mediator.Send(new GetDependantByUserIdRequest { UserId = user.Id });
+            int numOfDependance = 0;
+            if (listDependance != null)
+            {
+                numOfDependance = listDependance.Where(x => x.AcceptanceType == AcceptanceType.Accept).Count();
+            }
+
+            if (numOfDependance > 0)
+            {
+                DependanceDeduction = Math.Round(defaultConfig.DependentTaxDeduction * numOfDependance);
+            }
+
+            //Tính giảm trừ gia cảnh bản thân: 
+            double PersonalDeduction = 0;
+
+            if (contract.isPersonalTaxDeduction)
+            {
+                PersonalDeduction = Math.Round(defaultConfig.PersonalTaxDeduction);
+            }
+
+            double Gross = 0;
+            //B1: tính thu nhập quay đổi:
+            double TNQD = (double)(contract.BasicSalary - DependanceDeduction - PersonalDeduction);
+
+            if(TNQD <= 0)
+            {
+                TNQD = 0;
+            }
+            Exchange exChange = new Exchange();
+            List<Exchange> finalListEx = new List<Exchange>();
+
+            if (TNQD <= 0) {
+                exChange= exchanges.OrderBy(x=>x.Thue_Suat).FirstOrDefault();
+            }
+            else
+            {
+                finalListEx = exchanges.Where(x => x.Muc_Quy_Doi_From < TNQD).ToList();
+                if (finalListEx.Count() == 1)
+                {
+                    exChange = finalListEx.FirstOrDefault();
+                }
+                else
+                {
+                    exChange = finalListEx.Where(x=>x.Muc_Quy_Doi_To>=TNQD && x.Muc_Quy_Doi_From < TNQD).FirstOrDefault();
+                }
+            }
+
+            double TNCT = Math.Round( (TNQD - exChange.Giam_Tru) / exChange.Thue_Suat);
+
+            double TNTT = TNCT + PersonalDeduction + DependanceDeduction;
+
+            double salaryIns = 0;
+            double InsCoe = (insuranceConfig.BHXH_Emp + insuranceConfig.BHYT_Emp + insuranceConfig.BHTN_Emp)/100;
+            double TotalBH = 0;
+
+            if (contract.InsuranceType == InsuranceType.BaseOnMinimum)
+            {
+                salaryIns = regional.Amount;
+                TotalBH = Math.Round(salaryIns * InsCoe);
+                Gross = TNTT + TotalBH;
+                return Gross;
+            }
+            else if(contract.InsuranceType == InsuranceType.BaseOnOtherAmount)
+            {
+                salaryIns = regional.Amount;
+                TotalBH = Math.Round(salaryIns * InsCoe);
+                Gross = TNTT + TotalBH;
+                return Gross;
+
+            }
+            else
+            {
+                double tempGross = Math.Round(TNTT / (1 - InsCoe));
+                if(tempGross > defaultConfig.BaseSalary * defaultConfig.InsuranceLimit)
+                {
+                    salaryIns = defaultConfig.BaseSalary * defaultConfig.InsuranceLimit;
+                    TotalBH = Math.Round(salaryIns * InsCoe);
+                    Gross = TNTT + TotalBH;
+                    return Gross;
+                }
+                else
+                {
+                    Gross = tempGross;
+                    return Gross;
+                }
+            }
+        }
+        
     }
 }

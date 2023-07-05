@@ -39,12 +39,16 @@ public class PayslipController : ApiControllerBase
         var insuranceConfig = await Mediator.Send(new GetInsuranceConfigRequest { });
         foreach (var item in listUser)
         {
+            //hd dang pending 
+
             var contract = await Mediator.Send(new GetContractByUserRequest { UserId = item.Id });
             var finalContract = contract.Where(x=>x.Status == EmployeeContractStatus.Pending).FirstOrDefault();
             if(item.UserName == "string")
             {
-                var total = await _payslipService.GrossToNet(item, defaultConfig, tax, exchange, regionWage, insuranceConfig, DateTime.Parse("2023-07-01"), shiftConfig, finalContract);
+                var total = await _payslipService.GrossToNetPending(item, defaultConfig, tax, exchange, regionWage, insuranceConfig, DateTime.Parse("2023-07-01"), shiftConfig, finalContract);
             }
+
+            //đã hết hạn trong tháng trước//tính lại lương => ....
         }
 
         return Ok();

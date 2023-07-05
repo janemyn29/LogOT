@@ -31,7 +31,7 @@ public class GetListAnnualByDayToDayRequestHandler : IRequestHandler<GetListAnnu
     {
 
         //get Attendance by ?
-        var item = _applicationDbContext.Get<Domain.Entities.AnnualWorkingDay>().Where(x => x.IsDeleted == false && x.Day.Date>= request.FromDate && x.Day.Date<=request.ToDate).OrderBy(x => x.Day).AsNoTracking().ToList();
+        var item = _applicationDbContext.Get<Domain.Entities.AnnualWorkingDay>().Include(x=>x.Coefficient).Where(x => x.IsDeleted == false && x.Day.Date>= request.FromDate && x.Day.Date<=request.ToDate).OrderBy(x => x.Day).AsNoTracking().ToList();
         return Task.FromResult(item);
     }
 }
