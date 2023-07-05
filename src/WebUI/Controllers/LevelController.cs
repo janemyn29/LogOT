@@ -91,7 +91,7 @@ public class LevelController : ApiControllerBase
     #endregion
 
     #region updateLevel
-    [Authorize("Manager")]
+    [Authorize(Roles = "Manager")]
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] LevelViewModel model)
     {
@@ -125,7 +125,7 @@ public class LevelController : ApiControllerBase
     #endregion
 
     #region deleteLevel
-    //[Authorize ("Manager")]
+    [Authorize(Roles = "Manager")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete (Guid id)
     {
