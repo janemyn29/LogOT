@@ -144,8 +144,7 @@ public class SubsidizeController : ApiControllerBase
             model.Position = position;
             model.User = user;
             var departmentAllowance = await Mediator.Send(new GetDepartmentAllowanceByDepartmentIdRequest { Id = model.Position.DepartmentId });
-            var subsidize = await Mediator.Send(new GetSubsidizeByIdRequest { Id = Guid.Parse(departmentAllowance.SubsidizeId) });
-            return Ok(subsidize);
+            return Ok(departmentAllowance);
         }
         catch (Exception)
         {

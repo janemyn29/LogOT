@@ -9,6 +9,7 @@ using mentor_v1.Domain.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace WebUI.Controllers;
@@ -34,7 +35,7 @@ public class AccountController : ApiControllerBase
         try
         {
             var username = GetUserName();
-            var user = await _userManager.FindByNameAsync(username);
+            var user = await _userManager.Users.Include(x=>x.Position).FirstOrDefaultAsync(c=>c.UserName.Equals(username));
             return Ok(user);
         }
         catch (Exception ex)

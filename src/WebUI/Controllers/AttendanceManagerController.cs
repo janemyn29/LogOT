@@ -60,34 +60,39 @@ public class AttendanceManagerController : ApiControllerBase
         var listUser = await _userManager.GetUsersInRoleAsync("Employee");
         foreach (var item in listUser)
         {
-            for(int i = 0; i < distance; i++)
+            if(item.UserName == "string")
             {
-
-                var date = tempDate.AddHours(8);
-
-                await Mediator.Send(new CreateAttendanceManualCommand
+                for (int i = 0; i < distance; i++)
                 {
-                    ApplicationUserId = item.Id,
-                    Day = tempDate,
-                    StartTime = date,
-                    EndTime = date.AddHours(4),
 
-                    ShiftEnum = mentor_v1.Domain.Enums.ShiftEnum.Morning,
-                     OtHour = 0, WorkHour = 4
-                }) ;
+                    var date = tempDate.AddHours(8);
 
-                await Mediator.Send(new CreateAttendanceManualCommand
-                {
-                    ApplicationUserId = item.Id,
-                    Day = tempDate,
-                    StartTime = date.AddHours(5).AddMinutes(30),
-                    EndTime = date.AddHours(9).AddMinutes(30),
-                    ShiftEnum = mentor_v1.Domain.Enums.ShiftEnum.Afternoon,
-                    OtHour = 0,
-                    WorkHour = 4
-                });
-                tempDate = tempDate.AddDays(1);
+                    await Mediator.Send(new CreateAttendanceManualCommand
+                    {
+                        ApplicationUserId = item.Id,
+                        Day = tempDate,
+                        StartTime = date,
+                        EndTime = date.AddHours(4),
+
+                        ShiftEnum = mentor_v1.Domain.Enums.ShiftEnum.Morning,
+                        OtHour = 0,
+                        WorkHour = 4
+                    });
+
+                    await Mediator.Send(new CreateAttendanceManualCommand
+                    {
+                        ApplicationUserId = item.Id,
+                        Day = tempDate,
+                        StartTime = date.AddHours(5).AddMinutes(30),
+                        EndTime = date.AddHours(9).AddMinutes(30),
+                        ShiftEnum = mentor_v1.Domain.Enums.ShiftEnum.Afternoon,
+                        OtHour = 0,
+                        WorkHour = 4
+                    });
+                    tempDate = tempDate.AddDays(1);
+                }
             }
+            
 
         }
         return Ok();

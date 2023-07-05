@@ -49,8 +49,6 @@ public class AttendanceEmployeeController : ApiControllerBase
         return Ok(listAttendance);
     }
 
-
-
     [HttpPost]
     [Authorize(Roles = "Employee")]
     [Route("/AttendanceEmployee/Create")]

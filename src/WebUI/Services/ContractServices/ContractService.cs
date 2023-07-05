@@ -114,6 +114,12 @@ public class ContractService : IContracService
             var item = "Với hình thức đóng bảo hiểm dựa trên số khác yêu cầu phải cung cấp mức đóng bảo hiểm!";
             errors.Add(item);
         }
+        var defaultConfig = await _mediator.Send(new GetDefaultConfigRequest { });
+        if(model.InsuranceType == InsuranceType.BaseOnOtherAmount && model.InsuranceAmount> defaultConfig.InsuranceLimit * defaultConfig.BaseSalary)
+        {
+            var item = "Với hình thức đóng bảo hiểm dựa trên số khác, Mức đóng bảo hiểm không quá "+defaultConfig.InsuranceLimit+ " lần mức lương cơ sở (Mức lương cơ sở: "+defaultConfig.BaseSalary+" VNĐ)!";
+            errors.Add(item);
+        }
         var listExp = _context.Get<EmployeeContract>().Where(x => x.ApplicationUserId == user.Id && x.IsDeleted == false && x.ContractType == ContractType.FixedTerm).ToList();
         if (listExp != null && listExp.Count >= 2 && model.ContractType == ContractType.FixedTerm)
         {
@@ -183,6 +189,13 @@ public class ContractService : IContracService
         if (model.InsuranceType == InsuranceType.BaseOnOtherAmount && model.InsuranceAmount <= 0)
         {
             var item = "Với hình thức đóng bảo hiểm dựa trên số khác yêu cầu phải cung cấp mức đóng bảo hiểm!";
+            errors.Add(item);
+        }
+
+        var defaultConfig = await _mediator.Send(new GetDefaultConfigRequest { });
+        if (model.InsuranceType == InsuranceType.BaseOnOtherAmount && model.InsuranceAmount > defaultConfig.InsuranceLimit * defaultConfig.BaseSalary)
+        {
+            var item = "Với hình thức đóng bảo hiểm dựa trên số khác, Mức đóng bảo hiểm không quá " + defaultConfig.InsuranceLimit + " lần mức lương cơ sở (Mức lương cơ sở: " + defaultConfig.BaseSalary + " VNĐ)!";
             errors.Add(item);
         }
         try
@@ -290,6 +303,12 @@ public class ContractService : IContracService
         if (model.InsuranceType == InsuranceType.BaseOnOtherAmount && model.InsuranceAmount <= 0)
         {
             var item = "Với hình thức đóng bảo hiểm dựa trên số khác yêu cầu phải cung cấp mức đóng bảo hiểm!";
+            errors.Add(item);
+        }
+        var defaultConfig = await _mediator.Send(new GetDefaultConfigRequest { });
+        if (model.InsuranceType == InsuranceType.BaseOnOtherAmount && model.InsuranceAmount > defaultConfig.InsuranceLimit * defaultConfig.BaseSalary)
+        {
+            var item = "Với hình thức đóng bảo hiểm dựa trên số khác, Mức đóng bảo hiểm không quá " + defaultConfig.InsuranceLimit + " lần mức lương cơ sở (Mức lương cơ sở: " + defaultConfig.BaseSalary + " VNĐ)!";
             errors.Add(item);
         }
         var listExp = _context.Get<EmployeeContract>().Where(x => x.Id != contract.Id && x.ApplicationUserId == user.Id  && x.IsDeleted == false && x.ContractType == ContractType.FixedTerm).ToList();

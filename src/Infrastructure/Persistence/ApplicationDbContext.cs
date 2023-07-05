@@ -56,6 +56,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
     public DbSet<JobReport> JobReports => Set<JobReport>();
     public DbSet<ExcelContract> ExcelContracts => Set<ExcelContract>();
     public DbSet<ExcelEmployeeQuit> ExcelEmployeeQuits => Set<ExcelEmployeeQuit>();
+    public DbSet<InsuranceConfig> InsuranceConfigs => Set<InsuranceConfig>();
+    public DbSet<DetailTax> DetailTaxs => Set<DetailTax>();
 
 
     protected override void OnModelCreating(ModelBuilder builder)
@@ -529,6 +531,27 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
                IsDeleted = false
            }
        );
+
+      
+        builder.Entity<InsuranceConfig>()
+            .HasData(
+            new InsuranceConfig
+            {
+                Id = Guid.Parse("38f2c77a-b5da-484b-a836-3befc8fb9b89"),
+                BHXH_Emp = 8,
+                BHYT_Emp= 1.5,
+                BHTN_Emp = 1,
+                BHXH_Comp = 17.5,
+                BHYT_Comp = 3,
+                BHTN_Comp=0,
+                BHCD_Comp=2,
+                Created = DateTime.Parse("1/1/2023"),
+                CreatedBy = "Test",
+                LastModified = DateTime.Parse("1/1/2023"),
+                LastModifiedBy = "Test",
+                IsDeleted = false
+            }
+        );
         base.OnModelCreating(builder);
     }
 

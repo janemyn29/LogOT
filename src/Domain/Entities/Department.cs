@@ -14,5 +14,6 @@ public class Department : BaseAuditableEntity
     public string Description { get; set; }
 
     public IList<Position> Positions { get; set; }
+    public IList<DepartmentAllowance> DepartmentAllowances { get; private set; }
 
 }

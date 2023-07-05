@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using mentor_v1.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using mentor_v1.Infrastructure.Persistence;
 namespace mentorv1.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230704161907_updateInsurance")]
+    partial class updateInsurance
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -728,49 +731,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.HasIndex("ApplicationUserId");
 
                     b.ToTable("Dependents");
-                });
-
-            modelBuilder.Entity("mentor_v1.Domain.Entities.DetailTax", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("Muc_chiu_thue_From")
-                        .HasColumnType("float");
-
-                    b.Property<double?>("Muc_chiu_thue_To")
-                        .HasColumnType("float");
-
-                    b.Property<Guid>("PayslipId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<double>("TaxAmount")
-                        .HasColumnType("float");
-
-                    b.Property<double>("Thue_suat")
-                        .HasColumnType("float");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PayslipId");
-
-                    b.ToTable("DetailTaxs");
                 });
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.DetailTaxIncome", b =>
@@ -1741,9 +1701,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<int?>("Leave_Hours")
                         .HasColumnType("int");
 
-                    b.Property<double?>("MaternityHour")
-                        .HasColumnType("float");
-
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
@@ -1779,6 +1736,9 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
 
                     b.Property<int?>("Standard_Work_Hours")
                         .HasColumnType("int");
+
+                    b.Property<double>("TaxPercent")
+                        .HasColumnType("float");
 
                     b.Property<double>("TaxableSalary")
                         .HasColumnType("float");
@@ -2062,24 +2022,24 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                             Id = new Guid("8caed193-c40e-448b-bdab-cd7cd4f24844"),
                             Created = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CreatedBy = "Test",
-                            EndTime = new DateTime(2023, 7, 5, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndTime = new DateTime(2023, 7, 4, 12, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             LastModified = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LastModifiedBy = "Test",
                             ShiftEnum = 1,
-                            StartTime = new DateTime(2023, 7, 5, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                            StartTime = new DateTime(2023, 7, 4, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("25482772-d7ac-473b-9548-9ef38dfb1be1"),
                             Created = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CreatedBy = "Test",
-                            EndTime = new DateTime(2023, 7, 5, 17, 30, 0, 0, DateTimeKind.Unspecified),
+                            EndTime = new DateTime(2023, 7, 4, 17, 30, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             LastModified = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LastModifiedBy = "Test",
                             ShiftEnum = 2,
-                            StartTime = new DateTime(2023, 7, 5, 13, 30, 0, 0, DateTimeKind.Unspecified)
+                            StartTime = new DateTime(2023, 7, 4, 13, 30, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
@@ -2491,17 +2451,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Navigation("ApplicationUser");
                 });
 
-            modelBuilder.Entity("mentor_v1.Domain.Entities.DetailTax", b =>
-                {
-                    b.HasOne("mentor_v1.Domain.Entities.PaySlip", "PaySlip")
-                        .WithMany("DetailTaxes")
-                        .HasForeignKey("PayslipId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("PaySlip");
-                });
-
             modelBuilder.Entity("mentor_v1.Domain.Entities.EmployeeContract", b =>
                 {
                     b.HasOne("mentor_v1.Domain.Identity.ApplicationUser", "ApplicationUser")
@@ -2727,11 +2676,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("mentor_v1.Domain.Entities.Level", b =>
                 {
                     b.Navigation("Positions");
-                });
-
-            modelBuilder.Entity("mentor_v1.Domain.Entities.PaySlip", b =>
-                {
-                    b.Navigation("DetailTaxes");
                 });
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.Position", b =>
