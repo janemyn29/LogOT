@@ -1,11 +1,11 @@
 ﻿using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.Interfaces;
-using mentor_v1.Application.Common.Security;
 using mentor_v1.Application.Level.Commands.CreateLevel;
 using mentor_v1.Application.Level.Commands.DeleteLevel;
 using mentor_v1.Application.Level.Commands.UpdateLevel;
 using mentor_v1.Application.Level.Queries.GetLevel;
 using mentor_v1.Application.Level.Queries.GetLevelWithRelativeObject;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers;
@@ -23,7 +23,7 @@ public class LevelController : ApiControllerBase
     }
 
     #region getListLevel
-    //[Authorize(Roles = "Manager")]
+    [Authorize(Roles = "Manager")]
     [HttpGet]
     public async Task<IActionResult> GetLevel()
     {
@@ -33,7 +33,7 @@ public class LevelController : ApiControllerBase
     #endregion
 
     #region getLevelById
-    //[Authorize (Roles = "Manager")]
+    [Authorize(Roles = "Manager")]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetLevelById(Guid id)
     {
@@ -50,9 +50,9 @@ public class LevelController : ApiControllerBase
     #endregion
 
     #region createLevel
-    //[Authorize(Roles = "Manager")]
+    [Authorize(Roles = "Manager")]
     [HttpPost]
-    public async Task<IActionResult> CreateLevel([FromForm] LevelViewModel model)
+    public async Task<IActionResult> CreateLevel([FromBody] LevelViewModel model)
     {
         if (!ModelState.IsValid)
         {
@@ -89,9 +89,9 @@ public class LevelController : ApiControllerBase
     #endregion
 
     #region updateLevel
-    //[Authorize ("Manager")]
+    [Authorize("Manager")]
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(Guid id, LevelViewModel model)
+    public async Task<IActionResult> Update(Guid id, [FromBody] LevelViewModel model)
     {
         if (!ModelState.IsValid)
         {

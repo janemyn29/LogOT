@@ -64,7 +64,7 @@ public class OvertimeLogController : ApiControllerBase
             var user = await _userManager.FindByNameAsync(username);
 
 
-            var listOTLog = await Mediator.Send(new GetOvertimeLogByUserIdRequest() { Page = 1, Size = 10 });
+            var listOTLog = await Mediator.Send(new GetOvertimeLogByUserIdRequest() {id = new Guid(user.Id), Page = 1, Size = 10 });
             return Ok(listOTLog);
 
         }
@@ -76,13 +76,19 @@ public class OvertimeLogController : ApiControllerBase
     #endregion
 
     #region getOvertimeLogById
-    //[Authorize (Roles = "Manager")]
+    [Authorize(Roles = "Manager, Employee")]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetOvertimeLogById(Guid id)
     {
         try
         {
-            var OTLog = Mediator.Send(new GetOvertimeLogByIdRequest() { Id = id });
+            //lấy user từ username ở header
+            var username = GetUserName();
+            var user = await _userManager.FindByNameAsync(username);
+            var role = await _userManager.GetRolesAsync(user);
+            if (role == null) throw new Exception("user chưa có role");
+
+            var OTLog = Mediator.Send(new GetOvertimeLogByIdRequest() { Id = id, user = user, Role = role.FirstOrDefault() });
             return Ok(OTLog);
         }
         catch (Exception)

@@ -26,7 +26,7 @@ public class DeleteLevelCommandHandler : IRequestHandler<DeleteLevelCommand, boo
 
     public async Task<bool> Handle(DeleteLevelCommand request, CancellationToken cancellationToken)
     {
-        var positions = await _context.Get<Domain.Entities.Position>().Where(p => p.LevelId == request.Id && p.IsDeleted == false).FirstOrDefaultAsync();
+        var positions = _context.Get<Domain.Entities.Position>().Where(p => p.LevelId.Equals(request.Id) && p.IsDeleted == false).AsNoTracking().FirstOrDefault();
 
         if (positions != null) 
         {
@@ -36,7 +36,7 @@ public class DeleteLevelCommandHandler : IRequestHandler<DeleteLevelCommand, boo
         var CurrentLevel = await _context.Get<Domain.Entities.Level>()
             .FindAsync(new object[] { request.Id }, cancellationToken);
 
-        if (CurrentLevel == null || positions.IsDeleted == true)
+        if (CurrentLevel == null)
         {
             throw new NotFoundException(nameof(Domain.Entities.Level), request.Id);
         }
