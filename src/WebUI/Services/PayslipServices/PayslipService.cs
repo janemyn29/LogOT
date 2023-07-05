@@ -200,13 +200,12 @@ public class PayslipService : IPayslipService
             PersonalDeduction = Math.Round(defaultConfig.PersonalTaxDeduction);
         }
 
-
         //tính người phụ thuộc và giảm trừ người phụ thuộc
         var listDependance = await _mediator.Send(new GetDependantByUserIdRequest { UserId = user.Id });
         int numOfDependance = 0;
         if (listDependance != null)
         {
-            numOfDependance = listDependance.Count();
+            numOfDependance = listDependance.Where(x=>x.AcceptanceType == AcceptanceType.Accept).Count();
         }
 
         if (numOfDependance>0)

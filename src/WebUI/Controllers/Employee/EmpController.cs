@@ -8,6 +8,7 @@ using mentor_v1.Application.Common.Models;
 using mentor_v1.Application.Common.PagingUser;
 using mentor_v1.Application.ConfigWifis.Queries.GetByRelatedObject;
 using mentor_v1.Application.DepartmentAllowance.Queries.GetDepartmentAllowanceWithRelativeObject;
+using mentor_v1.Application.Dependent.Commands.CreateDependent;
 using mentor_v1.Application.Dependent.Queries;
 using mentor_v1.Application.EmployeeAllowance.Queries;
 using mentor_v1.Application.EmployeeContract.Queries.GetEmpContract;
@@ -410,5 +411,86 @@ public class EmpController : ApiControllerBase
     }
 
 
-    
+    #region GetListDependent
+    [HttpGet]
+    [Route("/Emp/DependanceFilter")]
+
+    public async Task<IActionResult> DependanceFilter(AcceptanceType acceptanceType )
+    {
+        try
+        {
+            var result = await Mediator.Send(new GetListDependantNoVmRequest {  AcceptanceType = acceptanceType });
+            return Ok(new
+            {
+                status = Ok().StatusCode,
+                message = "Lấy danh sách thành công.",
+                result = result
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new
+            {
+                status = BadRequest().StatusCode,
+                message = ex.Message
+            });
+        }
+    }
+    #endregion
+
+    #region Create
+    [HttpPost]
+    [Route("/Emp/DependentCreate")]
+    public async Task<IActionResult> CreateDependent(CreateDependentViewModel createDependentViewModel)
+    {
+        var username = GetUserName();
+
+        var user = await _userManager.FindByNameAsync(username);
+        createDependentViewModel.ApplicationUserId = user.Id;
+        var validator = new CreateDepentdentCommandValidator(_context);
+        var valResult = await validator.ValidateAsync(createDependentViewModel);
+
+        if (valResult.Errors.Count != 0)
+        {
+            List<string> errors = new List<string>();
+            foreach (var error in valResult.Errors)
+            {
+                var item = error.ErrorMessage; errors.Add(item);
+            }
+            return BadRequest(errors);
+        }
+
+        try
+        {
+            
+            var create = await Mediator.Send(new CreateDependentCommand
+            {
+                createDependentViewModel = createDependentViewModel
+            });
+            return Ok(new
+            {
+                status = Ok().StatusCode,
+                message = "Tạo thành công."
+            });
+        }
+        catch (ArgumentNullException ex)
+        {
+            return BadRequest(new
+            {
+                status = BadRequest().StatusCode,
+                message = "Không tìm thấy người dùng bạn yêu cầu!."
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new
+            {
+                status = BadRequest().StatusCode,
+                message = "Tạo thất bại."
+            });
+        }
+
+    }
+    #endregion
+
 }

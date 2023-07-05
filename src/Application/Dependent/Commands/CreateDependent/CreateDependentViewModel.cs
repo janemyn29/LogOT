@@ -13,5 +13,4 @@ public class CreateDependentViewModel : IMapFrom<Domain.Entities.Dependent>
     public DateTime BirthDate { get; set; }
     public string Desciption { get; set; }
     public string Relationship { get; set; }
-    public int AcceptanceType { get; set; }
 }

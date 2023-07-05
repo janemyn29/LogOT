@@ -1,9 +1,11 @@
-﻿using mentor_v1.Application.Common.Exceptions;
+﻿using DocumentFormat.OpenXml.Office2010.Excel;
+using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.Interfaces;
 using mentor_v1.Application.Dependent.Commands.CreateDependent;
 using mentor_v1.Application.Dependent.Commands.DeleteDependentCommand;
 using mentor_v1.Application.Dependent.Commands.UpdateDependent;
 using mentor_v1.Application.Dependent.Queries;
+using mentor_v1.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml.Packaging.Ionic.Zip;
@@ -57,6 +59,58 @@ public class DependentController : ApiControllerBase
         try
         {
             var result = await Mediator.Send(new GetDependentIdRequest { id = id });
+            return Ok(new
+            {
+                status = Ok().StatusCode,
+                message = "Lấy dự liệu thành công.",
+                result = result
+            });
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(new
+            {
+                status = NotFound().StatusCode,
+                message = ex.Message
+            });
+        }
+    }
+    #endregion
+
+    #region Get id
+    [HttpGet]
+    public async Task<IActionResult> GetListDependantByStatus(int pg = 1)
+    {
+        try
+        {
+            var result = await Mediator.Send(new GetListDependanceByAcceptance { Page = pg , AcceptanceType = mentor_v1.Domain.Enums.AcceptanceType.Request, Size = 20 });
+            return Ok(new 
+            {
+                status = Ok().StatusCode,
+                message = "Lấy dự liệu thành công.",
+                result = result
+            });
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(new
+            {
+                status = NotFound().StatusCode,
+                message = ex.Message
+            });
+        }
+    }
+    #endregion
+
+    #region Get id
+    [HttpGet]
+    public async Task<IActionResult> UpdateAcceptance(Guid id,AcceptanceType acceptanceType)
+    {
+        try
+        {
+            var result = await Mediator.Send(new GetDependentIdRequest { id = id });
+
+            Mediator.Send(new UpdateDepartmentAcceptanceCommand { AcceptanceType = acceptanceType, Id = id });
             return Ok(new
             {
                 status = Ok().StatusCode,
