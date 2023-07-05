@@ -8,6 +8,7 @@ namespace mentor_v1.Domain.Enums;
 public enum LevelEnum
 {
     Junior = 1,
-    Senior = 2
+    Senior = 2,
+
 }
 

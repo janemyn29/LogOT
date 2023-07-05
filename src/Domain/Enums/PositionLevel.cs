@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 namespace mentor_v1.Domain.Enums;
 public enum PositionLevel
 {
-    Employee = 0,
-    Leader = 1,
-    Manager = 2,
-    Director = 3
+    Employee = 1,
+    Leader = 2,
+    Manager = 3,
+    Director = 4
 }
