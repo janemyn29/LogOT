@@ -4,12 +4,14 @@ using mentor_v1.Application.Dependent.Commands.CreateDependent;
 using mentor_v1.Application.Dependent.Commands.DeleteDependentCommand;
 using mentor_v1.Application.Dependent.Commands.UpdateDependent;
 using mentor_v1.Application.Dependent.Queries;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml.Packaging.Ionic.Zip;
 
 namespace WebUI.Controllers;
 
 [ApiController]
+[Authorize(Roles = "Manager")]
 
 [Route("[controller]/[action]")]
 public class DependentController : ApiControllerBase

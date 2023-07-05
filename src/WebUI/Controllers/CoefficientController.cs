@@ -1,10 +1,13 @@
 ﻿using mentor_v1.Application.Coefficients.Commands;
 using mentor_v1.Application.Coefficients.Queries.GetCoefficients;
 using mentor_v1.Application.ConfigDays.Commands.UpdateConfigDay;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace WebUI.Controllers;
+
+[Authorize(Roles = "Manager")]
 public class CoefficientController :ApiControllerBase
 {
     [HttpGet]

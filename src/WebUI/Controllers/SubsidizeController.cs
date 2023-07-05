@@ -13,8 +13,11 @@ using mentor_v1.Application.Positions.Queries.GetPositionByRelatedObjects;
 using WebUI.Models;
 using Namotion.Reflection;
 using Google.Apis.Util;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebUI.Controllers;
+
+[Authorize(Roles = "Manager")]
 
 public class SubsidizeController : ApiControllerBase
 {

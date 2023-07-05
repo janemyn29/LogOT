@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 using AutoMapper;
 using MediatR;
 using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.Interfaces;
 using mentor_v1.Application.EmployeeContract.Queries.GetEmpContract;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace mentor_v1.Application.EmployeeContract.Queries.GetEmpContractByRelativedObject;
 public class GetEmpContractByCodeRequest : IRequest<EmpContractViewModel>
@@ -33,7 +29,7 @@ public class GetEmpContractByCodeRequestHandler : IRequestHandler<GetEmpContract
     public Task<EmpContractViewModel> Handle(GetEmpContractByCodeRequest request, CancellationToken cancellationToken)
     {
         // get categories
-        var EmpContract = _context.Get<Domain.Entities.EmployeeContract>().Where(x => x.IsDeleted == false && x.ContractCode == request.code).FirstOrDefault();
+        var EmpContract = _context.Get<Domain.Entities.EmployeeContract>().Include(x=>x.ApplicationUser).Include(x=>x.AllowanceEmployees).Where(x => x.IsDeleted == false && x.ContractCode == request.code).AsNoTracking().FirstOrDefault();
         if (EmpContract == null)
         {
             throw new NotFoundException("Không tìm thấy hợp đồng mà bạn yêu cầu!");

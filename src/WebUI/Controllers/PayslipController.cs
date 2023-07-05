@@ -8,12 +8,15 @@ using mentor_v1.Application.ShiftConfig.Queries;
 using mentor_v1.Application.TaxIncome.Queries;
 using mentor_v1.Domain.Enums;
 using mentor_v1.Domain.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebUI.Services.PayslipServices;
 
 namespace WebUI.Controllers;
+[Authorize(Roles = "Manager")]
+
 public class PayslipController : ApiControllerBase
 {
     private readonly UserManager<ApplicationUser> _userManager;

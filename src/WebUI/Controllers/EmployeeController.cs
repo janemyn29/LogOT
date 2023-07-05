@@ -23,6 +23,7 @@ using WebUI.Services.FileManager;
 
 namespace WebUI.Controllers;
 
+[Authorize(Roles = "Manager")]
 
 public class EmployeeController : ApiControllerBase
 {

@@ -5,6 +5,7 @@ using mentor_v1.Application.Degree.Commands.CreateDegree;
 using mentor_v1.Application.Degree.Commands.DeleteDegree;
 using mentor_v1.Application.Degree.Commands.UpdateDegree;
 using mentor_v1.Application.Degree.Queries.GetDegree;
+using mentor_v1.Application.Degree.Queries.GetDegreeByRelatedObject;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using WebUI.Models;
@@ -47,6 +48,33 @@ public class DegreeController : ApiControllerBase
         }
     }
     #endregion
+
+
+    #region Get List
+    [HttpGet("{page}")]
+    public async Task<IActionResult> GetListByUserId(int page,string userId)
+    {
+        try
+        {
+            var result = await Mediator.Send(new GetListDegreeByUserIdRequets { Page = page, Size = 20,UserId = userId });
+            return Ok(new
+            {
+                status = Ok().StatusCode,
+                message = "Lấy danh sách thành công.",
+                result = result
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new
+            {
+                status = BadRequest().StatusCode,
+                message = ex.Message
+            });
+        }
+    }
+    #endregion
+
 
     #region Get id
     [HttpGet("{id}")]

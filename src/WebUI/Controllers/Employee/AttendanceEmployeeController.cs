@@ -39,7 +39,7 @@ public class AttendanceEmployeeController : ApiControllerBase
 
     [HttpGet]
     [Authorize(Roles = "Employee")]
-    [Route("/AttendanceEmployee")]
+    [Route("/Emp/AttendanceEmployee")]
     public async Task<IActionResult> Index(int pg = 1)
     {
         //lấy user
@@ -51,7 +51,7 @@ public class AttendanceEmployeeController : ApiControllerBase
 
     [HttpPost]
     [Authorize(Roles = "Employee")]
-    [Route("/AttendanceEmployee/Create")]
+    [Route("/Emp/AttendanceEmployee/Create")]
     public async Task<IActionResult> Create(/*DateTime tempNow*/)
     {
         //lấy configday xem coi ngày đó có làm ko.
@@ -109,7 +109,7 @@ public class AttendanceEmployeeController : ApiControllerBase
 
     [HttpGet]
     [Authorize(Roles = "Employee")]
-    [Route("/AttendanceEmployee/Filter")]
+    [Route("/Emp/AttendanceEmployee/Filter")]
     public async Task<IActionResult> Filter( DateTime FromDate, DateTime ToDate , int pg = 1)
     {
         //lấy user

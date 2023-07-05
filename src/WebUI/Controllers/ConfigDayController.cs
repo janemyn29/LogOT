@@ -15,7 +15,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers;
-//[Authorize]
+
+[Authorize(Roles = "Manager")]
 public class ConfigDayController : ApiControllerBase
 {
     [HttpGet]
