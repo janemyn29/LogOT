@@ -39,7 +39,7 @@ public class AttendanceEmployeeController : ApiControllerBase
 
     [HttpGet]
     [Authorize(Roles = "Employee")]
-    [Route("/Emp/AttendanceEmployee")]
+    [Route("/AttendanceEmployee")]
     public async Task<IActionResult> Index(int pg = 1)
     {
         //lấy user
@@ -51,7 +51,7 @@ public class AttendanceEmployeeController : ApiControllerBase
 
     [HttpPost]
     [Authorize(Roles = "Employee")]
-    [Route("/Emp/AttendanceEmployee/Create")]
+    [Route("/AttendanceEmployee/Create")]
     public async Task<IActionResult> Create(/*DateTime tempNow*/)
     {
         //lấy configday xem coi ngày đó có làm ko.
@@ -109,7 +109,7 @@ public class AttendanceEmployeeController : ApiControllerBase
 
     [HttpGet]
     [Authorize(Roles = "Employee")]
-    [Route("/Emp/AttendanceEmployee/Filter")]
+    [Route("/AttendanceEmployee/Filter")]
     public async Task<IActionResult> Filter( DateTime FromDate, DateTime ToDate , int pg = 1)
     {
         //lấy user
@@ -171,8 +171,6 @@ public class AttendanceEmployeeController : ApiControllerBase
             return null;
         }
     }
-
-
 
     [NonAction]
     public string GetIPWifi()
