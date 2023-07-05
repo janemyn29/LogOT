@@ -932,6 +932,125 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.ToTable("EmployeeContract");
                 });
 
+            modelBuilder.Entity("mentor_v1.Domain.Entities.ExcelContract", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Action")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ActionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ContractCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContractStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmployeeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("IdentityNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("JobReportId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("JobReportId");
+
+                    b.ToTable("ExcelContracts");
+                });
+
+            modelBuilder.Entity("mentor_v1.Domain.Entities.ExcelEmployeeQuit", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ActionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ActionType")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Identity")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("JobReportId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("WorkStatus")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("JobReportId");
+
+                    b.ToTable("ExcelEmployeeQuits");
+                });
+
             modelBuilder.Entity("mentor_v1.Domain.Entities.Exchange", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1115,6 +1234,46 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.ToTable("Experience");
                 });
 
+            modelBuilder.Entity("mentor_v1.Domain.Entities.JobReport", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ActionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ActionType")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Job")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("JobReports");
+                });
+
             modelBuilder.Entity("mentor_v1.Domain.Entities.LeaveLog", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1134,9 +1293,6 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -1146,15 +1302,15 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("LeaveHours")
+                    b.Property<DateTime>("LeaveDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("LeaveShift")
                         .HasColumnType("int");
 
                     b.Property<string>("Reason")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -1450,6 +1606,9 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<double?>("FinalSalary")
                         .HasColumnType("float");
 
+                    b.Property<DateTime>("FromTime")
+                        .HasColumnType("datetime2");
+
                     b.Property<double>("InsuranceAmount")
                         .HasColumnType("float");
 
@@ -1489,6 +1648,9 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<DateTime?>("Paid_date")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("PaydayCal")
+                        .HasColumnType("datetime2");
+
                     b.Property<double>("PersonalTaxDeductionAmount")
                         .HasColumnType("float");
 
@@ -1512,6 +1674,9 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
 
                     b.Property<double>("TaxableSalary")
                         .HasColumnType("float");
+
+                    b.Property<DateTime>("ToTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<double?>("TotalContractAllowance")
                         .HasColumnType("float");
@@ -1747,6 +1912,67 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.HasIndex("ApplicationUserId");
 
                     b.ToTable("RequestChange");
+                });
+
+            modelBuilder.Entity("mentor_v1.Domain.Entities.ShiftConfig", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ShiftEnum")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ShiftConfigs");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("8caed193-c40e-448b-bdab-cd7cd4f24844"),
+                            Created = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Test",
+                            EndTime = new DateTime(2023, 6, 30, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            LastModified = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastModifiedBy = "Test",
+                            ShiftEnum = 1,
+                            StartTime = new DateTime(2023, 6, 30, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = new Guid("25482772-d7ac-473b-9548-9ef38dfb1be1"),
+                            Created = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Test",
+                            EndTime = new DateTime(2023, 6, 30, 17, 30, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            LastModified = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastModifiedBy = "Test",
+                            ShiftEnum = 2,
+                            StartTime = new DateTime(2023, 6, 30, 13, 30, 0, 0, DateTimeKind.Unspecified)
+                        });
                 });
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.SkillEmployee", b =>
@@ -2168,6 +2394,28 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Navigation("ApplicationUser");
                 });
 
+            modelBuilder.Entity("mentor_v1.Domain.Entities.ExcelContract", b =>
+                {
+                    b.HasOne("mentor_v1.Domain.Entities.JobReport", "JobReport")
+                        .WithMany("ExcelContracts")
+                        .HasForeignKey("JobReportId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("JobReport");
+                });
+
+            modelBuilder.Entity("mentor_v1.Domain.Entities.ExcelEmployeeQuit", b =>
+                {
+                    b.HasOne("mentor_v1.Domain.Entities.JobReport", "JobReport")
+                        .WithMany("ExcelEmployeeQuits")
+                        .HasForeignKey("JobReportId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("JobReport");
+                });
+
             modelBuilder.Entity("mentor_v1.Domain.Entities.Experience", b =>
                 {
                     b.HasOne("mentor_v1.Domain.Identity.ApplicationUser", "ApplicationUser")
@@ -2348,6 +2596,13 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Navigation("AllowanceEmployees");
 
                     b.Navigation("PaySlips");
+                });
+
+            modelBuilder.Entity("mentor_v1.Domain.Entities.JobReport", b =>
+                {
+                    b.Navigation("ExcelContracts");
+
+                    b.Navigation("ExcelEmployeeQuits");
                 });
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.Level", b =>

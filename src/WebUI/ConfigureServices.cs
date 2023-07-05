@@ -8,6 +8,10 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using Hangfire;
+using WebUI.Services.ContractServices;
+using WebUI.Services.JobServices;
+using WebUI.Services.AttendanceServices;
 
 namespace WebUI;
 
@@ -37,9 +41,11 @@ public static class ConfigureServices
         services.AddHttpContextAccessor();
 
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+        services.AddTransient<IContracService, ContractService>();
+        services.AddTransient<IJobService, JobService>();
+        services.AddTransient<IAttendanceService, AttendanceService>();
 
         services.AddDistributedMemoryCache();
-
         services.AddHealthChecks()
             .AddDbContextCheck<ApplicationDbContext>();
 
@@ -88,6 +94,21 @@ public static class ConfigureServices
                 }
             });
         });
+
+        var connectHangfire =
+        services.AddHangfire(configuration => configuration
+        .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+        .UseSimpleAssemblyNameTypeSerializer()
+        .UseRecommendedSerializerSettings()
+        .UseSqlServerStorage("Data Source=testHangfire.mssql.somee.com;Initial Catalog=testHangfire;User ID=janemyn_SQLLogin_1;Password=kiydpgufhr;Trust Server Certificate=true; MultipleActiveResultSets=true", new Hangfire.SqlServer.SqlServerStorageOptions
+        {
+            //Data Source=sql.bsite.net\\MSSQL2016;Initial Catalog=tramysy_;User ID=tramysy_;Password=12345;Trust Server Certificate=true; MultipleActiveResultSets=true
+            CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+            SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+            QueuePollInterval = TimeSpan.Zero,
+            UseRecommendedIsolationLevel = true,
+            DisableGlobalLocks = true,
+        }));
 
         return services;
     }

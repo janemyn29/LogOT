@@ -12,6 +12,10 @@ public class PaySlip : BaseAuditableEntity
     [ForeignKey("EmployeeContract")]
     public Guid EmployeeContractId { get; set; }
     public string Code { get; set; }
+    public DateTime FromTime { get; set; }  
+    public DateTime ToTime { get; set; }
+    public DateTime PaydayCal { get; set; }
+
     public double SalaryPerHour { get; set; }
     public int? Standard_Work_Hours { get; set; }
     public int? Actual_Work_Hours { get; set; }
@@ -64,6 +68,8 @@ public class PaySlip : BaseAuditableEntity
     public double? OTWage { get; set; }
 
     public double? FinalSalary { get; set; }
+
+
     public DateTime? Paid_date { get; set; }
     public string? Note { get; set; }
     public string? BankName { get; set; }

@@ -7,6 +7,6 @@ using System.Threading.Tasks;
 namespace mentor_v1.Domain.Enums;
 public enum ShiftEnum
 {
-    Morning = 0,
-    Afternoon = 1
+    Morning = 1,
+    Afternoon = 2
 }

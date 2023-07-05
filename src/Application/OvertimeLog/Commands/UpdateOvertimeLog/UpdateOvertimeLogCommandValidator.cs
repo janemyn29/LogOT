@@ -19,7 +19,7 @@ public class UpdateOvertimeLogCommandValidator : AbstractValidator<UpdateOvertim
         // Add validation for request
         RuleFor(v => v.Hours)
             .NotEmpty().WithMessage("Thời gian yêu cầu tăng ca không thể bỏ trống")
-            .LessThanOrEqualTo(24).WithMessage("Thời gian yêu cầu tham gia không vượt quá 24h.");
+            .LessThanOrEqualTo(24).WithMessage("Thời gian yêu cầu tăng ca không vượt quá 24h.");
             
         // Add validation for request
         /*RuleFor(v => v.)

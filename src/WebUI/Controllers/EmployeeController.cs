@@ -1,5 +1,6 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
+using AutoMapper;
 using mentor_v1.Application.ApplicationUser.Commands.CreateUse;
 using mentor_v1.Application.ApplicationUser.Commands.UpdateUser;
 using mentor_v1.Application.ApplicationUser.Queries.GetUser;
@@ -7,6 +8,8 @@ using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.Interfaces;
 using mentor_v1.Application.Common.Models;
 using mentor_v1.Application.Common.PagingUser;
+using mentor_v1.Application.EmployeeContract.Commands.CreateEmpContract;
+using mentor_v1.Application.EmployeeContract.Commands.DeleteEmpContract;
 using mentor_v1.Application.Positions.Queries.GetPositionByRelatedObjects;
 using mentor_v1.Domain.Entities;
 using mentor_v1.Domain.Identity;
@@ -15,6 +18,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebUI.Models;
+using WebUI.Services.ContractServices;
 using WebUI.Services.FileManager;
 
 namespace WebUI.Controllers;
@@ -27,14 +31,18 @@ public class EmployeeController : ApiControllerBase
     private readonly IFileService _fileService;
     private readonly IApplicationDbContext _context;
     private readonly IWebHostEnvironment environment;
+    private readonly IMapper _mapper;
+    private readonly IContracService _contract;
 
-    public EmployeeController(IWebHostEnvironment ev, IFileService fileService, UserManager<ApplicationUser> userManager, IIdentityService identityService, IApplicationDbContext context)
+    public EmployeeController(IWebHostEnvironment ev, IFileService fileService, UserManager<ApplicationUser> userManager, IIdentityService identityService, IApplicationDbContext context, IMapper mapper,IContracService  contracService)
     {
         _userManager = userManager;
         _identityService = identityService;
         _context = context;
         _fileService = fileService;
         environment = ev;
+        _mapper = mapper;
+        _contract = contracService;
     }
 
     //Quản lý employee của staff
@@ -75,54 +83,85 @@ public class EmployeeController : ApiControllerBase
         [Authorize(Roles = "Manager")]*/
     [HttpPost]
     [Route("/Employee/Create")]
-    public async Task<IActionResult> Create([FromBody] UserViewModel model , string role)
+    public async Task<IActionResult> Create([FromBody] EmployeeModel newEmp )
     {
+        Guid contractIid = Guid.NewGuid();
         if (!ModelState.IsValid)
         {
             return BadRequest("Vui lòng điền đầy đủ các thông tin được yêu cầu!");
         }
+        var model = _mapper.Map<UserViewModel>(newEmp);
+        var contract = _mapper.Map<CreateEmployeeContractCommand>(newEmp);
+
+        var errors = await _contract.CheckValidatorCreateEmployee(contract);
         var validator = new CreateUseCommandValidator(_context, _userManager);
         var valResult = await validator.ValidateAsync(model);
 
-         if (!role.Equals("Employee") && !role.Equals("Manager") && !role.Equals("Staff"))
+         if (!newEmp.Role.Equals("Employee") && !newEmp.Role.Equals("Manager"))
         {
 
             return BadRequest("Role không tồn tại!");
         }
         if (valResult.Errors.Count != 0)
         {
-
-            List<string> errors = new List<string>();
             foreach (var error in valResult.Errors)
             {
                 var item = error.ErrorMessage; errors.Add(item);
             }
+        }
+        if (errors != null && errors.Count > 0)
+        {
             return BadRequest(errors);
-
         }
         try
         {/*
                 string fileResult = _fileService.SaveImage(model.Image);*/
-            var result = await _identityService.CreateUserAsync(model.Username, model.Email, "Employee1!", model.Fullname, model.Image, model.Address, model.IdentityNumber, model.BirthDay, model.BankAccountNumber, model.BankAccountName, model.BankName, model.PositionId, model.GenderType, model.IsMaternity, mentor_v1.Domain.Enums.WorkStatus.StillWork);
+            var result = await _identityService.CreateUserAsync(model.Username, model.Email, "Employee1!", model.Fullname, model.Image, model.Address, model.IdentityNumber, model.BirthDay, model.BankAccountNumber, model.BankAccountName, model.BankName, model.PositionId, model.GenderType, model.IsMaternity, mentor_v1.Domain.Enums.WorkStatus.StillWork,model.PhoneNumber);
 
             if (result.Result.Succeeded)
             {
                 var user = await _identityService.FindUserByEmailAsync(model.Email);
                 try
                 {
-                    var addRoleResult = await _userManager.AddToRoleAsync(user, role);
+                    var addRoleResult = await _userManager.AddToRoleAsync(user, newEmp.Role);
+                    
+                   
                     if (addRoleResult.Succeeded)
                     {
-                        //confirm email
-                        return Ok(user);
+                        try
+                        {
 
+                            /*            var filePath = await _fileService.UploadFile(model.File);*/
+                            contractIid = await Mediator.Send(new CreateEmployeeContractCommand
+                            {
+                                Username = model.Username,
+                                ContractCode = contract.ContractCode,
+                                StartDate = contract.StartDate,
+                                EndDate = contract.EndDate,
+                                BasicSalary = contract.BasicSalary,
+                                File = contract.File,
+                                Job = contract.Job,
+                                ContractType = contract.ContractType,
+                                PercentDeduction = contract.PercentDeduction,
+                                SalaryType = contract.SalaryType,
+                                isPersonalTaxDeduction = contract.isPersonalTaxDeduction,
+                                InsuranceAmount = contract.InsuranceAmount,
+                                InsuranceType = contract.InsuranceType,
+                                AllowanceId = contract.AllowanceId,
+                            });
+
+                        }
+                        catch (Exception ex)
+                        {
+                            await _userManager.DeleteAsync(user);
+                            return BadRequest(ex.Message);
+                        }
+                        return Ok(user);
                     }
                     else
                     {
                         await _userManager.DeleteAsync(user);
-
                         return BadRequest("Thêm Role bị lỗi");
-
                     }
                 }
                 catch (Exception)

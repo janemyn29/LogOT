@@ -33,7 +33,7 @@ public class GetAnnualByMonthRequestHandler : IRequestHandler<GetAnnualByMonthRe
     public Task<List<AnnualViewModel>> Handle(GetAnnualByMonthRequest request, CancellationToken cancellationToken)
     {
 
-        var EmpContract = _context.Get<Domain.Entities.AnnualWorkingDay>().Where(x => x.IsDeleted == false && x.Day.Month == request.Month && x.Day.Year == request.Year);
+        var EmpContract = _context.Get<Domain.Entities.AnnualWorkingDay>().Where(x => x.IsDeleted == false && x.Day.Month == request.Month && x.Day.Year == request.Year).OrderBy(x=>x.Day);
         var map = _mapper.ProjectTo<AnnualViewModel>(EmpContract).ToList();
         return Task.FromResult(map);
     }
