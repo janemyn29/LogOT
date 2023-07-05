@@ -18,19 +18,19 @@ public class CreateLeaveLogCommandValidator : AbstractValidator<CreateLeaveLogVi
         _context = context;
 
         // Add validation for request
-        RuleFor(v => v.StartDate)
-            .NotEmpty().WithMessage("Ngày bắt đầu không thể để trống.")
-            .GreaterThanOrEqualTo(DateTime.Now).WithMessage("Ngày bắt đầu phải sau ngày hiện tại")
-            .LessThanOrEqualTo(v => v.EndDate).WithMessage("Ngày bắt đầu không thể sau ngày kết thúc");
+        RuleFor(v => v.LeaveDate)
+            .NotEmpty().WithMessage("Ngày nghỉ không thể để trống.")
+            .GreaterThanOrEqualTo(DateTime.Now).WithMessage("Ngày bắt đầu phải sau ngày hiện tại");
+        //.LessThanOrEqualTo(v => v.EndDate).WithMessage("Ngày bắt đầu không thể sau ngày kết thúc");
         //.MustAsync(BeUniqueName).WithMessage("Tên cấp độ đã tồn tại.");
 
-        RuleFor(v => v.EndDate)
-            .NotEmpty().WithMessage("Ngày kết thúc không thể để trống.")
-            .GreaterThanOrEqualTo(DateTime.Now).WithMessage("Ngày kết thúc phải sau ngày hiện tại");
+        //RuleFor(v => v.EndDate)
+        //    .NotEmpty().WithMessage("Ngày kết thúc không thể để trống.")
+        //    .GreaterThanOrEqualTo(DateTime.Now).WithMessage("Ngày kết thúc phải sau ngày hiện tại");
 
-        RuleFor(v => v.LeaveHours)
-            .NotEmpty().WithMessage("Thời lượng giờ nghỉ không thể để trống.")
-            .LessThanOrEqualTo(24).WithMessage("Thời lượng giờ nghỉ không thể vượt quá 24h");
+        RuleFor(v => v.LeaveShift)
+            .NotEmpty().WithMessage("Ca nghỉ không thể để trống.");
+            //.LessThanOrEqualTo(24).WithMessage("Thời lượng giờ nghỉ không thể vượt quá 24h");
 
         RuleFor(v => v.Reason)
             .NotEmpty().WithMessage("Lý do nghỉ không thể để trống")

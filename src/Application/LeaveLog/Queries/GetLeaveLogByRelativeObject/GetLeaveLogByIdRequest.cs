@@ -14,6 +14,7 @@ namespace mentor_v1.Application.LeaveLog.Queries.GetLeaveLogByRelativeObject;
 public class GetLeaveLogByIdRequest : IRequest<Domain.Entities.LeaveLog>
 {
     public Guid Id { get; set; }
+    
 
 }
 
@@ -33,10 +34,14 @@ public class GetLeaveLogByIdRequestHandler : IRequestHandler<GetLeaveLogByIdRequ
     public Task<Domain.Entities.LeaveLog> Handle(GetLeaveLogByIdRequest request, CancellationToken cancellationToken)
     {
         // get categories
-        var LeaveLog = _context.Get<Domain.Entities.LeaveLog>()
+            var leaveLog = _context.Get<Domain.Entities.LeaveLog>()
+           .Where(x => x.IsDeleted == false && x.Id.Equals(request.Id))
+           .AsNoTracking().FirstOrDefault();
+        
+        /*var LeaveLog = _context.Get<Domain.Entities.LeaveLog>()
             .Where(x => x.IsDeleted == false && x.Id.Equals(request.Id))
-            .AsNoTracking().FirstOrDefault();
-        if (LeaveLog == null)
+            .AsNoTracking().FirstOrDefault();*/
+        if (leaveLog == null)
         {
             throw new NotFoundException(nameof(Domain.Entities.LeaveLog), request.Id);
         }
@@ -45,6 +50,6 @@ public class GetLeaveLogByIdRequestHandler : IRequestHandler<GetLeaveLogByIdRequ
         //var map = _mapper.Map<GetLeaveLog.LeaveLogViewModel>(LeaveLog);
 
         // Paginate data
-        return Task.FromResult(LeaveLog); //Task.CompletedTask;
+        return Task.FromResult(leaveLog); //Task.CompletedTask;
     }
 }
