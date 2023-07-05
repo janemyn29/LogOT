@@ -162,18 +162,6 @@ public class OvertimeLogController : ApiControllerBase
         {
             return BadRequest("Vui lòng điền đầy đủ các thông tin được yêu cầu");
         }
-        /*var validator = new UpdateOvertimeLogCommandValidator(_context);
-        var valResult = await validator.ValidateAsync(model);
-
-        if (valResult.Errors.Count != 0)
-        {
-            List<string> errors = new List<string>();
-            foreach (var error in valResult.Errors)
-            {
-                var item = error.ErrorMessage; errors.Add(item);
-            }
-            return BadRequest(errors);
-        }*/
 
         try
         {
@@ -220,23 +208,6 @@ public class OvertimeLogController : ApiControllerBase
     [HttpPut]
     public async Task<IActionResult> UpdateStatusOvertimeLogRequest(Guid idOTRequest, string status, string? cancelReason)
     {
-        /*if (!ModelState.IsValid)
-        {
-            return BadRequest("Vui lòng điền đầy đủ các thông tin được yêu cầu");
-        }
-        var validator = new UpdateOvertimeLogCommandValidator(_context);
-        var valResult = await validator.ValidateAsync(model);
-
-        if (valResult.Errors.Count != 0)
-        {
-            List<string> errors = new List<string>();
-            foreach (var error in valResult.Errors)
-            {
-                var item = error.ErrorMessage; errors.Add(item);
-            }
-            return BadRequest(errors);
-        }*/
-
         //lấy user từ username ở header
         var username = GetUserName();
         var user = await _userManager.FindByNameAsync(username);
