@@ -5,12 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 using MediatR;
 using mentor_v1.Application.Common.Interfaces;
+using mentor_v1.Application.Note.Commands;
 using mentor_v1.Application.OvertimeLog.Queries.GetOvertimeLog;
+using mentor_v1.Domain.Identity;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace mentor_v1.Application.OvertimeLog.Commands.CreateOvertimeLog;
 
 public class CreateOvertimeLogCommand : IRequest<Guid>
 {
+    public string applicationUserId { get; set; }
     public CreateOvertimeLogViewModel createOvertimeLogViewModel { get; set; }
 
 }
@@ -36,10 +40,17 @@ public class CreateOvertimeLogCommandHandler : IRequestHandler<CreateOvertimeLog
         // create new OvertimeLog from request data
         var OvertimeLog = new Domain.Entities.OvertimeLog()
         {
-            ApplicationUserId = request.createOvertimeLogViewModel.applicationUserId,
+            ApplicationUserId = request.applicationUserId,
             Date = request.createOvertimeLogViewModel.Date,
             Hours = request.createOvertimeLogViewModel.Hours,
             Status = Domain.Enums.LogStatus.Request
+        };
+
+        var noti = new CreateNotiCommand()
+        {
+            ApplicationUserId = request.createOvertimeLogViewModel.employeeId,
+            Title = "Thông báo về việc nhận yêu cầu OT",
+            Description = "Bạn vừa có 1 yêu cầu OT " + request.createOvertimeLogViewModel.Hours + " tiếng, vào lúc: " + DateTime.Now + ", vui lòng xác nhận trong thời gian sớm nhất!"
         };
 
         // add new OvertimeLog

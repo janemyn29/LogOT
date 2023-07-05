@@ -8,7 +8,7 @@ using mentor_v1.Domain.Enums;
 namespace mentor_v1.Application.OvertimeLog.Commands.CreateOvertimeLog;
 public class CreateOvertimeLogViewModel
 {
-    public string applicationUserId { get; set; }
+    public string employeeId { get; set; }
     public DateTime Date { get; set; }
     public int Hours { get; set; }
     //public LogStatus Status { get; set; }
