@@ -14,6 +14,8 @@ namespace mentor_v1.Application.OvertimeLog.Queries.GetOvertimeLogByRelativeObje
 public class GetOvertimeLogByIdRequest : IRequest<Domain.Entities.OvertimeLog>
 {
     public Guid Id { get; set; }
+    public Domain.Identity.ApplicationUser user { get; set; }
+    public string Role { get; set; }
 
 }
 
@@ -33,9 +35,19 @@ public class GetOvertimeLogByIdRequestHandler : IRequestHandler<GetOvertimeLogBy
     public Task<Domain.Entities.OvertimeLog> Handle(GetOvertimeLogByIdRequest request, CancellationToken cancellationToken)
     {
         // get categories
-        var OvertimeLog = _context.Get<Domain.Entities.OvertimeLog>()
+        Domain.Entities.OvertimeLog OvertimeLog = null;
+        if (request.Role.ToLower().Equals("manager"))
+        {
+             OvertimeLog = _context.Get<Domain.Entities.OvertimeLog>()
             .Where(x => x.IsDeleted == false && x.Id.Equals(request.Id))
             .AsNoTracking().FirstOrDefault();
+        } else if (request.Role.ToLower().Equals("employee"))
+        {
+            OvertimeLog = _context.Get<Domain.Entities.OvertimeLog>()
+            .Where(x => x.IsDeleted == false && x.Id.Equals(request.Id) && x.ApplicationUserId.Equals(request.user.Id))
+            .AsNoTracking().FirstOrDefault();
+        }
+        
         if (OvertimeLog == null)
         {
             throw new NotFoundException(nameof(Domain.Entities.OvertimeLog), request.Id);
