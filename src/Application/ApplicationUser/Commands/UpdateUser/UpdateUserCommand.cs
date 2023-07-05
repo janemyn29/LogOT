@@ -51,6 +51,7 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand>
         CurrentUser.BankName = request.model.BankName;
         CurrentUser.IsMaternity = request.model.IsMaternity;
         CurrentUser.Image= request.model.Image;
+        CurrentUser.PhoneNumber = request.model.PhoneNumber;
         await _context.SaveChangesAsync(cancellationToken);
         return Unit.Value;
     }

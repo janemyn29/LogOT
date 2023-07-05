@@ -31,7 +31,7 @@ public class PaySlip : BaseAuditableEntity
     public RegionType RegionType { get; set; }
     public double RegionMinimumWage { get; set; }
     public bool IsMaternity { get; set; }=false;
-
+    public double? MaternityHour { get; set; }
 
     public double BHXH_Emp_Amount { get; set; }
     public double BHYT_Emp_Amount { get; set; }
@@ -50,11 +50,9 @@ public class PaySlip : BaseAuditableEntity
     public double TotalInsuranceEmp { get; set; }
     public double TotalInsuranceComp { get; set; }
 
-
     //kết thúc BH
     public double? LeaveWageDeduction { get; set; }
     public double TaxableSalary { get; set; } //lương chịu thếu (có trừ nghỉ)
-    public double TaxPercent { get; set; } // mức phần trăm chịu thuế
     // có mức giảm trừ gia cảnh ở trên 
     public int NumberOfDependent { get; set; }
     // có mức giảm trừ người phụ thuộc ở trên 
@@ -76,4 +74,5 @@ public class PaySlip : BaseAuditableEntity
     public string? BankAcountName { get; set; }
     public string? BankAcountNumber { get; set; }
     public virtual EmployeeContract EmployeeContract { get; set; } = null!;
+    public IList<DetailTax> DetailTaxes { get; set; }
 }

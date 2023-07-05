@@ -19,6 +19,7 @@ using WebUI.Services;
 using WebUI.Services.FileManager;
 using WebUI.Services.Format;
 using WebUI.Services.MomoServices;
+using WebUI.Services.PayslipServices;
 
 var builder = WebApplication.CreateBuilder(args);
 //builder.Environment.EnvironmentName = "Staging"; //for branch develop
@@ -59,6 +60,8 @@ builder.Services.Configure<GoogleCaptchaConfig>(builder.Configuration.GetSection
 builder.Services.Configure<MomoServices>(builder.Configuration.GetSection("MomoServices"));
 builder.Services.AddTransient<IFileService, FileService>();
 builder.Services.AddTransient<IFormatMoney, FormatMoney>();
+builder.Services.AddTransient<IPayslipService, PayslipService>();
+
 
 builder.Services.AddTransient(typeof(GoogleCaptchaService));
 builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
