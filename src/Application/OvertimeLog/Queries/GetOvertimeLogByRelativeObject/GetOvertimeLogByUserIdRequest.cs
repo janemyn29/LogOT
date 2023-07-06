@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using MediatR;
-using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.Interfaces;
 using mentor_v1.Application.Common.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace mentor_v1.Application.OvertimeLog.Queries.GetOvertimeLogByRelativeObject;
 
@@ -34,7 +28,9 @@ public class GetOvertimeLogByUserIdRequestHandler : IRequestHandler<GetOvertimeL
     {
 
         //get OvertimeLog 
-        var OvertimeLogs = _applicationDbContext.Get<Domain.Entities.OvertimeLog>().Where(x => x.IsDeleted == false && x.ApplicationUserId.Equals(request.id)).OrderByDescending(x => x.Created).AsNoTracking();
+        var OvertimeLogs = _applicationDbContext.Get<Domain.Entities.OvertimeLog>()
+            .Include(x => x.ApplicationUser)
+            .Where(x => x.IsDeleted == false && x.ApplicationUserId.Equals(request.id)).OrderByDescending(x => x.Created).AsNoTracking();
         //var models = _mapper.ProjectTo<OvertimeLogViewModel>(OvertimeLogs);
 
         var page = PaginatedList<Domain.Entities.OvertimeLog>.CreateAsync(OvertimeLogs, request.Page, request.Size);
