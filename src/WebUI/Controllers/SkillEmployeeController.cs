@@ -6,6 +6,7 @@ using mentor_v1.Application.SkillEmployee.Commands.DeleteSkillEmployeeCommand;
 using mentor_v1.Application.SkillEmployee.Commands.UpdateSkillEmployee;
 using mentor_v1.Application.SkillEmployee.Commands.UpdateSkillEmployeeCommand;
 using mentor_v1.Application.SkillEmployee.Queries.GetSkillEmployee;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -13,6 +14,8 @@ namespace WebUI.Controllers;
 
 [ApiController]
 [Route("[controller]/[action]")]
+[Authorize(Roles = "Manager")]
+
 public class SkillEmployeeController : ApiControllerBase
 {
     private readonly IIdentityService _identityService;

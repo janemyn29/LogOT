@@ -20,6 +20,7 @@ using System.Text;
 
 namespace WebUI.Controllers;
 
+[Authorize(Roles = "Manager")]
 public class AttendanceManagerController : ApiControllerBase
 {
 

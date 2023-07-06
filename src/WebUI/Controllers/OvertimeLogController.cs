@@ -21,6 +21,8 @@ namespace WebUI.Controllers;
 
 [ApiController]
 [Route("[controller]/[action]")]
+[Authorize(Roles = "Manager")]
+
 public class OvertimeLogController : ApiControllerBase
 {
     private readonly UserManager<ApplicationUser> _userManager;

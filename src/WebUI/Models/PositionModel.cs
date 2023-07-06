@@ -7,4 +7,5 @@ public class PositionModel
 {
     public ApplicationUser User { get; set; }
     public Position Position { get; set; }
+    public List<Subsidize> Subsidize { get; set; }
 }

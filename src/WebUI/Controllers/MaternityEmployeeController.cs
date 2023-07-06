@@ -5,12 +5,15 @@ using mentor_v1.Application.MaternityEmployee.Commands.CreateMaternityEmployee;
 using mentor_v1.Application.MaternityEmployee.Commands.DeleteMaternityEmployee;
 using mentor_v1.Application.MaternityEmployee.Commands.UpdateMaternityEmployee;
 using mentor_v1.Application.MaternityEmployee.Queries;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers;
 
 [ApiController]
 [Route("[controller]/[action]")]
+[Authorize(Roles = "Manager")]
+
 public class MaternityEmployeeController : ApiControllerBase
 {
     private readonly IIdentityService _identityService;

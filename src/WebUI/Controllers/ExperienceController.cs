@@ -12,11 +12,14 @@ using mentor_v1.Application.Experience.Queries.GetExperienceWithRelativeObject;
 using mentor_v1.Application.Positions.Queries.GetPositionByRelatedObjects;
 using mentor_v1.Domain.Entities;
 using mentor_v1.Domain.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WebUI.Models;
 
 namespace WebUI.Controllers;
+
+[Authorize(Roles = "Manager")]
 
 public class ExperienceController : ApiControllerBase
 {

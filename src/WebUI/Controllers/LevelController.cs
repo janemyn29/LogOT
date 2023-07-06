@@ -12,6 +12,8 @@ namespace WebUI.Controllers;
 
 [ApiController]
 [Route("[controller]/[action]")]
+[Authorize(Roles = "Manager")]
+
 public class LevelController : ApiControllerBase
 {
 

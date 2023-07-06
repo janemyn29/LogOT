@@ -1641,8 +1641,8 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int?>("Actual_Work_Hours")
-                        .HasColumnType("int");
+                    b.Property<double?>("Actual_Work_Hours")
+                        .HasColumnType("float");
 
                     b.Property<double>("AfterTaxSalary")
                         .HasColumnType("float");
@@ -1738,8 +1738,8 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<double?>("LeaveWageDeduction")
                         .HasColumnType("float");
 
-                    b.Property<int?>("Leave_Hours")
-                        .HasColumnType("int");
+                    b.Property<double?>("Leave_Hours")
+                        .HasColumnType("float");
 
                     b.Property<double?>("MaternityHour")
                         .HasColumnType("float");
@@ -1753,8 +1753,8 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<double?>("OTWage")
                         .HasColumnType("float");
 
-                    b.Property<int?>("Ot_Hours")
-                        .HasColumnType("int");
+                    b.Property<double?>("Ot_Hours")
+                        .HasColumnType("float");
 
                     b.Property<DateTime?>("Paid_date")
                         .HasColumnType("datetime2");
@@ -1777,8 +1777,11 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                     b.Property<int>("SalaryType")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Standard_Work_Hours")
-                        .HasColumnType("int");
+                    b.Property<double?>("Standard_Work_Hours")
+                        .HasColumnType("float");
+
+                    b.Property<double>("TNTT")
+                        .HasColumnType("float");
 
                     b.Property<double>("TaxableSalary")
                         .HasColumnType("float");
@@ -2062,24 +2065,24 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
                             Id = new Guid("8caed193-c40e-448b-bdab-cd7cd4f24844"),
                             Created = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CreatedBy = "Test",
-                            EndTime = new DateTime(2023, 7, 5, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndTime = new DateTime(2023, 7, 6, 12, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             LastModified = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LastModifiedBy = "Test",
                             ShiftEnum = 1,
-                            StartTime = new DateTime(2023, 7, 5, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                            StartTime = new DateTime(2023, 7, 6, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("25482772-d7ac-473b-9548-9ef38dfb1be1"),
                             Created = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CreatedBy = "Test",
-                            EndTime = new DateTime(2023, 7, 5, 17, 30, 0, 0, DateTimeKind.Unspecified),
+                            EndTime = new DateTime(2023, 7, 6, 17, 30, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             LastModified = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LastModifiedBy = "Test",
                             ShiftEnum = 2,
-                            StartTime = new DateTime(2023, 7, 5, 13, 30, 0, 0, DateTimeKind.Unspecified)
+                            StartTime = new DateTime(2023, 7, 6, 13, 30, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
@@ -2464,7 +2467,7 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("mentor_v1.Domain.Entities.DepartmentAllowance", b =>
                 {
                     b.HasOne("mentor_v1.Domain.Entities.Department", "Departments")
-                        .WithMany()
+                        .WithMany("DepartmentAllowances")
                         .HasForeignKey("DepartmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -2707,6 +2710,8 @@ namespace mentorv1.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("mentor_v1.Domain.Entities.Department", b =>
                 {
+                    b.Navigation("DepartmentAllowances");
+
                     b.Navigation("Positions");
                 });
 

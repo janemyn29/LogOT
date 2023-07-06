@@ -22,6 +22,8 @@ using WebUI.Services.Format;
 
 namespace WebUI.Controllers;
 [Route("[controller]/[action]")]
+[Authorize(Roles = "Manager")]
+
 public class EmployeeContractController : ApiControllerBase
 {
     private readonly IApplicationDbContext _context;

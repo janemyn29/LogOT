@@ -17,10 +17,10 @@ public class PaySlip : BaseAuditableEntity
     public DateTime PaydayCal { get; set; }
 
     public double SalaryPerHour { get; set; }
-    public int? Standard_Work_Hours { get; set; }
-    public int? Actual_Work_Hours { get; set; }
-    public int? Ot_Hours { get; set; }
-    public int? Leave_Hours { get; set; }
+    public double? Standard_Work_Hours { get; set; }
+    public double? Actual_Work_Hours { get; set; }
+    public double? Ot_Hours { get; set; }
+    public double? Leave_Hours { get; set; }
     public double? DefaultSalary { get; set; }
     public SalaryType SalaryType { get; set; }
     public InsuranceType InsuranceType { get; set; }
@@ -51,6 +51,8 @@ public class PaySlip : BaseAuditableEntity
     public double TotalInsuranceComp { get; set; }
 
     //kết thúc BH
+    public double TNTT { get; set; } //lương chịu thếu (có trừ nghỉ)
+
     public double? LeaveWageDeduction { get; set; }
     public double TaxableSalary { get; set; } //lương chịu thếu (có trừ nghỉ)
     // có mức giảm trừ gia cảnh ở trên 

@@ -26,18 +26,11 @@ public class CreateDepentdentCommandValidator : AbstractValidator<CreateDependen
         RuleFor(v => v.BirthDate)
             .NotEmpty().WithMessage("Ngày sinh không được để trống.");
 
-        RuleFor(v => (DateTime.UtcNow.Year - v.BirthDate.Year)).GreaterThanOrEqualTo(18)
-            .WithMessage("Ngày sinh không được nhỏ hơn 18.");
 
         RuleFor(v => v.Desciption)
             .NotEmpty().WithMessage("Mô tả không được để trống.");
 
         RuleFor(v => v.Relationship)
             .NotEmpty().WithMessage("Mối quan hệ không được để trống.");
-
-        RuleFor(v => v.AcceptanceType)
-            .NotNull().WithMessage("Loại chập nhận không được để trống.")
-            .LessThan(4).WithMessage("Loại chập nhận nhỏ hơn hoặc bằng 3")
-            .GreaterThan(0).WithMessage("Loại chập nhận lớn hơn hoặc bằng 1.");
     }
 }

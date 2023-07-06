@@ -1,4 +1,5 @@
 ﻿using DocumentFormat.OpenXml.Bibliography;
+using DocumentFormat.OpenXml.Vml;
 using mentor_v1.Application.DefaultConfig.Queries.Get;
 using mentor_v1.Application.EmployeeContract.Queries.GetEmpContractByRelativedObject;
 using mentor_v1.Application.Exchange.Queries;
@@ -8,12 +9,15 @@ using mentor_v1.Application.ShiftConfig.Queries;
 using mentor_v1.Application.TaxIncome.Queries;
 using mentor_v1.Domain.Enums;
 using mentor_v1.Domain.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebUI.Services.PayslipServices;
 
 namespace WebUI.Controllers;
+[Authorize(Roles = "Manager")]
+
 public class PayslipController : ApiControllerBase
 {
     private readonly UserManager<ApplicationUser> _userManager;
@@ -36,12 +40,18 @@ public class PayslipController : ApiControllerBase
         var insuranceConfig = await Mediator.Send(new GetInsuranceConfigRequest { });
         foreach (var item in listUser)
         {
+            //hd dang pending 
+
             var contract = await Mediator.Send(new GetContractByUserRequest { UserId = item.Id });
             var finalContract = contract.Where(x=>x.Status == EmployeeContractStatus.Pending).FirstOrDefault();
             if(item.UserName == "string")
             {
-                var total = await _payslipService.GrossToNet(item, defaultConfig, tax, exchange, regionWage, insuranceConfig, DateTime.Parse("2023-07-01"), shiftConfig, finalContract);
+                //var total = await _payslipService.GrossToNetPending(item, defaultConfig, tax, exchange, regionWage, insuranceConfig, DateTime.Parse("2023-07-01"), shiftConfig, finalContract);
+                var total = await _payslipService.ExchangeFromNetToGross(item, defaultConfig, tax, exchange, regionWage, insuranceConfig, DateTime.Parse("2023-07-01"), shiftConfig, finalContract);
+
             }
+
+            //đã hết hạn trong tháng trước//tính lại lương => ....
         }
 
         return Ok();

@@ -46,9 +46,7 @@
       <Folder Include="DefaultConfig\Commands\" />
       <Folder Include="DefaultConfig\Queries\GetByRelatedObject\" />
       <Folder Include="ExcelContract\Queries\" />
-      <Folder Include="JobReport\Queries\" />
       <Folder Include="Note\Queries\" />
-      <Folder Include="Payslip\Commands\" />
       <Folder Include="ShiftConfig\Commands\" />
     </ItemGroup>
 

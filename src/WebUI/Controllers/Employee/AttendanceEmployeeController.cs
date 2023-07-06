@@ -172,8 +172,6 @@ public class AttendanceEmployeeController : ApiControllerBase
         }
     }
 
-
-
     [NonAction]
     public string GetIPWifi()
     {
