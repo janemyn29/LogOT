@@ -45,12 +45,12 @@ public class JobReportController : ApiControllerBase
     #endregion
 
     #region GetAllowanceId
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetJobReportId(Guid id)
+    [HttpGet("{JobReportId}")]
+    public async Task<IActionResult> GetJobReportDetailById(Guid JobReportId)
     {
         try
         {
-            var jobID = await Mediator.Send(new GetJobReportByIdRequest { Id = id });
+            var jobID = await Mediator.Send(new GetJobReportByIdRequest { Id = JobReportId });
             return Ok(new
             {
                 Status = Ok().StatusCode,
@@ -68,5 +68,4 @@ public class JobReportController : ApiControllerBase
         }
     }
     #endregion
-
 }
