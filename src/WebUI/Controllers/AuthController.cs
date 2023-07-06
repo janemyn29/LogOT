@@ -1,15 +1,18 @@
 ﻿using System.Data;
 using System.Text;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Hangfire;
 using mentor_v1.Application.Auth;
 using mentor_v1.Application.Common;
 using mentor_v1.Application.Common.Interfaces;
 using mentor_v1.Application.Common.Models;
 using mentor_v1.Domain.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Newtonsoft.Json;
+using SonPhat.VietNameseLunarCalendar.Astronomy;
 using WebUI.Models;
 
 namespace WebUI.Controllers;
@@ -140,5 +143,40 @@ public class AuthController : ApiControllerBase
 
         }
     }
+
+    /*[HttpPost]
+    [AllowAnonymous]
+    [Route("/ResetPassword")]
+    public async Task<IActionResult> ResetPassword(ResetPasswordModel model)
+    {
+        // Kiểm tra tính hợp lệ của yêu cầu
+        if (!ModelState.IsValid)
+        {
+            return BadRequest("Invalid request");
+        }
+
+        // Kiểm tra xác thực người dùng và tạo mã đặt lại mật khẩu (reset token)
+        var user = await _userManager.FindByEmailAsync(model.Email);
+        if (user == null)
+        {
+            return BadRequest("User not found");
+        }
+
+        var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+        // Gửi email chứa liên kết để đặt lại mật khẩu
+        var resetLink = Url.Action("ResetPassword", "Account", new { token = resetToken }, Request.Scheme);
+
+        // Gửi email chứa resetLink đến địa chỉ email người dùng
+        // Code gửi email ở đâyChú ý rằng trong ví dụ trên, tôi sử dụng `UserManager` để quản lý người dùng và tạo mã đặt lại mật khẩu (reset token). Bạn có thể sử dụng các công cụ và thư viện khác tương tự để thực hiện các chức năng tương tự trong hệ thống của bạn.
+
+        Ngoài ra, bạn cần thực hiện các bước bổ sung như xác thực email và xác thực token khi người dùng nhấp vào liên kết đặt lại mật khẩu. Điều này giúp đảm bảo tính bảo mật của quá trình đặt lại mật khẩu.
+
+Hy vọng rằng ví dụ trên có thể giúp bạn triển khai chức năng reset mật khẩu trong ASP.NET API.*/
+
+
+
+
+
 
 }

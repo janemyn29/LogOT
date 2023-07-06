@@ -24,10 +24,13 @@ public class CreateOvertimeLogCommand : IRequest<Guid>
 public class CreateOvertimeLogCommandHandler : IRequestHandler<CreateOvertimeLogCommand, Guid>
 {
     private readonly IApplicationDbContext _context;
+    private readonly IMediator _mediator;
 
-    public CreateOvertimeLogCommandHandler(IApplicationDbContext context)
+
+    public CreateOvertimeLogCommandHandler(IApplicationDbContext context, IMediator mediator)
     {
         _context = context;
+        _mediator = mediator;
     }
 
     public async Task<Guid> Handle(CreateOvertimeLogCommand request, CancellationToken cancellationToken)
@@ -40,18 +43,18 @@ public class CreateOvertimeLogCommandHandler : IRequestHandler<CreateOvertimeLog
         // create new OvertimeLog from request data
         var OvertimeLog = new Domain.Entities.OvertimeLog()
         {
-            ApplicationUserId = request.applicationUserId,
+            ApplicationUserId = request.createOvertimeLogViewModel.employeeId,
             Date = request.createOvertimeLogViewModel.Date,
             Hours = request.createOvertimeLogViewModel.Hours,
             Status = Domain.Enums.LogStatus.Request
         };
 
-        var noti = new CreateNotiCommand()
+        var noti = _mediator.Send(new CreateNotiCommand()
         {
             ApplicationUserId = request.createOvertimeLogViewModel.employeeId,
             Title = "Thông báo về việc nhận yêu cầu OT",
             Description = "Bạn vừa có 1 yêu cầu OT " + request.createOvertimeLogViewModel.Hours + " tiếng, vào lúc: " + DateTime.Now + ", vui lòng xác nhận trong thời gian sớm nhất!"
-        };
+        });
 
         // add new OvertimeLog
         _context.Get<Domain.Entities.OvertimeLog>().Add(OvertimeLog);

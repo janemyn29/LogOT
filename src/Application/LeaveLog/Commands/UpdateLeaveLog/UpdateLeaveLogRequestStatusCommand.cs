@@ -14,17 +14,19 @@ namespace mentor_v1.Application.LeaveLog.Commands.UpdateLeaveLog;
 public record UpdateLeaveLogRequestStatusCommand : IRequest
 {
     public Guid Id { get; init; }
-    public string applicationUserId { get; set; }  
+    public string applicationUserId { get; set; }
     public LogStatus status { get; init; }
     public string? cancelReason { get; init; }
 }
 public class UpdateLeaveLogRequestStatusCommandHandler : IRequestHandler<UpdateLeaveLogRequestStatusCommand>
 {
     private readonly IApplicationDbContext _context;
+    private readonly IMediator _mediator;
 
-    public UpdateLeaveLogRequestStatusCommandHandler(IApplicationDbContext context)
+    public UpdateLeaveLogRequestStatusCommandHandler(IApplicationDbContext context, IMediator mediator)
     {
         _context = context;
+        _mediator = mediator;
     }
 
     public async Task<Unit> Handle(UpdateLeaveLogRequestStatusCommand request, CancellationToken cancellationToken)
@@ -40,23 +42,28 @@ public class UpdateLeaveLogRequestStatusCommandHandler : IRequestHandler<UpdateL
         CurrentLeaveLog.Status = request.status;
         CurrentLeaveLog.CancelReason = request.cancelReason;
 
-        string des = "xử lý";
-        if (request.status.ToString().Equals("approve")) 
+        await _context.SaveChangesAsync(cancellationToken);
+
+        string des = "được: xử lý";
+        if (request.status.ToString().ToLower().Equals("approved"))
         {
-            des = "xác nhận";
-        } else if(request.status.ToString().Equals("cancel"))
+            des = "được: xác nhận";
+        }
+        else if (request.status.ToString().ToLower().Equals("cancel"))
         {
-            des = "từ chối";
+            des = "bị: từ chối";
+        }
+        else if (request.status.ToString().ToLower().Equals("noaction"))
+        {
+            des = "bị: bỏ qua";
         }
 
-        var noti = new CreateNotiCommand()
+        var noti = _mediator.Send(new CreateNotiCommand()
         {
             ApplicationUserId = request.applicationUserId,
             Title = "Thông báo về việc nhận kết quả yêu cầu nghỉ làm tạm thời",
-            Description = "Yêu cầu nghỉ làm tạm thời của bạn đã được " + des + ", vui lòng xem chi tiết !"
-        };
-
-        await _context.SaveChangesAsync(cancellationToken);
+            Description = "Yêu cầu nghỉ làm tạm thời của bạn đã " + des + ", vui lòng xem chi tiết !"
+        });
 
         return Unit.Value;
     }

@@ -68,9 +68,9 @@ public class CreateLeaveLogCommandHandler : IRequestHandler<CreateLeaveLogComman
             var noti = await _mediator.Send(new CreateNotiCommand()
             {
                 ApplicationUserId = item.Id,
-                Title = "Thông báo về việc xác nhận yêu cầu OT của nhân viên",
+                Title = "Thông báo về việc yêu cầu xin nghỉ làm tạm thời của nhân viên",
                 Description = "Nhân viên: " + request.user.Fullname + " \n" +
-                " đã gửi yêu cầu nghỉ làm tạm thời ca làm thứ: " + request.createLeaveLogViewModel.LeaveShift + "\n" +
+                " đã gửi yêu cầu nghỉ làm tạm thời ca làm: " + request.createLeaveLogViewModel.LeaveShift + "\n" +
                 "vào ngày: " + request.createLeaveLogViewModel.LeaveDate
             });
         }

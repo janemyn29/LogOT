@@ -64,7 +64,7 @@ public class OvertimeLogController : ApiControllerBase
             var user = await _userManager.FindByNameAsync(username);
 
 
-            var listOTLog = await Mediator.Send(new GetOvertimeLogByUserIdRequest() {id = new Guid(user.Id), Page = 1, Size = 10 });
+            var listOTLog = await Mediator.Send(new GetOvertimeLogByUserIdRequest() {id = user.Id, Page = 1, Size = 10 });
             return Ok(listOTLog);
 
         }
@@ -130,7 +130,7 @@ public class OvertimeLogController : ApiControllerBase
             var username = GetUserName();
             var user = await _userManager.FindByNameAsync(username);
             //var count = Mediator.Send(new GetOvertimeLogRequest() { Page = 1, Size = 20 }).Result.TotalCount;
-            var oldOT = await Mediator.Send(new GetOvertimeLogByUserIdRequest() { id = new Guid(model.employeeId), Page = 1, Size = 10 });
+            var oldOT = await Mediator.Send(new GetOvertimeLogByUserIdRequest() { id = model.employeeId, Page = 1, Size = 10 });
             foreach (var item in oldOT.Items)
             {
                 if (model.Date.ToShortDateString() == item.Date.ToShortDateString())
@@ -143,6 +143,13 @@ public class OvertimeLogController : ApiControllerBase
                 applicationUserId = user.Id,
                 createOvertimeLogViewModel = model
             });
+
+            /*var noti = await Mediator.Send(new CreateNotiCommand()
+            {
+                ApplicationUserId = model.employeeId,
+                Title = "Thông báo về việc nhận yêu cầu OT",
+                Description = "Bạn vừa có 1 yêu cầu OT " + model.Hours + " tiếng, vào lúc: " + model.Date+ ", vui lòng xác nhận trong thời gian sớm nhất!"
+            });*/
 
             return Ok(new
             {

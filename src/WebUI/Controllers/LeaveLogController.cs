@@ -101,7 +101,7 @@ public class LeaveLogController : ApiControllerBase
     #endregion
 
     #region [create]
-    [Authorize(Roles = "Manager")]
+    [Authorize(Roles = "Employee")]
     [HttpPost]
     public async Task<IActionResult> CreateLeaveLog([FromBody] CreateLeaveLogViewModel model)
     {
@@ -242,12 +242,12 @@ public class LeaveLogController : ApiControllerBase
             //return Ok("Xác nhận yêu cầu thành công");
             throw new Exception();
         }
-        catch (Exception)
+        catch (Exception e)
         {
             return BadRequest(new
             {
                 id = id,
-                message = "Xác nhận trạng thái không thành công"
+                message = "Xác nhận trạng thái không thành công : " + e.Message
             });
         }
     }

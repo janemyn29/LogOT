@@ -14,7 +14,7 @@ namespace mentor_v1.Application.OvertimeLog.Queries.GetOvertimeLogByRelativeObje
 
 public class GetOvertimeLogByUserIdRequest : IRequest<PaginatedList<Domain.Entities.OvertimeLog>>
 {
-    public Guid id { get; set; }
+    public string id { get; set; }
     public int Page { get; set; }
     public int Size { get; set; }
 }
