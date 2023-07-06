@@ -239,24 +239,30 @@ public class PayslipService : IPayslipService
         {
             TNCT = 0;
         }
-        DetailTaxIncome tax;
-        var listTax = taxIncome.Where(x => x.Muc_chiu_thue_From < TNCT).ToList();
-        if (listTax.Count > 1)
-        {
-            tax = taxIncome.Where(x => x.Muc_chiu_thue_From < TNCT && x.Muc_chiu_thue_To >= TNCT).FirstOrDefault();
-        }
-        else
-        {
-            tax = listTax.FirstOrDefault();
-        }
-        // double TotalTaxIncome =Math.Round( (TNCT * tax.Thue_suat/100) - tax.He_so_tru);
-        double TotalTaxIncome = 0;
-
-        List<DetailTax> DetailTaxs = new List<DetailTax>();
+        DetailTaxIncome tax = new DetailTaxIncome();
         if (TNCT == 0)
         {
             tax = taxIncome.OrderBy(x => x.Thue_suat).FirstOrDefault();
         }
+        else
+        {
+            var listTax = taxIncome.Where(x => x.Muc_chiu_thue_From < TNCT ).ToList();
+            var temp = taxIncome.Where(x => x.Muc_chiu_thue_From < TNCT).ToList();
+            if (listTax.Count() == taxIncome.Count())
+            {
+                tax = taxIncome.LastOrDefault();
+            }
+            else
+            {
+                tax = taxIncome.Where(x => x.Muc_chiu_thue_From < TNCT && x.Muc_chiu_thue_To >= TNCT).ToList().FirstOrDefault();
+            }
+            
+        }
+        
+        // double TotalTaxIncome =Math.Round( (TNCT * tax.Thue_suat/100) - tax.He_so_tru);
+        double TotalTaxIncome = 0;
+
+        List<DetailTax> DetailTaxs = new List<DetailTax>();
         foreach (var item in taxIncome.OrderBy(x => x.Thue_suat))
         {
             var taxDetail = new DetailTax();
@@ -472,7 +478,7 @@ public class PayslipService : IPayslipService
 
 
 
-    public async Task<double> ExchangeFromNetToGross(List<Exchange> exchanges, InsuranceConfig insuranceConfig, EmployeeContract contract, ApplicationUser user, RegionalMinimumWage regional, DefaultConfig defaultConfig)
+    public async Task<double> ExchangeFromNetToGross(ApplicationUser user, DefaultConfig defaultConfig, List<DetailTaxIncome> taxIncome, List<Exchange> exchanges, RegionalMinimumWage regional, InsuranceConfig insuranceConfig, DateTime tempNow, List<ShiftConfig> shiftConfig, EmployeeContract contract)
     {
         if(contract.SalaryType == SalaryType.Gross)
         {
@@ -518,20 +524,28 @@ public class PayslipService : IPayslipService
             }
             else
             {
-                finalListEx = exchanges.Where(x => x.Muc_Quy_Doi_From < TNQD).ToList();
-                if (finalListEx.Count() == 1)
+                finalListEx = exchanges.Where(x =>  x.Muc_Quy_Doi_From < TNQD).ToList();
+                if (finalListEx.Count() == exchanges.Count())
                 {
-                    exChange = finalListEx.FirstOrDefault();
+                    exChange = finalListEx.LastOrDefault();
                 }
                 else
                 {
-                    exChange = finalListEx.Where(x=>x.Muc_Quy_Doi_To>=TNQD && x.Muc_Quy_Doi_From < TNQD).FirstOrDefault();
+                    
+                 exChange = exchanges.Where(x => x.Muc_Quy_Doi_To >= TNQD && x.Muc_Quy_Doi_From < TNQD).ToList().FirstOrDefault();
                 }
             }
 
             double TNCT = Math.Round( (TNQD - exChange.Giam_Tru) / exChange.Thue_Suat);
-
-            double TNTT = TNCT + PersonalDeduction + DependanceDeduction;
+            double TNTT = 0;
+            if (TNCT <= 0) { 
+                TNCT = 0;
+                TNTT = (double)contract.BasicSalary; 
+            }
+            else
+            {
+                TNTT = TNCT + PersonalDeduction + DependanceDeduction;
+            }
 
             double salaryIns = 0;
             double InsCoe = (insuranceConfig.BHXH_Emp + insuranceConfig.BHYT_Emp + insuranceConfig.BHTN_Emp)/100;

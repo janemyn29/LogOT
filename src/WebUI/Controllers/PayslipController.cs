@@ -1,4 +1,5 @@
 ﻿using DocumentFormat.OpenXml.Bibliography;
+using DocumentFormat.OpenXml.Vml;
 using mentor_v1.Application.DefaultConfig.Queries.Get;
 using mentor_v1.Application.EmployeeContract.Queries.GetEmpContractByRelativedObject;
 using mentor_v1.Application.Exchange.Queries;
@@ -45,7 +46,9 @@ public class PayslipController : ApiControllerBase
             var finalContract = contract.Where(x=>x.Status == EmployeeContractStatus.Pending).FirstOrDefault();
             if(item.UserName == "string")
             {
-                var total = await _payslipService.GrossToNetPending(item, defaultConfig, tax, exchange, regionWage, insuranceConfig, DateTime.Parse("2023-07-01"), shiftConfig, finalContract);
+                //var total = await _payslipService.GrossToNetPending(item, defaultConfig, tax, exchange, regionWage, insuranceConfig, DateTime.Parse("2023-07-01"), shiftConfig, finalContract);
+                var total = await _payslipService.ExchangeFromNetToGross(item, defaultConfig, tax, exchange, regionWage, insuranceConfig, DateTime.Parse("2023-07-01"), shiftConfig, finalContract);
+
             }
 
             //đã hết hạn trong tháng trước//tính lại lương => ....
