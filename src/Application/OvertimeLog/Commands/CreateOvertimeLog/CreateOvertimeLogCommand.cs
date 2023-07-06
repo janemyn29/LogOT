@@ -14,7 +14,7 @@ namespace mentor_v1.Application.OvertimeLog.Commands.CreateOvertimeLog;
 
 public class CreateOvertimeLogCommand : IRequest<Guid>
 {
-    public string applicationUserId { get; set; }
+    //public string applicationUserId { get; set; }
     public CreateOvertimeLogViewModel createOvertimeLogViewModel { get; set; }
 
 }

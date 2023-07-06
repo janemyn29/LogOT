@@ -129,8 +129,9 @@ public class OvertimeLogController : ApiControllerBase
         try
         {
             //lấy user từ username ở header
-            var username = GetUserName();
-            var user = await _userManager.FindByNameAsync(username);
+            /*var username = GetUserName();
+            var user = await _userManager.FindByNameAsync(username);*/
+
             //var count = Mediator.Send(new GetOvertimeLogRequest() { Page = 1, Size = 20 }).Result.TotalCount;
             var oldOT = await Mediator.Send(new GetOvertimeLogByUserIdRequest() { id = model.employeeId, Page = 1, Size = 10 });
             foreach (var item in oldOT.Items)
@@ -142,7 +143,7 @@ public class OvertimeLogController : ApiControllerBase
             }
             var create = await Mediator.Send(new CreateOvertimeLogCommand()
             {
-                applicationUserId = user.Id,
+                //applicationUserId = user.Id,
                 createOvertimeLogViewModel = model
             });
 
