@@ -131,8 +131,9 @@ public class OvertimeLogController : ApiControllerBase
             //lấy user từ username ở header
             //var username = GetUserName();
             var user = await _userManager.FindByIdAsync(model.employeeId);
+            if (user  == null) { throw new Exception("Tài khoản không tồn tại !")};
             var role = await _userManager.GetRolesAsync(user);
-            if (role.FirstOrDefault() != "Employee")
+            if (role.FirstOrDefault().ToString().ToLower() != "employee")
             {
                 throw new Exception("Không thể tạo OT cho Manager !");
             }
