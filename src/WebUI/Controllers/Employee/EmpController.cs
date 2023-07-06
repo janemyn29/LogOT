@@ -13,6 +13,8 @@ using mentor_v1.Application.Dependent.Queries;
 using mentor_v1.Application.EmployeeAllowance.Queries;
 using mentor_v1.Application.EmployeeContract.Queries.GetEmpContract;
 using mentor_v1.Application.EmployeeContract.Queries.GetEmpContractByRelativedObject;
+using mentor_v1.Application.LeaveLog.Queries.GetLeaveLog;
+using mentor_v1.Application.LeaveLog.Queries.GetLeaveLogByRelativeObject;
 using mentor_v1.Application.Positions.Queries.GetPositionByRelatedObjects;
 using mentor_v1.Application.SkillEmployee.Queries;
 using mentor_v1.Application.SkillEmployee.Queries.GetSkillEmployee;
@@ -494,6 +496,88 @@ public class EmpController : ApiControllerBase
     #endregion
 
 
+    //Leave log
+    #region [getListForEmployee]
+    [Authorize(Roles = "Employee")]
+    [HttpGet]
+    [Route("/Emp/LeaveLog")]
+    public async Task<IActionResult> GetListLeaveLogByEmployeeId(int pg = 1)
+    {
+        try
+        {
+            //lấy user từ username ở header
+            var username = GetUserName();
+            var user = await _userManager.FindByNameAsync(username);
 
+            var listOTLog = await Mediator.Send(new GetListLeaveLogByUserIdRequest() { userId = new Guid(user.Id), Page = pg, Size = 20 });
+            return Ok(listOTLog);
+
+        }
+        catch (Exception)
+        {
+            return BadRequest("Không thể lấy danh sách nghỉ làm");
+        }
+    }
+    #endregion
+
+    #region getLeaveLogById
+    [Authorize(Roles = "Employee")]
+    [HttpGet()]
+    [Route("/Emp/GetLeaveLogById")]
+    public async Task<IActionResult> GetLeaveLogById(Guid id)
+    {
+        try
+        {
+            //lấy user từ username ở header
+            var username = GetUserName();
+            var user = await _userManager.FindByNameAsync(username);
+            var OTLog = await Mediator.Send(new GetLeaveLogByIdRequest() { Id = id });
+            if (OTLog.ApplicationUserId.ToLower().Equals(user.Id.ToLower()))
+            {
+                return Ok(OTLog);
+
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    Id = id,
+                    message = "Bạn không có quyền truy cập vào yêu cầu nghỉ làm ngày!"
+                });
+            }
+        }
+        catch (Exception)
+        {
+            return BadRequest(new
+            {
+                Id = id,
+                message = "Không tìm thấy yêu cầu nghỉ phép cần truy vấn"
+            });
+        }
+    }
+    #endregion
+    #region [GetLeaveLogFilterByStatus]
+    [Authorize(Roles = "Employee")]
+    [HttpGet]
+    [Route("/Emp/GetListLeaveLogFilterByStatus")]
+    public async Task<IActionResult> GetLeaveLogFilterByStatus(LogStatus logStatus)
+    {
+        try
+        {
+            //lấy user từ username ở header
+            var username = GetUserName();
+            var user = await _userManager.FindByNameAsync(username); 
+            var listLeaveLog = await Mediator.Send(new GetListLeaveLogNoPG { });
+            var result = listLeaveLog.Where(x => x.Status.Equals(logStatus.ToString()) && x.ApplicationUserId.ToLower().Equals(user.Id.ToLower())).ToList();
+            return Ok(result);
+        }
+        catch (Exception)
+        {
+            return BadRequest("Không thể lấy danh sách nghỉ");
+        }
+    }
+    #endregion
+
+    //OT Log
 
 }

@@ -10,6 +10,7 @@ using mentor_v1.Application.LeaveLog.Queries.GetLeaveLog;
 using mentor_v1.Application.LeaveLog.Queries.GetLeaveLogByRelativeObject;
 using mentor_v1.Application.OvertimeLog.Commands.DeleteOvertimeLog;
 using mentor_v1.Application.OvertimeLog.Queries.GetOvertimeLogByRelativeObject;
+using mentor_v1.Domain.Enums;
 using mentor_v1.Domain.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -51,10 +52,29 @@ public class LeaveLogController : ApiControllerBase
     }
     #endregion
 
+    #region [GetLeaveLogFilterByStatus]
+    [Authorize(Roles = "Manager")]
+    [HttpGet]
+    public async Task<IActionResult> GetLeaveLogFilterByStatus(LogStatus logStatus)
+    {
+        try
+        {
+            var listLeaveLog = await Mediator.Send(new GetListLeaveLogNoPG{ });
+            var result = listLeaveLog.Where(x=>x.Status.Equals(logStatus.ToString())).ToList();
+            return Ok(result);
+
+        }
+        catch (Exception)
+        {
+            return BadRequest("Không thể lấy danh sách nghỉ");
+        }
+    }
+    #endregion
+
     #region [getListForEmployee]
     [Authorize(Roles = "Employee")]
     [HttpGet]
-    public async Task<IActionResult> GetListLeaveLogByEmployeeId()
+    public async Task<IActionResult> GetListLeaveLogByEmployeeId(int  pg = 1)
     {
         try
         {
@@ -62,7 +82,7 @@ public class LeaveLogController : ApiControllerBase
             var username = GetUserName();
             var user = await _userManager.FindByNameAsync(username);
 
-            var listOTLog = await Mediator.Send(new GetListLeaveLogByUserIdRequest() {userId = new Guid(user.Id)});
+            var listOTLog = await Mediator.Send(new GetListLeaveLogByUserIdRequest() {userId = new Guid(user.Id), Page = pg, Size=20});
             return Ok(listOTLog);
 
         }
@@ -80,12 +100,6 @@ public class LeaveLogController : ApiControllerBase
     {
         try
         {
-            //lấy user từ username ở header
-            var username = GetUserName();
-            var user = await _userManager.FindByNameAsync(username);
-            var role = await _userManager.GetRolesAsync(user);
-            if (role == null) throw new Exception("user chưa có role");
-
             var OTLog = Mediator.Send(new GetLeaveLogByIdRequest() { Id = id });
             return Ok(OTLog);
         }
@@ -94,7 +108,7 @@ public class LeaveLogController : ApiControllerBase
             return BadRequest(new
             {
                 Id = id,
-                message = "Không tìm thấy id cần truy vấn"
+                message = "Không tìm thấy yêu cầu nghỉ phép cần truy vấn"
             });
         }
     }
