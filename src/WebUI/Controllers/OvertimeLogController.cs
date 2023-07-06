@@ -131,11 +131,14 @@ public class OvertimeLogController : ApiControllerBase
             //lấy user từ username ở header
             //var username = GetUserName();
             var user = await _userManager.FindByIdAsync(model.employeeId);
-            if (user  == null) { throw new Exception("Tài khoản không tồn tại !")};
+            if (user  == null) 
+            {
+                throw new Exception("Tài khoản không tồn tại !"); 
+            }
             var role = await _userManager.GetRolesAsync(user);
             if (role.FirstOrDefault().ToString().ToLower() != "employee")
             {
-                throw new Exception("Không thể tạo OT cho Manager !");
+                throw new Exception("Chỉ có thể tạo OT cho Employee!");
             }
 
             //var count = Mediator.Send(new GetOvertimeLogRequest() { Page = 1, Size = 20 }).Result.TotalCount;
