@@ -1,5 +1,7 @@
 ﻿using System.Data;
 using System.Text;
+using DocumentFormat.OpenXml.CustomXmlSchemaReferences;
+using DocumentFormat.OpenXml.EMMA;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Hangfire;
 using mentor_v1.Application.Auth;
@@ -11,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using SonPhat.VietNameseLunarCalendar.Astronomy;
 using WebUI.Models;
@@ -31,14 +34,14 @@ public class AuthController : ApiControllerBase
     }
 
 
-   /* [HttpGet]
-    [Route("/test")]
-    public async Task<IActionResult> Test()
-    {
+    /* [HttpGet]
+     [Route("/test")]
+     public async Task<IActionResult> Test()
+     {
 
-        RecurringJob.AddOrUpdate("myrecurringjob",() => Console.WriteLine("Recurring!"),"16 3 * * *",TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
-        return Ok();
-    }*/
+         RecurringJob.AddOrUpdate("myrecurringjob",() => Console.WriteLine("Recurring!"),"16 3 * * *",TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
+         return Ok();
+     }*/
 
     [HttpPost]
     [Route("/Login")]
@@ -144,39 +147,82 @@ public class AuthController : ApiControllerBase
         }
     }
 
-    /*[HttpPost]
-    [AllowAnonymous]
+    [HttpPost]
     [Route("/ResetPassword")]
-    public async Task<IActionResult> ResetPassword(ResetPasswordModel model)
+    public async Task<IActionResult> ResetPassword(string userId, string code, string newPassword, string confirmPassword)
     {
-        // Kiểm tra tính hợp lệ của yêu cầu
-        if (!ModelState.IsValid)
+        try
         {
-            return BadRequest("Invalid request");
+            if (userId == null || code == null || newPassword == null || confirmPassword == null)
+            {
+                return BadRequest("Vui lòng điền đẩy đủ thông tin được yêu cầu !");
+            }
+            if (!newPassword.Equals(confirmPassword))
+            {
+                return BadRequest("Mật khẩu với và mật khẩu xác nhận không khớp !");
+            }
+
+            // Kiểm tra xác thực người dùng và tạo mã đặt lại mật khẩu (reset token)
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return BadRequest("Không tìm thấy tài khoản !");
+            }
+
+            code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
+
+            // Gửi email chứa liên kết để đặt lại mật khẩu
+            //var callbackUrl = Url.Action("ResetPassword", "Auth", new { token = code }, Request.Scheme);
+
+            var result = await _userManager.ResetPasswordAsync(user, code, newPassword);
+
+            if (result.Succeeded)
+            {
+                // Mật khẩu đã được đặt lại thành công
+                return Ok("Mật khẩu đã được đặt lại thành công!");
+            }
+            else
+            {
+                // Đặt lại mật khẩu không thành công
+                return BadRequest("Không thể đặt lại mật khẩu.");
+            }
+        }
+        catch (Exception e)
+        {
+
+            return BadRequest("Đã xảy ra lỗi trong quá trình: " + e.Message);
         }
 
-        // Kiểm tra xác thực người dùng và tạo mã đặt lại mật khẩu (reset token)
-        var user = await _userManager.FindByEmailAsync(model.Email);
-        if (user == null)
+    }
+
+    [HttpGet]
+    [Route("/ForgotPassword")]
+    public async Task<IActionResult> ForgotPassword(string email)
+    {
+        try
         {
-            return BadRequest("User not found");
+            if (email == null) throw new ArgumentNullException("email");
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return BadRequest("Không tìm thấy địa chỉ emal");
+            }
+
+            var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+            // Gửi email chứa liên kết để đặt lại mật khẩu
+            string callbackUrl =/* schema + "://" + host +*/ Url.Action("ResetPassword", "Auth", new { userId = user.Id, code = code }, Request.Scheme);
+
+            return Ok(callbackUrl);
         }
+        catch (ArgumentNullException e)
+        {
+            return BadRequest("lỗi: " + e.Message);
+        }
+        catch (Exception e)
+        {
 
-        var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
-
-        // Gửi email chứa liên kết để đặt lại mật khẩu
-        var resetLink = Url.Action("ResetPassword", "Account", new { token = resetToken }, Request.Scheme);
-
-        // Gửi email chứa resetLink đến địa chỉ email người dùng
-        // Code gửi email ở đâyChú ý rằng trong ví dụ trên, tôi sử dụng `UserManager` để quản lý người dùng và tạo mã đặt lại mật khẩu (reset token). Bạn có thể sử dụng các công cụ và thư viện khác tương tự để thực hiện các chức năng tương tự trong hệ thống của bạn.
-
-        Ngoài ra, bạn cần thực hiện các bước bổ sung như xác thực email và xác thực token khi người dùng nhấp vào liên kết đặt lại mật khẩu. Điều này giúp đảm bảo tính bảo mật của quá trình đặt lại mật khẩu.
-
-Hy vọng rằng ví dụ trên có thể giúp bạn triển khai chức năng reset mật khẩu trong ASP.NET API.*/
-
-
-
-
-
-
+            return BadRequest("Xác nhận email không thành công: " + e.Message);
+        }
+    }
 }

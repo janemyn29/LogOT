@@ -25,6 +25,33 @@ public class AllowanceController : ApiControllerBase
 
     #region Get List Allowance
     [Authorize(Roles = "Manager")]
+    [HttpGet]
+    [Route("/Allowance/GetAll")]
+    public async Task<IActionResult> GetAllListAllowance(int page = 1)
+    {
+        try
+        {
+            var listAllowance = await Mediator.Send(new GetAllowanceRequest { Page = page, Size = 10 });
+            return Ok(new
+            {
+                Status = Ok().StatusCode,
+                Message = "Lấy danh sách thành công.",
+                Result = listAllowance
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new
+            {
+                status = BadRequest().StatusCode,
+                message = ex.Message
+            });
+        }
+    }
+    #endregion
+
+    #region Get List Allowance
+    [Authorize(Roles = "Manager")]
     [HttpGet("{page}")]
     public async Task<IActionResult> GetListAllowance(int page)
     {

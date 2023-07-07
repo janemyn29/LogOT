@@ -1,18 +1,15 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using FluentValidation;
 using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.Interfaces;
-using mentor_v1.Application.Level.Commands.CreateLevel;
-using mentor_v1.Application.Note.Commands;
 using mentor_v1.Application.OvertimeLog.Commands.CreateOvertimeLog;
 using mentor_v1.Application.OvertimeLog.Commands.DeleteOvertimeLog;
 using mentor_v1.Application.OvertimeLog.Commands.UpdateOvertimeLog;
 using mentor_v1.Application.OvertimeLog.Queries.GetOvertimeLog;
 using mentor_v1.Application.OvertimeLog.Queries.GetOvertimeLogByRelativeObject;
+using mentor_v1.Domain.Enums;
 using mentor_v1.Domain.Identity;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -50,6 +47,24 @@ public class OvertimeLogController : ApiControllerBase
         catch (Exception)
         {
             return BadRequest("Không thể lấy danh sách tăng ca");
+        }
+    }
+    #endregion
+
+    #region [GetOvertimeLogFilterByStatus]
+    [Authorize(Roles = "Manager")]
+    [HttpGet]
+    public async Task<IActionResult> GetOvertimeLogFilterByStatus(LogStatus logStatus)
+    {
+        try
+        {
+            var listOvertimeLog = await Mediator.Send(new GetListOvertimeLogByStatusNoPG { status = logStatus });
+            return Ok(listOvertimeLog);
+
+        }
+        catch (Exception e)
+        {
+            return BadRequest("Không thể lấy danh sách tăng ca: " + e.Message);
         }
     }
     #endregion

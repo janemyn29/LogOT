@@ -232,6 +232,13 @@ public class LeaveLogController : ApiControllerBase
         if (id.Equals(Guid.Empty)) return BadRequest("Vui lòng nhập id");
         try
         {
+            var user = await _userManager.FindByIdAsync(userId);
+            var role = await _userManager.GetRolesAsync(user);
+            if (role.FirstOrDefault().ToString().ToLower() != "employee")
+            {
+                throw new Exception("Chỉ có thể thực hiện với employee !");
+            }
+
             if (status.ToLower().Equals("approve"))
             {
                 var update = await Mediator.Send(new UpdateLeaveLogRequestStatusCommand() 
