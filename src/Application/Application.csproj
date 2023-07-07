@@ -45,7 +45,6 @@
       <Folder Include="DefaultConfig\Commands\" />
       <Folder Include="DefaultConfig\Queries\GetByRelatedObject\" />
       <Folder Include="ExcelContract\Queries\" />
-      <Folder Include="Note\Queries\" />
       <Folder Include="ShiftConfig\Commands\" />
     </ItemGroup>
 
