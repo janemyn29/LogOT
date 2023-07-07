@@ -7,10 +7,11 @@ using AutoMapper;
 using MediatR;
 using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.Interfaces;
+using mentor_v1.Application.LeaveLog.Queries.GetLeaveLog;
 using Microsoft.EntityFrameworkCore;
 
 namespace mentor_v1.Application.LeaveLog.Queries.GetLeaveLogByRelativeObject;
-public class GetLeaveLogByUserIdRequest : IRequest<Domain.Entities.LeaveLog>
+public class GetLeaveLogByUserIdRequest : IRequest<LeaveLogViewModel>
 {
     public string UserId { get; set; }
     public DateTime day { get; set; }
@@ -18,7 +19,7 @@ public class GetLeaveLogByUserIdRequest : IRequest<Domain.Entities.LeaveLog>
 }
 
 // IRequestHandler<request type, return type>
-public class GetLeaveLogByUserIdRequestHandler : IRequestHandler<GetLeaveLogByUserIdRequest, Domain.Entities.LeaveLog>
+public class GetLeaveLogByUserIdRequestHandler : IRequestHandler<GetLeaveLogByUserIdRequest, LeaveLogViewModel>
 {
     private readonly IApplicationDbContext _context;
     private readonly IMapper _mapper;
@@ -30,12 +31,13 @@ public class GetLeaveLogByUserIdRequestHandler : IRequestHandler<GetLeaveLogByUs
         _mapper = mapper;
     }
 
-    public Task<Domain.Entities.LeaveLog> Handle(GetLeaveLogByUserIdRequest request, CancellationToken cancellationToken)
+    public Task<LeaveLogViewModel> Handle(GetLeaveLogByUserIdRequest request, CancellationToken cancellationToken)
     {
         // get categories
         var LeaveLog = _context.Get<Domain.Entities.LeaveLog>()
             .Where(x => x.IsDeleted == false && x.ApplicationUserId.Equals(request.UserId) && x.LeaveDate.Date == request.day.Date  && x.Status == Domain.Enums.LogStatus.Approved)
             .AsNoTracking().FirstOrDefault();
-        return Task.FromResult(LeaveLog); //Task.CompletedTask;
+        var map = _mapper.Map<LeaveLogViewModel>(LeaveLog);
+        return Task.FromResult(map); //Task.CompletedTask;
     }
 }

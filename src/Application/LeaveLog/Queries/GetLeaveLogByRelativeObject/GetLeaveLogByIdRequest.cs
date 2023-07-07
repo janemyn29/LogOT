@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using MediatR;
 using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.Interfaces;
 using mentor_v1.Application.LeaveLog.Queries.GetLeaveLog;
+using Microsoft.EntityFrameworkCore;
 
 namespace mentor_v1.Application.LeaveLog.Queries.GetLeaveLogByRelativeObject;
 
@@ -34,6 +29,7 @@ public class GetLeaveLogByIdRequestHandler : IRequestHandler<GetLeaveLogByIdRequ
     {
         // get categories
             var leaveLog = _context.Get<Domain.Entities.LeaveLog>()
+            .Include(x => x.ApplicationUser)
            .Where(x => x.IsDeleted == false && x.Id.Equals(request.Id))
            .AsNoTracking().FirstOrDefault();
         
