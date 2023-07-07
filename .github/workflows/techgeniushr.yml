@@ -1,14 +1,10 @@
-name: Build and deploy .NET Core application to Web App techgeniushrm
+name: Build and deploy .NET Core application to Web App techgeniushr
 on:
   push:
     branches:
-      - main
-  pull_request:
-    branches:
-      - main
-    types: [opened, reopened, synchronize, labeled, unlabeled]
+    - Dev
 env:
-  AZURE_WEBAPP_NAME: techgeniushrm
+  AZURE_WEBAPP_NAME: techgeniushr
   AZURE_WEBAPP_PACKAGE_PATH: src\WebUI\publish
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 7.0.x
@@ -48,5 +44,5 @@ jobs:
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        publish-profile: ${{ secrets.techgeniushrm_FDAF }}
+        publish-profile: ${{ secrets.techgeniushr_D002 }}
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
