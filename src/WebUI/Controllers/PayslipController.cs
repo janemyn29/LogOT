@@ -37,6 +37,7 @@ public class PayslipController : ApiControllerBase
         _payslipService = payslipService;
     }
     [HttpGet]
+    [Route("/Payslip/Create")]
     public async Task<IActionResult> Index()
     {
         //var now = DateTime.Now;
@@ -111,6 +112,8 @@ public class PayslipController : ApiControllerBase
     }
 
     [HttpGet]
+    [Route("/Payslip/GetListPayslip")]
+
     public async Task<IActionResult> GetListPayslip(int pg=1)
     {
         var list = await Mediator.Send(new GetListPayslipRequest { Page = pg, Size = 30 });
@@ -118,6 +121,8 @@ public class PayslipController : ApiControllerBase
     }
 
     [HttpGet]
+    [Route("/Payslip/GetListPayslipByUserOrMonthOrBoth")]
+
     public async Task<IActionResult> GetListPayslipByUserOrMonthOrBoth(string? userId, int? month, int? year)
     {
         var list = await Mediator.Send(new GetListPayslipNoPg { });
@@ -154,6 +159,8 @@ public class PayslipController : ApiControllerBase
 
 
     [HttpGet]
+    [Route("/Payslip/GetDetailPayslip")]
+
     public async Task<IActionResult> GetDetailPayslip(Guid id)
     {
         var list = await Mediator.Send(new GetPaySlipRequets {  Id = id });

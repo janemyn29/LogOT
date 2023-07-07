@@ -50,7 +50,6 @@ public class EmpController : ApiControllerBase
     }
 
     //Attendance
-
     [HttpGet]
     [Route("/Emp/AttendanceEmployee")]
     public async Task<IActionResult> Index(int pg = 1)
@@ -217,7 +216,6 @@ public class EmpController : ApiControllerBase
 
 
     //Infor
-
     [HttpGet]
     [Route("/Emp/Infor")]
     public async Task<IActionResult> Infor()
@@ -379,6 +377,35 @@ public class EmpController : ApiControllerBase
     }
     #endregion
 
+    #region GetListDependent
+    [HttpGet]
+    [Route("/Emp/DependanceFilter")]
+    public async Task<IActionResult> DependanceFilter(AcceptanceType acceptanceType)
+    {
+        try
+        {
+            var username = GetUserName();
+            var user = await _userManager.FindByNameAsync(username);
+            var result = await Mediator.Send(new GetListDependantNoVmRequest { AcceptanceType = acceptanceType });
+            var temp = result.Where(x => x.ApplicationUserId.ToLower().Equals(user.Id.ToLower())).ToList();
+            return Ok(new
+            {
+                status = Ok().StatusCode,
+                message = "Lấy danh sách thành công.",
+                result = temp
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new
+            {
+                status = BadRequest().StatusCode,
+                message = ex.Message
+            });
+        }
+    }
+    #endregion
+
     //Allowance 
     [HttpGet]
     [Route("/Emp/AllowanceByContract")]
@@ -410,34 +437,7 @@ public class EmpController : ApiControllerBase
     }
 
 
-    #region GetListDependent
-    [HttpGet]
-    [Route("/Emp/DependanceFilter")]
-    public async Task<IActionResult> DependanceFilter(AcceptanceType acceptanceType )
-    {
-        try
-        {
-            var username = GetUserName();
-            var user = await _userManager.FindByNameAsync(username);
-            var result = await Mediator.Send(new GetListDependantNoVmRequest {  AcceptanceType = acceptanceType });
-            var temp = result.Where(x=>x.ApplicationUserId.ToLower().Equals(user.Id.ToLower())).ToList();
-            return Ok(new
-            {
-                status = Ok().StatusCode,
-                message = "Lấy danh sách thành công.",
-                result = temp
-            });
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(new
-            {
-                status = BadRequest().StatusCode,
-                message = ex.Message
-            });
-        }
-    }
-    #endregion
+    
 
     #region Create
     [HttpPost]
@@ -579,6 +579,7 @@ public class EmpController : ApiControllerBase
     //Payslip 
 
     [HttpGet]
+    [Route("/Emp/GetListPayslip")]
     public async Task<IActionResult> GetListPayslip(int pg = 1)
     {
         //lấy user từ username ở header
@@ -589,6 +590,7 @@ public class EmpController : ApiControllerBase
     }
 
     [HttpGet]
+    [Route("/Emp/GetListPayslipByUserOrMonthOrBoth")]
     public async Task<IActionResult> GetListPayslipByUserOrMonthOrBoth(int? month, int? year)
     {
         //lấy user từ username ở header
@@ -635,6 +637,7 @@ public class EmpController : ApiControllerBase
 
 
     [HttpGet]
+    [Route("/Emp/GetDetailPayslip")]
     public async Task<IActionResult> GetDetailPayslip(Guid id)
     {
         var username = GetUserName();
