@@ -37,11 +37,11 @@ public class LeaveLogController : ApiControllerBase
     #region [getListForManager]
     [Authorize(Roles = "Manager")]
     [HttpGet]
-    public async Task<IActionResult> GetLeaveLog()
+    public async Task<IActionResult> GetLeaveLog(int page)
     {
         try
         {
-            var listLeaveLog = await Mediator.Send(new GetLeaveLogRequest() { Page = 1, Size = 20 });
+            var listLeaveLog = await Mediator.Send(new GetLeaveLogRequest() { Page = page, Size = 20 });
             return Ok(listLeaveLog);
 
         }
@@ -74,7 +74,7 @@ public class LeaveLogController : ApiControllerBase
     #region [getListForEmployee]
     [Authorize(Roles = "Employee")]
     [HttpGet]
-    public async Task<IActionResult> GetListLeaveLogByEmployeeId(int  pg = 1)
+    public async Task<IActionResult> GetListLeaveLogByEmployeeId(int pg)
     {
         try
         {

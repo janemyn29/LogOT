@@ -33,7 +33,7 @@ public class NotificationController : ApiControllerBase
         {
             var username = GetUserName();
             var user = await _userManager.FindByNameAsync(username);
-            var listNoti = await Mediator.Send(new GetListNotificationByUserIdRequest() { userId = user.Id, Page = page , Size = 3 });
+            var listNoti = await Mediator.Send(new GetListNotificationByUserIdRequest() { userId = user.Id, Page = page , Size = 20 });
             return Ok(listNoti);
         }
         catch (Exception)
