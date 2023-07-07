@@ -9,9 +9,12 @@ using mentor_v1.Application.InsuranceConfig.Queries;
 using mentor_v1.Application.Note.Commands;
 using mentor_v1.Application.Payday.Commands;
 using mentor_v1.Application.Payday.Queries;
+using mentor_v1.Application.Payslip.Queries;
+using mentor_v1.Application.Payslip.Queries.GetList;
 using mentor_v1.Application.RegionalMinimumWage.Queries;
 using mentor_v1.Application.ShiftConfig.Queries;
 using mentor_v1.Application.TaxIncome.Queries;
+using mentor_v1.Domain.Entities;
 using mentor_v1.Domain.Enums;
 using mentor_v1.Domain.Identity;
 using Microsoft.AspNetCore.Authorization;
@@ -55,7 +58,7 @@ public class PayslipController : ApiControllerBase
         var lastPayday = listPayday.OrderByDescending(x => x.PaymentDay).FirstOrDefault();
         if (lastPayday != null)
         {
-            if (now.Date <= lastPayday.PaymentDay.Date )
+            if (now.Date <= lastPayday.PaymentDay.Date)
             {
                 return BadRequest("Ngày tính lương không thể trùng với ngày trả lương lần trước hoặc ngày bắt đầu hợp đồng");
             }
@@ -65,8 +68,8 @@ public class PayslipController : ApiControllerBase
 
         foreach (var item in listUser)
         {
-            var Manager = listManager.Where(x=>x.Id == item.Id).FirstOrDefault();
-            if(Manager == null)
+            var Manager = listManager.Where(x => x.Id == item.Id).FirstOrDefault();
+            if (Manager == null)
             {
                 var contract = await Mediator.Send(new GetContractByUserRequest { UserId = item.Id });
                 //hd dang pending 
@@ -95,13 +98,65 @@ public class PayslipController : ApiControllerBase
                 {
                 }
             }
-            await Mediator.Send(new CreateNotiCommand { ApplicationUserId = item.Id,
-                Title = "Hoàn thành tính lương tháng "+ now.AddDays(-1).Month + "/"+ now.AddDays(-1).Year,
-                Description = "Lương tháng " + now.AddDays(-1).Month + "/" + now.AddDays(-1).Year +" của nhân viên đã được tính xong.Vui lòng truy cập vào bảng lương để xem chi tiết! "
+            await Mediator.Send(new CreateNotiCommand
+            {
+                ApplicationUserId = item.Id,
+                Title = "Hoàn thành tính lương tháng " + now.AddDays(-1).Month + "/" + now.AddDays(-1).Year,
+                Description = "Lương tháng " + now.AddDays(-1).Month + "/" + now.AddDays(-1).Year + " của nhân viên đã được tính xong.Vui lòng truy cập vào bảng lương để xem chi tiết! "
             });
-           
+
         }
         await Mediator.Send(new CreatePaydayCommand { PaymentDay = now });
         return Ok("Đã hoàn thành tính lương cho nhân viên!");
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetListPayslip(int pg=1)
+    {
+        var list = await Mediator.Send(new GetListPayslipRequest { Page = pg, Size = 30 });
+        return Ok(list);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetListPayslipByUserOrMonthOrBoth(string? userId, int? month, int? year)
+    {
+        var list = await Mediator.Send(new GetListPayslipNoPg { });
+        List<PaySlip> final = new List<PaySlip>();
+        if (userId != null && month != null && year != null)
+        {
+            final = list.Where(x => x.EmployeeContract.ApplicationUser.Id.ToLower().Equals(userId.ToLower()) && x.ToTime.Month == month && x.ToTime.Year == year).ToList();
+
+        }else if(userId != null && month != null && year == null)
+        {
+            final = list.Where(x => x.EmployeeContract.ApplicationUser.Id.ToLower().Equals(userId.ToLower()) && x.ToTime.Month == month).ToList();
+
+        }else if(userId != null && month == null && year != null)
+        {
+            final = list.Where(x => x.EmployeeContract.ApplicationUser.Id.ToLower().Equals(userId.ToLower()) &&  x.ToTime.Year == year).ToList();
+        }else if(userId == null && month != null && year != null)
+        {
+            final = list.Where(x => x.ToTime.Month == month && x.ToTime.Year == year).ToList();
+        }else if(userId != null && month == null && year == null)
+        {
+            final = list.Where(x => x.EmployeeContract.ApplicationUser.Id.ToLower().Equals(userId.ToLower()) ).ToList();
+        }else if(userId == null && month == null && year != null)
+        {
+            final = list.Where(x =>  x.ToTime.Year == year).ToList();
+        }else if(userId == null && month != null && month == null)
+        {
+            final = list.Where(x => x.ToTime.Month == month).ToList();
+        }
+        else
+        {
+        }
+        return Ok(final);
+    }
+
+
+    [HttpGet]
+    public async Task<IActionResult> GetDetailPayslip(Guid id)
+    {
+        var list = await Mediator.Send(new GetPaySlipRequets {  Id = id });
+        return Ok(list);
     }
 }
