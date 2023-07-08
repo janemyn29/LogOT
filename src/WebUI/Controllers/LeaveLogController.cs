@@ -94,7 +94,7 @@ public class LeaveLogController : ApiControllerBase
     #endregion
 
     #region getLeaveLogById
-    [Authorize(Roles = "Manager, Employee")]
+    [Authorize(Roles = "Manager")]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetLeaveLogById(Guid id)
     {
@@ -113,7 +113,7 @@ public class LeaveLogController : ApiControllerBase
         }
     }
     #endregion
-
+/*
     #region [create]
     [Authorize(Roles = "Employee")]
     [HttpPost]
@@ -205,7 +205,7 @@ public class LeaveLogController : ApiControllerBase
             return BadRequest("Cập nhật không thành công: " + e.Message);
         }
     }
-    #endregion
+    #endregion*/
 
     #region approveLeaveRequest
     [Authorize(Roles = "Manager")]

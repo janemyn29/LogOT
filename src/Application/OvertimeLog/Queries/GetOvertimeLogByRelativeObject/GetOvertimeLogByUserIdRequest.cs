@@ -31,7 +31,7 @@ public class GetOvertimeLogByUserIdRequestHandler : IRequestHandler<GetOvertimeL
         //get OvertimeLog 
         var OvertimeLogs = _applicationDbContext.Get<Domain.Entities.OvertimeLog>()
             .Include(x => x.ApplicationUser)
-            .Where(x => x.IsDeleted == false && x.ApplicationUserId.Equals(request.id)).OrderByDescending(x => x.Created).AsNoTracking();
+            .Where(x => x.IsDeleted == false && x.ApplicationUserId.Equals(request.id)).OrderByDescending(x => x.Date).AsNoTracking();
         var models = _mapper.ProjectTo<OvertimeLogViewModel>(OvertimeLogs);
 
         var page = PaginatedList<OvertimeLogViewModel>.CreateAsync(models, request.Page, request.Size);
