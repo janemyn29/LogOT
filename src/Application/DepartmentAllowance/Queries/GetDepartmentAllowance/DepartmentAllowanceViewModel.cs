@@ -13,4 +13,7 @@ public class DepartmentAllowanceViewModel : IMapFrom<Domain.Entities.DepartmentA
     public Guid Id { get; set; }
     public string DepartmentId { get; set; }
     public string SubsidizeId { get; set; }
+
+    public virtual Domain.Entities.Department Departments { get; set; }
+    public virtual Domain.Entities.Subsidize Subsidize { get; set; }
 }

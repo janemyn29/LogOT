@@ -36,11 +36,11 @@ public class OvertimeLogController : ApiControllerBase
     #region [getListForManager]
     [Authorize(Roles = "Manager")]
     [HttpGet]
-    public async Task<IActionResult> GetOvertimeLog()
+    public async Task<IActionResult> GetOvertimeLog(int pg)
     {
         try
         {
-            var listOTLog = await Mediator.Send(new GetOvertimeLogRequest() { Page = 1, Size = 20 });
+            var listOTLog = await Mediator.Send(new GetOvertimeLogRequest() { Page = pg, Size = 20 });
             return Ok(listOTLog);
 
         }
@@ -72,7 +72,7 @@ public class OvertimeLogController : ApiControllerBase
     #region [getListForEmployee]
     [Authorize(Roles = "Employee")]
     [HttpGet]
-    public async Task<IActionResult> GetOvertimeLogByEmployeeId()
+    public async Task<IActionResult> GetOvertimeLogByEmployeeId(int pg)
     {
         try
         {
@@ -81,7 +81,7 @@ public class OvertimeLogController : ApiControllerBase
             var user = await _userManager.FindByNameAsync(username);
 
 
-            var listOTLog = await Mediator.Send(new GetOvertimeLogByUserIdRequest() {id = user.Id, Page = 1, Size = 10 });
+            var listOTLog = await Mediator.Send(new GetOvertimeLogByUserIdRequest() {id = user.Id, Page = pg, Size = 10 });
             return Ok(listOTLog);
 
         }
