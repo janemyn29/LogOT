@@ -232,7 +232,7 @@ public class DependentController : ApiControllerBase
 
     #region Delete
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteDegree(Guid id)
+    public async Task<IActionResult> DeleteDependent(Guid id)
     {
         try
         {
