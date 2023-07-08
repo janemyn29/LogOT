@@ -3,6 +3,7 @@ using mentor_v1.Application.AnnualWorkingDays.Commands.Delete;
 using mentor_v1.Application.AnnualWorkingDays.Commands.Update;
 using mentor_v1.Application.AnnualWorkingDays.Queries.GetByRelatedObject;
 using mentor_v1.Application.AnnualWorkingDays.Queries.GetList;
+using mentor_v1.Application.Department.Commands.DeleteDepartment;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebUI.Services.FileManager;
@@ -102,21 +103,19 @@ public class AnnualWorkingDayController : ApiControllerBase
 
     [HttpDelete]
     [Route("/Annual/Delete")]
-
-    [Authorize(Roles = "Manager")]
-    public async Task<IActionResult> Delete([FromForm]Guid id)
+    public async Task<IActionResult> Delete(Guid id)
     {
         try
         {
-            await Mediator.Send(new DeleteAnnualCommand { Id = id });
+            var result = await Mediator.Send(new DeleteAnnualCommand { Id = id });
             return Ok("Xóa thành công");
         }
         catch (Exception ex)
         {
             return BadRequest(ex.Message);
         }
-
     }
+
 
     [HttpGet]
     [Route("/Annual/GetByMonth")]
