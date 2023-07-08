@@ -17,6 +17,7 @@ using mentor_v1.Domain.Entities;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using mentor_v1.Application.Common.PagingUser;
 
 namespace WebUI.Controllers;
 
@@ -180,5 +181,19 @@ public class AttendanceManagerController : ApiControllerBase
         {
             return BadRequest("Không tìm thấy người dùng bạn yêu cầu");
         }
+    }
+
+    [HttpGet]
+    [Route("/Attendance/Filter")]
+    public async Task<IActionResult> Filter(DateTime FromDate, DateTime ToDate, int pg = 1)
+    {
+        var listAttendance = await Mediator.Send(new GetListAttendanceNoVm { });
+        var finalList = listAttendance.Where(x => x.Day.Date >= FromDate.Date && x.Day.Date <= ToDate.Date).ToList();
+        var page = await PagingAppUser<AttendanceViewModel>.CreateAsync(finalList, pg, 40);
+        var model = new AttendanceFilterViewModel();
+        model.list = page;
+        model.FromDate = FromDate.Date;
+        model.ToDate = ToDate.Date;
+        return Ok(model);
     }
 }

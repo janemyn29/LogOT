@@ -31,6 +31,8 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using WebUI.Models;
 using WebUI.Services.AttendanceServices;
+using DocumentFormat.OpenXml.Spreadsheet;
+using mentor_v1.Application.ShiftConfig.Queries;
 
 namespace WebUI.Controllers.Employee;
 [Authorize(Roles = "Employee")]
@@ -61,7 +63,7 @@ public class EmpController : ApiControllerBase
         return Ok(listAttendance);
     }
 
-    [HttpPost]
+    [HttpGet]
     [Route("/Emp/AttendanceEmployee/Create")]
     public async Task<IActionResult> Create(/*DateTime tempNow*/)
     {
@@ -137,6 +139,35 @@ public class EmpController : ApiControllerBase
         model.FromDate = FromDate.Date;
         model.ToDate = ToDate.Date;
         return Ok(model);
+    }
+
+    [HttpGet]
+    [Route("/Emp/AttendanceEmployee/GetAttendanceCurrentDay")]
+    public async Task<IActionResult> GetAttendanceCurrentDay()
+    {
+        //lấy user
+        var username = GetUserName();
+        var user = await _userManager.FindByNameAsync(username);
+        var listAttendance = await Mediator.Send(new GetListAttendanceByUserNoPaging { UserId = user.Id });
+        var finalList = listAttendance.Where(x => x.Day.Date >= DateTime.Now.Date && x.Day.Date <= DateTime.Now.Date).ToList();
+        if(finalList ==null||finalList.Count == 0)
+        {
+            return Ok("Hôm nay bạn chứ thực hiện chấm công");
+        }
+        return Ok(finalList);
+    }
+
+
+    [HttpGet]
+    [Route("/Emp/AttendanceEmployee/AttendantRegulations")]
+    public async Task<IActionResult> AttendantRegulations()
+    {
+        var Regulations = new AttendantRegulations();
+        var listShift = await Mediator.Send(new GetListShiftViewmodel { });
+        Regulations.Title = "Lưu ý:";
+        Regulations.Morning = "Thời gian chấm công ca Sáng từ : " + listShift.ElementAt(0).StartTime.Value.AddMinutes(-30).ToString("HH:mm:ss") + " tới " + listShift.ElementAt(1).StartTime.Value.AddMinutes(-30).AddSeconds(-1).ToString("HH:mm:ss");
+        Regulations.Afternoon = "Thời gian chấm công ca Chiều từ : " + listShift.ElementAt(1).StartTime.Value.AddMinutes(-30).ToString("HH:mm:ss") + " tới " + DateTime.Parse("2023-01-10 23:29").ToString("HH:mm:ss");
+        return Ok(Regulations);
     }
 
     [NonAction]
