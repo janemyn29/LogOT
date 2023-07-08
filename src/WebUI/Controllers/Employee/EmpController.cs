@@ -259,6 +259,28 @@ public class EmpController : ApiControllerBase
         }
     }
 
+    //contract 
+    [HttpGet]
+    [Route("/Emp/GetListContract2")]
+    public async Task<IActionResult> GetListContract2(int pg = 1)
+    {
+        var username = GetUserName();
+        try
+        {
+            var user = await _userManager.FindByNameAsync(username);
+            var list = await Mediator.Send(new GetEmpContractByEmpRequest { Username = username, page = pg, size = 20 });
+            foreach (var item in list.Items)
+            {
+                item.ApplicationUser = null;
+            }
+            return Ok(list);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
     [HttpGet]
     [Route("/Emp/ContractDetail")]
     public async Task<IActionResult> GetDetailContractByContractCode(string code)
