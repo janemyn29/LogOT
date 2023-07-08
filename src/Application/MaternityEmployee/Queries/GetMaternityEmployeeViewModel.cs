@@ -10,6 +10,7 @@ public class GetMaternityEmployeeViewModel : IMapFrom<Domain.Entities.MaternityE
 {
     public Guid Id { get; set; }
     public string ApplicationUserId { get; set; }
+    public string Fullname { get; set; }
     public string Image { get; set; }
     public string BirthDay { get; set; }
     public string AcceptanceType { get;set; }
