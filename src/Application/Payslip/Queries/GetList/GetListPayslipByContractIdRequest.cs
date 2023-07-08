@@ -11,7 +11,7 @@ using mentor_v1.Application.Common.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace mentor_v1.Application.Payslip.Queries.GetList;
-public class GetListPayslipByUserIdRequest : IRequest<PaginatedList<Domain.Entities.PaySlip>>
+public class GetListPayslipByContractIdRequest : IRequest<PaginatedList<Domain.Entities.PaySlip>>
 {
     public int Page { get; set; }
     public int Size { get; set; }
@@ -20,18 +20,18 @@ public class GetListPayslipByUserIdRequest : IRequest<PaginatedList<Domain.Entit
 
 }
 
-public class GetListPayslipByUserIdRequestHandler : IRequestHandler<GetListPayslipByUserIdRequest, PaginatedList<Domain.Entities.PaySlip>>
+public class GetListPayslipByContractIdRequestHandler : IRequestHandler<GetListPayslipByContractIdRequest, PaginatedList<Domain.Entities.PaySlip>>
 {
     private readonly IApplicationDbContext _applicationDbContext;
     private readonly IMapper _mapper;
 
-    public GetListPayslipByUserIdRequestHandler(IApplicationDbContext applicationDbContext, IMapper mapper)
+    public GetListPayslipByContractIdRequestHandler(IApplicationDbContext applicationDbContext, IMapper mapper)
     {
         _applicationDbContext = applicationDbContext;
         _mapper = mapper;
     }
 
-    public Task<PaginatedList<Domain.Entities.PaySlip>> Handle(GetListPayslipByUserIdRequest request, CancellationToken cancellationToken)
+    public Task<PaginatedList<Domain.Entities.PaySlip>> Handle(GetListPayslipByContractIdRequest request, CancellationToken cancellationToken)
     {
 
         //get Attendance by ?

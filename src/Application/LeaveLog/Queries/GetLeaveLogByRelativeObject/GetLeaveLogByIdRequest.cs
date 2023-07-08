@@ -1,25 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using MediatR;
 using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.Interfaces;
+using mentor_v1.Application.LeaveLog.Queries.GetLeaveLog;
+using Microsoft.EntityFrameworkCore;
 
 namespace mentor_v1.Application.LeaveLog.Queries.GetLeaveLogByRelativeObject;
 
-public class GetLeaveLogByIdRequest : IRequest<Domain.Entities.LeaveLog>
+public class GetLeaveLogByIdRequest : IRequest<LeaveLogViewModel>
 {
     public Guid Id { get; set; }
-    
-
 }
 
 // IRequestHandler<request type, return type>
-public class GetLeaveLogByIdRequestHandler : IRequestHandler<GetLeaveLogByIdRequest, Domain.Entities.LeaveLog>
+public class GetLeaveLogByIdRequestHandler : IRequestHandler<GetLeaveLogByIdRequest, LeaveLogViewModel>
 {
     private readonly IApplicationDbContext _context;
     private readonly IMapper _mapper;
@@ -31,10 +25,11 @@ public class GetLeaveLogByIdRequestHandler : IRequestHandler<GetLeaveLogByIdRequ
         _mapper = mapper;
     }
 
-    public Task<Domain.Entities.LeaveLog> Handle(GetLeaveLogByIdRequest request, CancellationToken cancellationToken)
+    public Task<LeaveLogViewModel> Handle(GetLeaveLogByIdRequest request, CancellationToken cancellationToken)
     {
         // get categories
             var leaveLog = _context.Get<Domain.Entities.LeaveLog>()
+            .Include(x => x.ApplicationUser)
            .Where(x => x.IsDeleted == false && x.Id.Equals(request.Id))
            .AsNoTracking().FirstOrDefault();
         
@@ -47,9 +42,9 @@ public class GetLeaveLogByIdRequestHandler : IRequestHandler<GetLeaveLogByIdRequ
         }
 
         // AsNoTracking to remove default tracking on entity framework
-        //var map = _mapper.Map<GetLeaveLog.LeaveLogViewModel>(LeaveLog);
+        var map = _mapper.Map<LeaveLogViewModel>(leaveLog);
 
         // Paginate data
-        return Task.FromResult(leaveLog); //Task.CompletedTask;
+        return Task.FromResult(map); //Task.CompletedTask;
     }
 }

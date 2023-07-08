@@ -13,6 +13,10 @@ using mentor_v1.Application.Dependent.Queries;
 using mentor_v1.Application.EmployeeAllowance.Queries;
 using mentor_v1.Application.EmployeeContract.Queries.GetEmpContract;
 using mentor_v1.Application.EmployeeContract.Queries.GetEmpContractByRelativedObject;
+using mentor_v1.Application.LeaveLog.Queries.GetLeaveLog;
+using mentor_v1.Application.LeaveLog.Queries.GetLeaveLogByRelativeObject;
+using mentor_v1.Application.Payslip.Queries.GetList;
+using mentor_v1.Application.Payslip.Queries;
 using mentor_v1.Application.Positions.Queries.GetPositionByRelatedObjects;
 using mentor_v1.Application.SkillEmployee.Queries;
 using mentor_v1.Application.SkillEmployee.Queries.GetSkillEmployee;
@@ -29,6 +33,7 @@ using WebUI.Models;
 using WebUI.Services.AttendanceServices;
 
 namespace WebUI.Controllers.Employee;
+[Authorize(Roles = "Employee")]
 public class EmpController : ApiControllerBase
 {
     private readonly UserManager<ApplicationUser> _userManager;
@@ -45,9 +50,7 @@ public class EmpController : ApiControllerBase
     }
 
     //Attendance
-
     [HttpGet]
-    [Authorize(Roles = "Employee")]
     [Route("/Emp/AttendanceEmployee")]
     public async Task<IActionResult> Index(int pg = 1)
     {
@@ -59,7 +62,6 @@ public class EmpController : ApiControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "Employee")]
     [Route("/Emp/AttendanceEmployee/Create")]
     public async Task<IActionResult> Create(/*DateTime tempNow*/)
     {
@@ -121,7 +123,6 @@ public class EmpController : ApiControllerBase
 
 
     [HttpGet]
-    [Authorize(Roles = "Employee")]
     [Route("/Emp/AttendanceEmployee/Filter")]
     public async Task<IActionResult> Filter(DateTime FromDate, DateTime ToDate, int pg = 1)
     {
@@ -215,7 +216,6 @@ public class EmpController : ApiControllerBase
 
 
     //Infor
-    [Authorize(Roles = "Employee")]
     [HttpGet]
     [Route("/Emp/Infor")]
     public async Task<IActionResult> Infor()
@@ -233,7 +233,6 @@ public class EmpController : ApiControllerBase
     }
 
     //contract 
-    [Authorize(Roles = "Employee")]
     [HttpGet]
     [Route("/Emp/ListContract")]
 
@@ -261,7 +260,6 @@ public class EmpController : ApiControllerBase
     }
 
     [HttpGet]
-    [Authorize(Roles = "Employee")]
     [Route("/Emp/ContractDetail")]
     public async Task<IActionResult> GetDetailContractByContractCode(string code)
     {
@@ -379,9 +377,37 @@ public class EmpController : ApiControllerBase
     }
     #endregion
 
+    #region GetListDependent
+    [HttpGet]
+    [Route("/Emp/DependanceFilter")]
+    public async Task<IActionResult> DependanceFilter(AcceptanceType acceptanceType)
+    {
+        try
+        {
+            var username = GetUserName();
+            var user = await _userManager.FindByNameAsync(username);
+            var result = await Mediator.Send(new GetListDependantNoVmRequest { AcceptanceType = acceptanceType });
+            var temp = result.Where(x => x.ApplicationUserId.ToLower().Equals(user.Id.ToLower())).ToList();
+            return Ok(new
+            {
+                status = Ok().StatusCode,
+                message = "Lấy danh sách thành công.",
+                result = temp
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new
+            {
+                status = BadRequest().StatusCode,
+                message = ex.Message
+            });
+        }
+    }
+    #endregion
+
     //Allowance 
     [HttpGet]
-    [Authorize(Roles = "Employee")]
     [Route("/Emp/AllowanceByContract")]
     public async Task<IActionResult> GetListAllowancetByContractCode(string code )
     {
@@ -411,32 +437,7 @@ public class EmpController : ApiControllerBase
     }
 
 
-    #region GetListDependent
-    [HttpGet]
-    [Route("/Emp/DependanceFilter")]
-
-    public async Task<IActionResult> DependanceFilter(AcceptanceType acceptanceType )
-    {
-        try
-        {
-            var result = await Mediator.Send(new GetListDependantNoVmRequest {  AcceptanceType = acceptanceType });
-            return Ok(new
-            {
-                status = Ok().StatusCode,
-                message = "Lấy danh sách thành công.",
-                result = result
-            });
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(new
-            {
-                status = BadRequest().StatusCode,
-                message = ex.Message
-            });
-        }
-    }
-    #endregion
+    
 
     #region Create
     [HttpPost]
@@ -492,5 +493,165 @@ public class EmpController : ApiControllerBase
 
     }
     #endregion
+
+
+    //Leave log
+    #region [getListForEmployee]
+    
+    [HttpGet]
+    [Route("/Emp/LeaveLog")]
+    public async Task<IActionResult> GetListLeaveLogByEmployeeId(int pg = 1)
+    {
+        try
+        {
+            //lấy user từ username ở header
+            var username = GetUserName();
+            var user = await _userManager.FindByNameAsync(username);
+
+            var listOTLog = await Mediator.Send(new GetListLeaveLogByUserIdRequest() { userId = new Guid(user.Id), Page = pg, Size = 20 });
+            return Ok(listOTLog);
+
+        }
+        catch (Exception)
+        {
+            return BadRequest("Không thể lấy danh sách nghỉ làm");
+        }
+    }
+    #endregion
+
+    #region getLeaveLogById
+    [HttpGet()]
+    [Route("/Emp/GetLeaveLogById")]
+    public async Task<IActionResult> GetLeaveLogById(Guid id)
+    {
+        try
+        {
+            //lấy user từ username ở header
+            var username = GetUserName();
+            var user = await _userManager.FindByNameAsync(username);
+            var OTLog = await Mediator.Send(new GetLeaveLogByIdRequest() { Id = id });
+            if (OTLog.ApplicationUserId.ToLower().Equals(user.Id.ToLower()))
+            {
+                return Ok(OTLog);
+
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    Id = id,
+                    message = "Bạn không có quyền truy cập vào yêu cầu nghỉ làm ngày!"
+                });
+            }
+        }
+        catch (Exception)
+        {
+            return BadRequest(new
+            {
+                Id = id,
+                message = "Không tìm thấy yêu cầu nghỉ phép cần truy vấn"
+            });
+        }
+    }
+    #endregion
+    #region [GetLeaveLogFilterByStatus]
+    
+    [HttpGet]
+    [Route("/Emp/GetListLeaveLogFilterByStatus")]
+    public async Task<IActionResult> GetLeaveLogFilterByStatus(LogStatus logStatus)
+    {
+        try
+        {
+            //lấy user từ username ở header
+            var username = GetUserName();
+            var user = await _userManager.FindByNameAsync(username); 
+            var listLeaveLog = await Mediator.Send(new GetListLeaveLogNoPG { });
+            var result = listLeaveLog.Where(x => x.Status.Equals(logStatus.ToString()) && x.ApplicationUserId.ToLower().Equals(user.Id.ToLower())).ToList();
+            return Ok(result);
+        }
+        catch (Exception)
+        {
+            return BadRequest("Không thể lấy danh sách nghỉ");
+        }
+    }
+    #endregion
+
+    //Payslip 
+
+    [HttpGet]
+    [Route("/Emp/GetListPayslip")]
+    public async Task<IActionResult> GetListPayslip(int pg = 1)
+    {
+        //lấy user từ username ở header
+        var username = GetUserName();
+        var user = await _userManager.FindByNameAsync(username);
+        var list = await Mediator.Send(new GetListPaySlipByUserReuqest { Page = pg, Size = 30, userId = user.Id });
+        return Ok(list);
+    }
+
+    [HttpGet]
+    [Route("/Emp/GetListPayslipByUserOrMonthOrBoth")]
+    public async Task<IActionResult> GetListPayslipByUserOrMonthOrBoth(int? month, int? year)
+    {
+        //lấy user từ username ở header
+        var username = GetUserName();
+        var user = await _userManager.FindByNameAsync(username);
+        var userId = user.Id;
+        var list = await Mediator.Send(new GetListPayslipNoPg { });
+        List<PaySlip> final = new List<PaySlip>();
+        if (userId != null && month != null && year != null)
+        {
+            final = list.Where(x => x.EmployeeContract.ApplicationUser.Id.ToLower().Equals(userId.ToLower()) && x.ToTime.Month == month && x.ToTime.Year == year).ToList();
+
+        }
+        else if (userId != null && month != null && year == null)
+        {
+            final = list.Where(x => x.EmployeeContract.ApplicationUser.Id.ToLower().Equals(userId.ToLower()) && x.ToTime.Month == month).ToList();
+
+        }
+        else if (userId != null && month == null && year != null)
+        {
+            final = list.Where(x => x.EmployeeContract.ApplicationUser.Id.ToLower().Equals(userId.ToLower()) && x.ToTime.Year == year).ToList();
+        }
+        else if (userId == null && month != null && year != null)
+        {
+            final = list.Where(x => x.ToTime.Month == month && x.ToTime.Year == year).ToList();
+        }
+        else if (userId != null && month == null && year == null)
+        {
+            final = list.Where(x => x.EmployeeContract.ApplicationUser.Id.ToLower().Equals(userId.ToLower())).ToList();
+        }
+        else if (userId == null && month == null && year != null)
+        {
+            final = list.Where(x => x.ToTime.Year == year).ToList();
+        }
+        else if (userId == null && month != null && month == null)
+        {
+            final = list.Where(x => x.ToTime.Month == month).ToList();
+        }
+        else
+        {
+        }
+        return Ok(final);
+    }
+
+
+    [HttpGet]
+    [Route("/Emp/GetDetailPayslip")]
+    public async Task<IActionResult> GetDetailPayslip(Guid id)
+    {
+        var username = GetUserName();
+        var user = await _userManager.FindByNameAsync(username);
+        var item = await Mediator.Send(new GetPaySlipRequets { Id = id });
+        if (item.EmployeeContract.ApplicationUserId.ToLower().Equals(user.Id.ToLower()))
+        {
+            return Ok(item);
+
+        }
+        else
+        {
+            return BadRequest("Bạn không có quyền truy cập vào bảng lương này!");
+        }
+    }
 
 }

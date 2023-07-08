@@ -27,9 +27,9 @@ public class LevelController : ApiControllerBase
     #region getListLevel
     [Authorize(Roles = "Manager")]
     [HttpGet]
-    public async Task<IActionResult> GetLevel()
+    public async Task<IActionResult> GetLevel(int pg)
     {
-        var listLevel = await Mediator.Send(new GetLevelRequest { Page = 1, Size = 20 });
+        var listLevel = await Mediator.Send(new GetLevelRequest { Page = pg, Size = 20 });
         return Ok(listLevel);
     }
     #endregion

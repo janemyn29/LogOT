@@ -252,22 +252,13 @@ public class ContractService : IContracService
             
         }
         
-        try
-        {
-            user = await _userManager.FindByNameAsync(contract.ApplicationUserId);
+            user = await _userManager.FindByIdAsync(contract.ApplicationUserId);
             if (user == null)
             {
                 var item = "Không tìm thấy người dùng bạn yêu cầu!";
                 errors.Add(item);
                 return errors;
             }
-        }
-        catch (Exception)
-        {
-            var item = "Không tìm thấy người dùng bạn yêu cầu!";
-            errors.Add(item);
-            return errors;
-        }
         
         //check validation:
         var validator = new UpdateEmpContractCommandValidator(_context);

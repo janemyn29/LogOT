@@ -2,11 +2,12 @@
 using MediatR;
 using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.Interfaces;
+using mentor_v1.Application.OvertimeLog.Queries.GetOvertimeLog;
 using Microsoft.EntityFrameworkCore;
 
 namespace mentor_v1.Application.OvertimeLog.Queries.GetOvertimeLogByRelativeObject;
 
-public class GetOvertimeLogByIdRequest : IRequest<Domain.Entities.OvertimeLog>
+public class GetOvertimeLogByIdRequest : IRequest<OvertimeLogViewModel>
 {
     public Guid Id { get; set; }
     public Domain.Identity.ApplicationUser user { get; set; }
@@ -15,7 +16,7 @@ public class GetOvertimeLogByIdRequest : IRequest<Domain.Entities.OvertimeLog>
 }
 
 // IRequestHandler<request type, return type>
-public class GetOvertimeLogByIdRequestHandler : IRequestHandler<GetOvertimeLogByIdRequest, Domain.Entities.OvertimeLog>
+public class GetOvertimeLogByIdRequestHandler : IRequestHandler<GetOvertimeLogByIdRequest, OvertimeLogViewModel>
 {
     private readonly IApplicationDbContext _context;
     private readonly IMapper _mapper;
@@ -27,7 +28,7 @@ public class GetOvertimeLogByIdRequestHandler : IRequestHandler<GetOvertimeLogBy
         _mapper = mapper;
     }
 
-    public Task<Domain.Entities.OvertimeLog> Handle(GetOvertimeLogByIdRequest request, CancellationToken cancellationToken)
+    public Task<OvertimeLogViewModel> Handle(GetOvertimeLogByIdRequest request, CancellationToken cancellationToken)
     {
         // get categories
         Domain.Entities.OvertimeLog OvertimeLog = null;
@@ -52,9 +53,9 @@ public class GetOvertimeLogByIdRequestHandler : IRequestHandler<GetOvertimeLogBy
         }
 
         // AsNoTracking to remove default tracking on entity framework
-        //var map = _mapper.Map<GetOvertimeLog.OvertimeLogViewModel>(OvertimeLog);
+        var map = _mapper.Map<GetOvertimeLog.OvertimeLogViewModel>(OvertimeLog);
 
         // Paginate data
-        return Task.FromResult(OvertimeLog); //Task.CompletedTask;
+        return Task.FromResult(map); //Task.CompletedTask;
     }
 }
