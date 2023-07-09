@@ -18,7 +18,6 @@ public record UpdateOvertimeLogRequestStatusCommand : IRequest
     public Guid Id { get; init; }
     public LogStatus status { get; init; }
     public string? cancelReason { get; init; }
-    public Domain.Identity.ApplicationUser User { get; init; }
 }
 public class UpdateOvertimeLogRequestStatusCommandHandler : IRequestHandler<UpdateOvertimeLogRequestStatusCommand>
 {
@@ -48,18 +47,7 @@ public class UpdateOvertimeLogRequestStatusCommandHandler : IRequestHandler<Upda
 
         var listManager = await _userManager.GetUsersInRoleAsync("Manager");
 
-        foreach (var item in listManager)
-        {
-
-            var noti = await _mediator.Send(new CreateNotiCommand()
-            {
-                ApplicationUserId = item.Id,
-                Title = "Thông báo về việc xác nhận yêu cầu OT của nhân viên",
-                Description = "Nhân viên: " + request.User.Fullname + " \n" +
-                " đã xác nhận: " + request.status.ToString() + "\n" +
-                "vào lúc: " + DateTime.Now 
-            });
-        }
+        
 
         await _context.SaveChangesAsync(cancellationToken);
 

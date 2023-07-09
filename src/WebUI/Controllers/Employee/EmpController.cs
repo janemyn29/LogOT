@@ -39,6 +39,7 @@ using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.LeaveLog.Commands.DeleteLeaveLog;
 using mentor_v1.Application.OvertimeLog.Queries.GetOvertimeLogByRelativeObject;
 using mentor_v1.Application.OvertimeLog.Commands.UpdateOvertimeLog;
+using mentor_v1.Application.Note.Commands;
 
 namespace WebUI.Controllers.Employee;
 [Authorize(Roles = "Employee")]
@@ -813,7 +814,7 @@ public class EmpController : ApiControllerBase
     [Authorize(Roles = "Employee")]
     [HttpGet]
     [Route("/Emp/GetOvertimeLog")]
-    public async Task<IActionResult> GetOvertimeLogByEmployeeId(int pg)
+    public async Task<IActionResult> GetOvertimeLogByEmployeeId(int pg=1)
     {
         try
         {
@@ -859,7 +860,8 @@ public class EmpController : ApiControllerBase
     #region approveOvertimeRequest
     [Authorize(Roles = "Employee")]
     [HttpPut]
-    public async Task<IActionResult> UpdateStatusOvertimeLogRequest(Guid idOTRequest, string status, string? cancelReason)
+    [Route("/Emp/UpdateStatusOvertimeLogRequest")]
+    public async Task<IActionResult> UpdateStatusOvertimeLogRequest([FromBody] UpdateOvertimeLogRequestStatusCommand model)
     {
         //lấy user từ username ở header
         var username = GetUserName();
@@ -868,27 +870,36 @@ public class EmpController : ApiControllerBase
         var listManager = await _userManager.GetUsersInRoleAsync("Manager");
 
 
-        if (idOTRequest.Equals(Guid.Empty)) return BadRequest("Vui lòng nhập id");
+        if (model.Id.Equals(Guid.Empty)) return BadRequest("Vui lòng nhập id");
         try
         {
-            if (status.ToLower().Equals("approve"))
+            foreach (var item in listManager)
+            {
+                var noti = await Mediator.Send(new CreateNotiCommand()
+                {
+                    ApplicationUserId = item.Id,
+                    Title = "Thông báo về việc xác nhận yêu cầu OT của nhân viên",
+                    Description = "Nhân viên: " + user.Fullname + " \n" +
+                    " đã xác nhận: " + model.status.ToString() + "\n" +
+                    "vào lúc: " + DateTime.Now
+                });
+            }
+            if (model.status== LogStatus.Approved)
             {
                 var update = await Mediator.Send(new UpdateOvertimeLogRequestStatusCommand()
                 {
-                    Id = idOTRequest,
-                    status = mentor_v1.Domain.Enums.LogStatus.Approved,
-                    User = user
+                    Id = model.Id,
+                    status = mentor_v1.Domain.Enums.LogStatus.Approved
                 });
                 return Ok("Xác nhận yêu cầu thành công");
             }
-            else if (status.ToLower().Equals("cancel"))
+            else if (model.status == LogStatus.Cancel)
             {
                 var update = await Mediator.Send(new UpdateOvertimeLogRequestStatusCommand()
                 {
-                    Id = idOTRequest,
+                    Id = model.Id,
                     status = mentor_v1.Domain.Enums.LogStatus.Cancel,
-                    cancelReason = cancelReason,
-                    User = user
+                    cancelReason = model.cancelReason
                 });
                 return Ok("Từ chối yêu cầu thành công");
             }
