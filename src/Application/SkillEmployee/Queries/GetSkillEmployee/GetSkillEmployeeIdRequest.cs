@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 namespace mentor_v1.Application.SkillEmployee.Queries.GetSkillEmployee;
 public class GetSkillEmployeeIdRequest : IRequest<GetSkillEmployeeViewModel>
 {
-    public Guid id { get; set; }
+    public string id { get; set; }
 }
 
 public class GetSkillEmployeeIdRequestHandler : IRequestHandler<GetSkillEmployeeIdRequest, GetSkillEmployeeViewModel>
@@ -29,7 +29,7 @@ public class GetSkillEmployeeIdRequestHandler : IRequestHandler<GetSkillEmployee
 
     public Task<GetSkillEmployeeViewModel> Handle(GetSkillEmployeeIdRequest request, CancellationToken cancellationToken)
     {
-        var skill = _context.Get<Domain.Entities.SkillEmployee>().Where(x => x.Id.Equals(request.id) && x.IsDeleted == false).FirstOrDefault();
+        var skill = _context.Get<Domain.Entities.SkillEmployee>().Where(x => x.ApplicationUserId.Equals(request.id) && x.IsDeleted == false).FirstOrDefault();
         if (skill == null) throw new NotFoundException("Không tìm thấy ID  " + request.id);
         var map = _mapper.Map<GetSkillEmployeeViewModel>(skill);
         return Task.FromResult(map);

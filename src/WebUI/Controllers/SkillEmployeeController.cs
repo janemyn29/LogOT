@@ -52,7 +52,7 @@ public class SkillEmployeeController : ApiControllerBase
 
     #region Get Skill ID
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetSkillEmployeeId(Guid id)
+    public async Task<IActionResult> GetSkillEmployeeId(string id)
     {
         try
         {
