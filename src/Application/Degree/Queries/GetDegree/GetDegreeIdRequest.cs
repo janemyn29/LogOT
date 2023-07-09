@@ -12,7 +12,7 @@ using mentor_v1.Application.Common.Interfaces;
 namespace mentor_v1.Application.Degree.Queries.GetDegree;
 public class GetDegreeIdRequest : IRequest<GetDegreeViewModel>
 {
-    public string id { get; set; }
+    public Guid id { get; set; }
 }
 
 public class GetDegreeRequestIdHandler : IRequestHandler<GetDegreeIdRequest, GetDegreeViewModel>
@@ -27,7 +27,7 @@ public class GetDegreeRequestIdHandler : IRequestHandler<GetDegreeIdRequest, Get
 
     public Task<GetDegreeViewModel> Handle(GetDegreeIdRequest request, CancellationToken cancellationToken)
     {
-        var degree = _applicationDbContext.Get<Domain.Entities.Degree>().Where(x => x.ApplicationUserId.Equals(request.id) && x.IsDeleted == false).AsNoTracking().FirstOrDefault();
+        var degree = _applicationDbContext.Get<Domain.Entities.Degree>().Where(x => x.Id.Equals(request.id) && x.IsDeleted == false).AsNoTracking().FirstOrDefault();
         if (degree == null) throw new NotFoundException("Không tìm thấy ID " + request.id);
         var map = _mapper.Map<GetDegreeViewModel>(degree);
         return Task.FromResult(map);
