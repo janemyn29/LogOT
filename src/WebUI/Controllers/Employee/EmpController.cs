@@ -700,11 +700,7 @@ public class EmpController : ApiControllerBase
             var user = await _userManager.FindByNameAsync(username);
             var currentLeaveLog = await Mediator.Send(new GetLeaveLogByIdRequest() { Id = id });
             if(currentLeaveLog != null && !currentLeaveLog.ApplicationUserId.ToLower().Equals(user.Id.ToLower()) ){
-                return BadRequest(new
-                {
-                    Id = id,
-                    message = "Bạn không được cấp quyền để cập nhật yêu cầu này!"
-                });
+                return BadRequest("Bạn không được cấp quyền để cập nhật yêu cầu này!");
             }
             if (currentLeaveLog.LeaveDate > DateTime.Now)
             {
@@ -715,20 +711,12 @@ public class EmpController : ApiControllerBase
                 }
                 else
                 {
-                    return BadRequest(new
-                    {
-                        Id = id,
-                        message = "Không thể cập nhật, yêu cầu đã được xử lý"
-                    });
+                    return BadRequest( "Không thể cập nhật, yêu cầu đã được xử lý");
                 }
             }
             else
             {
-                return BadRequest(new
-                {
-                    Id = id,
-                    message = "Không thể xóa, ngày yêu cầu đã qua thời gian hiện tại"
-                });
+                return BadRequest("Không thể xóa, ngày yêu cầu đã qua thời gian hiện tại");
             }
         }
         catch (NotFoundException)
@@ -858,16 +846,12 @@ public class EmpController : ApiControllerBase
             var role = await _userManager.GetRolesAsync(user);
             if (role == null) throw new Exception("user chưa có role");
 
-            var OTLog = Mediator.Send(new GetOvertimeLogByIdRequest() { Id = id, user = user, Role = role.FirstOrDefault() });
+            var OTLog = await Mediator.Send(new GetOvertimeLogByIdRequest() { Id = id, user = user, Role = role.FirstOrDefault() });
             return Ok(OTLog);
         }
         catch (Exception)
         {
-            return BadRequest(new
-            {
-                Id = id,
-                message = "Không tìm thấy id cần truy vấn"
-            });
+            return BadRequest("Không tìm thấy id cần truy vấn");
         }
     }
     #endregion
@@ -913,11 +897,7 @@ public class EmpController : ApiControllerBase
         }
         catch (Exception)
         {
-            return BadRequest(new
-            {
-                id = idOTRequest,
-                message = "Xác nhận trạng thái yêu cầu không thành công"
-            });
+            return BadRequest("Xác nhận trạng thái yêu cầu không thành công");
         }
     }
     #endregion
