@@ -30,7 +30,7 @@ public class GetSkillEmployeeIdRequestHandler : IRequestHandler<GetSkillEmployee
     public Task<GetSkillEmployeeViewModel> Handle(GetSkillEmployeeIdRequest request, CancellationToken cancellationToken)
     {
         var skill = _context.Get<Domain.Entities.SkillEmployee>().Where(x => x.ApplicationUserId.Equals(request.id) && x.IsDeleted == false).FirstOrDefault();
-        if (skill == null) throw new NotFoundException("Không tìm thấy ID  " + request.id);
+        if (skill == null) throw new NotFoundException("Không tìm thấy kĩ năng của nhân viên này: " + request.id);
         var map = _mapper.Map<GetSkillEmployeeViewModel>(skill);
         return Task.FromResult(map);
     }
