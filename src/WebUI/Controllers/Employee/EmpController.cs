@@ -33,6 +33,12 @@ using WebUI.Models;
 using WebUI.Services.AttendanceServices;
 using DocumentFormat.OpenXml.Spreadsheet;
 using mentor_v1.Application.ShiftConfig.Queries;
+using mentor_v1.Application.Dependent;
+using mentor_v1.Application.LeaveLog.Commands.CreateLeaveLog;
+using mentor_v1.Application.Common.Exceptions;
+using mentor_v1.Application.LeaveLog.Commands.DeleteLeaveLog;
+using mentor_v1.Application.OvertimeLog.Queries.GetOvertimeLogByRelativeObject;
+using mentor_v1.Application.OvertimeLog.Commands.UpdateOvertimeLog;
 
 namespace WebUI.Controllers.Employee;
 [Authorize(Roles = "Employee")]
@@ -495,11 +501,15 @@ public class EmpController : ApiControllerBase
     #region Create
     [HttpPost]
     [Route("/Emp/DependentCreate")]
-    public async Task<IActionResult> CreateDependent(CreateDependentViewModel createDependentViewModel)
+    public async Task<IActionResult> CreateDependent(DependantModel DependentViewModel)
     {
         var username = GetUserName();
-
         var user = await _userManager.FindByNameAsync(username);
+        CreateDependentViewModel createDependentViewModel = new CreateDependentViewModel();
+        createDependentViewModel.BirthDate = DependentViewModel.BirthDate;
+        createDependentViewModel.Relationship = DependentViewModel.Relationship;
+        createDependentViewModel.Desciption = DependentViewModel.Desciption;
+        createDependentViewModel.Name = DependentViewModel.Name;
         createDependentViewModel.ApplicationUserId = user.Id;
         var validator = new CreateDepentdentCommandValidator(_context);
         var valResult = await validator.ValidateAsync(createDependentViewModel);
@@ -561,7 +571,7 @@ public class EmpController : ApiControllerBase
             var username = GetUserName();
             var user = await _userManager.FindByNameAsync(username);
 
-            var listOTLog = await Mediator.Send(new GetListLeaveLogByUserIdRequest() { userId = new Guid(user.Id), Page = pg, Size = 20 });
+            var listOTLog = await Mediator.Send(new GetListLeaveLogByUserIdRequest() { userId = user.Id, Page = pg, Size = 20 });
             return Ok(listOTLog);
 
         }
@@ -608,7 +618,6 @@ public class EmpController : ApiControllerBase
     }
     #endregion
     #region [GetLeaveLogFilterByStatus]
-    
     [HttpGet]
     [Route("/Emp/GetListLeaveLogFilterByStatus")]
     public async Task<IActionResult> GetLeaveLogFilterByStatus(LogStatus logStatus)
@@ -629,6 +638,109 @@ public class EmpController : ApiControllerBase
     }
     #endregion
 
+    #region [create]
+    [Authorize(Roles = "Employee")]
+    [HttpPost]
+    [Route("/Emp/CreateLeaveLog")]
+    public async Task<IActionResult> CreateLeaveLog([FromBody] CreateLeaveLogViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest("Vui lòng điền đầy đủ các thông tin được yêu cầu");
+        }
+        var validator = new CreateLeaveLogCommandValidator(_context);
+        var valResult = await validator.ValidateAsync(model);
+
+        if (valResult.Errors.Count != 0)
+        {
+            List<string> errors = new List<string>();
+            foreach (var error in valResult.Errors)
+            {
+                var item = error.ErrorMessage; errors.Add(item);
+            }
+            return BadRequest(errors);
+        }
+
+        try
+        {
+            //lấy user từ username ở header
+            var username = GetUserName();
+            var user = await _userManager.FindByNameAsync(username);
+
+            var create = Mediator.Send(new CreateLeaveLogCommand() { user = user, createLeaveLogViewModel = model });
+            return Ok(new
+            {
+                id = create,
+                message = "Khởi tạo thành công"
+            });
+        }
+        catch (Exception e)
+        {
+            return BadRequest("Khởi tạo thất bại: " + e.Message);
+        }
+    }
+    #endregion
+    #region deleteLeaveLog
+    [Authorize(Roles = "Employee")]
+    [HttpPut]
+    [Route("/Emp/DeleteLeaveLog")]
+    public async Task<IActionResult> DeleteLeaveLog(Guid id)
+    {
+        if (id.Equals(Guid.Empty)) return BadRequest("Vui lòng nhập id");
+
+        if (!ModelState.IsValid)
+        {
+            return BadRequest("Vui lòng điền đầy đủ các thông tin được yêu cầu");
+        }
+
+        try
+        {
+            //lấy user từ username ở header
+            var username = GetUserName();
+            var user = await _userManager.FindByNameAsync(username);
+            var currentLeaveLog = await Mediator.Send(new GetLeaveLogByIdRequest() { Id = id });
+            if(currentLeaveLog != null && !currentLeaveLog.ApplicationUserId.ToLower().Equals(user.Id.ToLower()) ){
+                return BadRequest(new
+                {
+                    Id = id,
+                    message = "Bạn không được cấp quyền để cập nhật yêu cầu này!"
+                });
+            }
+            if (currentLeaveLog.LeaveDate > DateTime.Now)
+            {
+                if (currentLeaveLog.Status.ToString().ToLower().Equals("request"))
+                {
+                    var delete = await Mediator.Send(new DeleteLeaveLogCommand() { Id = id });
+                    return Ok("Cập nhật yêu cầu thành công");
+                }
+                else
+                {
+                    return BadRequest(new
+                    {
+                        Id = id,
+                        message = "Không thể cập nhật, yêu cầu đã được xử lý"
+                    });
+                }
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    Id = id,
+                    message = "Không thể xóa, ngày yêu cầu đã qua thời gian hiện tại"
+                });
+            }
+        }
+        catch (NotFoundException)
+        {
+            return BadRequest("Không tìm thấy id theo yêu cầu");
+        }
+        catch (Exception e)
+        {
+            return BadRequest("Cập nhật không thành công: " + e.Message);
+        }
+    }
+    #endregion
     //Payslip 
 
     [HttpGet]
@@ -707,4 +819,106 @@ public class EmpController : ApiControllerBase
         }
     }
 
+
+    //logOT
+    #region [getListForEmployee]
+    [Authorize(Roles = "Employee")]
+    [HttpGet]
+    [Route("/Emp/GetOvertimeLog")]
+    public async Task<IActionResult> GetOvertimeLogByEmployeeId(int pg)
+    {
+        try
+        {
+            //lấy user từ username ở header
+            var username = GetUserName();
+            var user = await _userManager.FindByNameAsync(username);
+
+
+            var listOTLog = await Mediator.Send(new GetOvertimeLogByUserIdRequest() { id = user.Id, Page = pg, Size = 10 });
+            return Ok(listOTLog);
+
+        }
+        catch (Exception)
+        {
+            return BadRequest("Không thể lấy danh sách tăng ca");
+        }
+    }
+    #endregion
+
+    #region getOvertimeLogById
+    [HttpGet]
+    [Route("/Emp/GetOvertimeLogById")]
+    public async Task<IActionResult> GetOvertimeLogById(Guid id)
+    {
+        try
+        {
+            //lấy user từ username ở header
+            var username = GetUserName();
+            var user = await _userManager.FindByNameAsync(username);
+            var role = await _userManager.GetRolesAsync(user);
+            if (role == null) throw new Exception("user chưa có role");
+
+            var OTLog = Mediator.Send(new GetOvertimeLogByIdRequest() { Id = id, user = user, Role = role.FirstOrDefault() });
+            return Ok(OTLog);
+        }
+        catch (Exception)
+        {
+            return BadRequest(new
+            {
+                Id = id,
+                message = "Không tìm thấy id cần truy vấn"
+            });
+        }
+    }
+    #endregion
+
+    #region approveOvertimeRequest
+    [Authorize(Roles = "Employee")]
+    [HttpPut]
+    public async Task<IActionResult> UpdateStatusOvertimeLogRequest(Guid idOTRequest, string status, string? cancelReason)
+    {
+        //lấy user từ username ở header
+        var username = GetUserName();
+        var user = await _userManager.FindByNameAsync(username);
+
+        var listManager = await _userManager.GetUsersInRoleAsync("Manager");
+
+
+        if (idOTRequest.Equals(Guid.Empty)) return BadRequest("Vui lòng nhập id");
+        try
+        {
+            if (status.ToLower().Equals("approve"))
+            {
+                var update = await Mediator.Send(new UpdateOvertimeLogRequestStatusCommand()
+                {
+                    Id = idOTRequest,
+                    status = mentor_v1.Domain.Enums.LogStatus.Approved,
+                    User = user
+                });
+                return Ok("Xác nhận yêu cầu thành công");
+            }
+            else if (status.ToLower().Equals("cancel"))
+            {
+                var update = await Mediator.Send(new UpdateOvertimeLogRequestStatusCommand()
+                {
+                    Id = idOTRequest,
+                    status = mentor_v1.Domain.Enums.LogStatus.Cancel,
+                    cancelReason = cancelReason,
+                    User = user
+                });
+                return Ok("Từ chối yêu cầu thành công");
+            }
+            //return Ok("Xác nhận yêu cầu thành công");
+            throw new Exception();
+        }
+        catch (Exception)
+        {
+            return BadRequest(new
+            {
+                id = idOTRequest,
+                message = "Xác nhận trạng thái yêu cầu không thành công"
+            });
+        }
+    }
+    #endregion
 }

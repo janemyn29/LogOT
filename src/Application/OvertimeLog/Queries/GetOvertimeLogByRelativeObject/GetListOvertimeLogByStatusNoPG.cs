@@ -32,7 +32,7 @@ public class GetListOvertimeLogByStatusNoPGHandler : IRequestHandler<GetListOver
         var OvertimeLogs = _applicationDbContext.Get<Domain.Entities.OvertimeLog>()
             .Include(x => x.ApplicationUser)
             .Where(x => x.IsDeleted == false && x.Status.Equals(request.status))
-            .OrderByDescending(x => x.Created).AsNoTracking();
+            .OrderByDescending(x => x.Date).AsNoTracking();
 
          var models = _mapper.ProjectTo<OvertimeLogViewModel>(OvertimeLogs);
 

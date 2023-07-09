@@ -9,7 +9,7 @@ namespace mentor_v1.Application.LeaveLog.Queries.GetLeaveLogByRelativeObject;
 
 public class GetListLeaveLogByUserIdRequest : IRequest<PaginatedList<LeaveLogViewModel>>
 {
-    public Guid userId { get; set; }
+    public string userId { get; set; }
     public int Page { get; set; }
     public int Size { get; set; }
 }
@@ -31,8 +31,8 @@ public class GetListLeaveLogByUserIdRequestHandler : IRequestHandler<GetListLeav
         //get LeaveLog 
         var LeaveLogs = _applicationDbContext.Get<Domain.Entities.LeaveLog>()
             .Include(x => x.ApplicationUser)
-            .Where(x => x.IsDeleted == false && x.ApplicationUserId.Equals(request.userId))
-            .OrderByDescending(x => x.Created)
+            .Where(x => x.IsDeleted == false && x.ApplicationUserId.ToLower().Equals(request.userId.ToLower()))
+            .OrderByDescending(x => x.LeaveDate)
             .AsNoTracking();
 
         var models = _mapper.ProjectTo<LeaveLogViewModel>(LeaveLogs);

@@ -93,7 +93,7 @@ public class OvertimeLogController : ApiControllerBase
     #endregion
 
     #region getOvertimeLogById
-    [Authorize(Roles = "Manager, Employee")]
+    [Authorize(Roles = "Manager")]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetOvertimeLogById(Guid id)
     {
@@ -243,7 +243,7 @@ public class OvertimeLogController : ApiControllerBase
     }
     #endregion
 
-    #region approveOvertimeRequest
+    /*#region approveOvertimeRequest
     [Authorize(Roles = "Employee")]
     [HttpPut]
     public async Task<IActionResult> UpdateStatusOvertimeLogRequest(Guid idOTRequest, string status, string? cancelReason)
@@ -291,7 +291,7 @@ public class OvertimeLogController : ApiControllerBase
             });
         }
     }
-    #endregion
+    #endregion*/
 
     [NonAction]
     public string GetJwtFromHeader()
