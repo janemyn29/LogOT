@@ -19,5 +19,6 @@ public class AttendanceViewModel : IMapFrom<Domain.Entities.Attendance>
     public string ShiftEnum { get; set; }
     public double? TimeWork { get; set; }
     public double? OverTime { get; set; }
+    public virtual Domain.Identity.ApplicationUser applicationUser { get; set; }
 
 }
