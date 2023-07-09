@@ -13,7 +13,7 @@ public class LeaveLogViewModel : IMapFrom<Domain.Entities.LeaveLog>
     public Guid Id { get; set; }
     public string ApplicationUserId { get; set; }
     public DateTime LeaveDate { get; set; }
-    public LeaveShift LeaveShift { get; set; }
+    public string LeaveShift { get; set; }
     public string Reason { get; set; }
     public string? CancelReason { get; set; }
     public string Status { get; set; }
