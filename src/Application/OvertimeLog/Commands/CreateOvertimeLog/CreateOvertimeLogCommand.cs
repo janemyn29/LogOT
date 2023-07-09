@@ -49,13 +49,6 @@ public class CreateOvertimeLogCommandHandler : IRequestHandler<CreateOvertimeLog
             Status = Domain.Enums.LogStatus.Request
         };
 
-        var noti = _mediator.Send(new CreateNotiCommand()
-        {
-            ApplicationUserId = request.createOvertimeLogViewModel.employeeId,
-            Title = "Thông báo về việc nhận yêu cầu OT",
-            Description = "Bạn vừa có 1 yêu cầu OT " + request.createOvertimeLogViewModel.Hours + " tiếng, vào lúc: " + DateTime.Now + ", vui lòng xác nhận trong thời gian sớm nhất!"
-        });
-
         // add new OvertimeLog
         _context.Get<Domain.Entities.OvertimeLog>().Add(OvertimeLog);
 
@@ -63,6 +56,7 @@ public class CreateOvertimeLogCommandHandler : IRequestHandler<CreateOvertimeLog
         // because the function is async so we await it
         await _context.SaveChangesAsync(cancellationToken);
 
+        
         // return the Guid
         return OvertimeLog.Id;
     }

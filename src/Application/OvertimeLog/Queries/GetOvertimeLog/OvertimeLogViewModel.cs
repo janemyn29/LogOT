@@ -10,11 +10,9 @@ using mentor_v1.Domain.Enums;
 namespace mentor_v1.Application.OvertimeLog.Queries.GetOvertimeLog;
 public class OvertimeLogViewModel : IMapFrom<Domain.Entities.OvertimeLog>
 {
-    [ForeignKey("ApplicationUser")]
-    public string ApplicationUserId { get; set; }
+    public Guid Id { get; set; }    
     public DateTime Date { get; set; }
     public int Hours { get; set; }
     public string? CancelReason { get; set; }
     public string Status { get; set; }
-    public virtual Domain.Identity.ApplicationUser ApplicationUser { get; set; }
 }

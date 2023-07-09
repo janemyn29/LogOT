@@ -2,6 +2,7 @@
 using System.Text;
 using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.Interfaces;
+using mentor_v1.Application.Note.Commands;
 using mentor_v1.Application.OvertimeLog.Commands.CreateOvertimeLog;
 using mentor_v1.Application.OvertimeLog.Commands.DeleteOvertimeLog;
 using mentor_v1.Application.OvertimeLog.Commands.UpdateOvertimeLog;
@@ -170,13 +171,19 @@ public class OvertimeLogController : ApiControllerBase
                 //applicationUserId = user.Id,
                 createOvertimeLogViewModel = model
             });
+            /*            var noti = await Mediator.Send(new CreateNotiCommand()
+                        {
+                            ApplicationUserId = request.createOvertimeLogViewModel.employeeId,
+                            Title = "Thông báo về việc nhận yêu cầu OT",
+                            Description = "Bạn vừa có 1 yêu cầu OT " + request.createOvertimeLogViewModel.Hours + " tiếng, vào lúc: " + DateTime.Now + ", vui lòng xác nhận trong thời gian sớm nhất!"
+                        });*/
 
-            /*var noti = await Mediator.Send(new CreateNotiCommand()
+            var noti = await Mediator.Send(new CreateNotiCommand()
             {
                 ApplicationUserId = model.employeeId,
                 Title = "Thông báo về việc nhận yêu cầu OT",
-                Description = "Bạn vừa có 1 yêu cầu OT " + model.Hours + " tiếng, vào lúc: " + model.Date+ ", vui lòng xác nhận trong thời gian sớm nhất!"
-            });*/
+                Description = "Bạn vừa có 1 yêu cầu OT " + model.Hours + " tiếng, vào lúc: " + model.Date + ", vui lòng xác nhận trong thời gian sớm nhất!"
+            });
 
             return Ok(new
             {
