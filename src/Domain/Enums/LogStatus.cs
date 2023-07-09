@@ -10,6 +10,5 @@ public enum LogStatus
     Request = 1,
     Approved = 2,
     Cancel = 3,
-    NoAction = 4
 }
 

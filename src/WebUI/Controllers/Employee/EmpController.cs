@@ -571,7 +571,7 @@ public class EmpController : ApiControllerBase
             var username = GetUserName();
             var user = await _userManager.FindByNameAsync(username);
 
-            var listOTLog = await Mediator.Send(new GetListLeaveLogByUserIdRequest() { userId = new Guid(user.Id), Page = pg, Size = 20 });
+            var listOTLog = await Mediator.Send(new GetListLeaveLogByUserIdRequest() { userId = user.Id, Page = pg, Size = 20 });
             return Ok(listOTLog);
 
         }

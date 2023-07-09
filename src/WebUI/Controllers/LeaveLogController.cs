@@ -71,7 +71,7 @@ public class LeaveLogController : ApiControllerBase
     }
     #endregion
 
-    #region [getListForEmployee]
+    /*#region [getListForEmployee]
     [Authorize(Roles = "Employee")]
     [HttpGet]
     public async Task<IActionResult> GetListLeaveLogByEmployeeId(int pg)
@@ -91,7 +91,7 @@ public class LeaveLogController : ApiControllerBase
             return BadRequest("Không thể lấy danh sách nghỉ làm");
         }
     }
-    #endregion
+    #endregion*/
 
     #region getLeaveLogById
     [Authorize(Roles = "Manager")]
