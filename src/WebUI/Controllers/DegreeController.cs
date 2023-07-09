@@ -78,7 +78,7 @@ public class DegreeController : ApiControllerBase
 
     #region Get id
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetDegreeId(string id)
+    public async Task<IActionResult> GetDegreeId(Guid id)
     {
         try
         {
