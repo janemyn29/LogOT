@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 using WebUI.Models;
 
 namespace WebUI.Controllers;
-//[Authorize(Roles ="Manager")]
+[Authorize(Roles ="Manager")]
 [ApiController]
 [Route("[controller]/[action]")]
 public class ConfigWifiController : ApiControllerBase
