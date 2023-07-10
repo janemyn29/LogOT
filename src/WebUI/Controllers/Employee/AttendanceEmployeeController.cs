@@ -1,4 +1,4 @@
-﻿using MediatR;
+﻿/*using MediatR;
 using mentor_v1.Application.Attendance.Commands.CreateAttendance;
 using mentor_v1.Application.Attendance.Commands.UpdateAttendance;
 using mentor_v1.Application.Attendance.Queries.GetAttendanceWithRelativeObject;
@@ -52,7 +52,7 @@ public class AttendanceEmployeeController : ApiControllerBase
     [HttpPost]
     [Authorize(Roles = "Employee")]
     [Route("/AttendanceEmployee/Create")]
-    public async Task<IActionResult> Create(/*DateTime tempNow*/)
+    public async Task<IActionResult> Create(*//*DateTime tempNow*//*)
     {
         //lấy configday xem coi ngày đó có làm ko.
 
@@ -197,3 +197,4 @@ public class AttendanceEmployeeController : ApiControllerBase
         return ip;
     }
 }
+*/
