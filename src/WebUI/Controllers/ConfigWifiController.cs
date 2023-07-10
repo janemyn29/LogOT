@@ -1,14 +1,18 @@
 ﻿
+using System.Net;
 using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.ConfigWifis.Commands.CreateConfigWifi;
 using mentor_v1.Application.ConfigWifis.Commands.DeleteConfigWifi;
 using mentor_v1.Application.ConfigWifis.Commands.UpdateConfigWifi;
 using mentor_v1.Application.ConfigWifis.Queries.GetList;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using WebUI.Models;
 
 namespace WebUI.Controllers;
-
+//[Authorize(Roles ="Manager")]
 [ApiController]
 [Route("[controller]/[action]")]
 public class ConfigWifiController : ApiControllerBase
@@ -19,13 +23,52 @@ public class ConfigWifiController : ApiControllerBase
     public async Task<IActionResult> GetAddressConnecting()
     {
         var network = await Mediator.Send(new GetWifiConnectRequest() { });
+        string ip = GetIPWifi();
+        if (ip == null)
+        {
+            return BadRequest("Vui lòng kiểm tra lại kết nối Wifi chấm công để thực hiện chấm công!");
+        }
+        var IpWifi = JsonConvert.DeserializeObject<IpModel>(ip);
+
+        WifiConnect wifiConnect = new WifiConnect();
+        wifiConnect.NameWifi = network.NameWifi;
+        wifiConnect.IPv6Adderss = IpWifi.ipString;
+
         return Ok(new { 
             Status = Ok().StatusCode,
             Message = "Lấy dự liệu thành công.",
-            Result = network
+            Result = wifiConnect
         });
     }
     #endregion
+
+
+    [NonAction]
+    public string GetIPWifi()
+    {
+        //lấy là Ktr IP wifi
+        var urlExteranlAPI = string.Format("https://api-bdc.net/data/client-info");
+        WebRequest request = WebRequest.Create(urlExteranlAPI);
+        request.Method = "GET";
+        HttpWebResponse response = null;
+        response = (HttpWebResponse)request.GetResponse();
+
+        string ip = null;
+        using (Stream stream = response.GetResponseStream())
+        {
+            StreamReader sr = new StreamReader(stream);
+            ip = sr.ReadToEnd();
+            sr.Close();
+        }
+        if (ip == null)
+        {
+
+            return null;
+        }
+        return ip;
+    }
+
+
 
     #region Get list network
     [HttpGet("page")]

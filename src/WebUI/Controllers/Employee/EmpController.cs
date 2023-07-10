@@ -40,7 +40,6 @@ using mentor_v1.Application.LeaveLog.Commands.DeleteLeaveLog;
 using mentor_v1.Application.OvertimeLog.Queries.GetOvertimeLogByRelativeObject;
 using mentor_v1.Application.OvertimeLog.Commands.UpdateOvertimeLog;
 using mentor_v1.Application.Note.Commands;
-using mentor_v1.Application.ConfigWifis.Queries.GetList;
 
 namespace WebUI.Controllers.Employee;
 [Authorize(Roles = "Employee")]
@@ -76,16 +75,16 @@ public class EmpController : ApiControllerBase
     public async Task<IActionResult> Create(/*DateTime tempNow*/)
     {
         //lấy configday xem coi ngày đó có làm ko.
-
-        var network = await Mediator.Send(new GetWifiConnectRequest() { });
-        if (network == null)
+        string ip = GetIPWifi();
+        if (ip == null)
         {
             return BadRequest("Vui lòng kiểm tra lại kết nối Wifi chấm công để thực hiện chấm công!");
         }
-        
+        var IpWifi = JsonConvert.DeserializeObject<IpModel>(ip);
+
         try
         {
-            var defaultWIfi = await Mediator.Send(new GetConfigWifiByIpRequest { Ip = network.IPv4Adderss });
+            var defaultWIfi = await Mediator.Send(new GetConfigWifiByIpRequest { Ip = IpWifi.ipString });
         }
         catch (Exception)
         {

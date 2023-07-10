@@ -48,7 +48,7 @@ public class GetWifiConnectRequestHandler : IRequestHandler<GetWifiConnectReques
 
         WifiConnect wifiConnect = new WifiConnect() { 
             NameWifi = ipName,
-            IPv4Adderss = ipAddress
+            IPv6Adderss = ipAddress
         };
 
         return wifiConnect;
@@ -58,5 +58,5 @@ public class GetWifiConnectRequestHandler : IRequestHandler<GetWifiConnectReques
 public class WifiConnect
 { 
     public string NameWifi { get; set; }
-    public string IPv4Adderss { get; set; }
+    public string IPv6Adderss { get; set; }
 }
