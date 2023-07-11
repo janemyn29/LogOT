@@ -102,8 +102,34 @@ public class DependentController : ApiControllerBase
     }
     #endregion
 
+
     #region Get id
     [HttpGet]
+    public async Task<IActionResult> GetListDependantByUser(string userId, int pg = 1)
+    {
+        try
+        {
+            var result = await Mediator.Send(new GetDependantByUserId { Page = pg, userId = userId, Size = 20 });
+            return Ok(new
+            {
+                status = Ok().StatusCode,
+                message = "Lấy dự liệu thành công.",
+                result = result
+            });
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(new
+            {
+                status = NotFound().StatusCode,
+                message = ex.Message
+            });
+        }
+    }
+    #endregion
+
+    #region Get id
+    [HttpPut]
     public async Task<IActionResult> UpdateAcceptance(Guid id,AcceptanceType acceptanceType)
     {
         try

@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using WebUI.Models;
 
 namespace WebUI.Controllers;
 public class AccountController : ApiControllerBase
@@ -45,8 +46,48 @@ public class AccountController : ApiControllerBase
 
     }
 
-
     [Authorize(Roles = "Manager,Employee")]
+    [HttpPut]
+    [Route("/Account/ChangePassword")]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePassModel moodel)
+    {
+        if (!moodel.NewPassword.Equals(moodel.ConfirmPassword))
+        {
+            return BadRequest("Mật khẩu xác nhận không trùng khớp!");
+        }
+        if (moodel.NewPassword.Equals(moodel.OldPassword))
+        {
+            return BadRequest("Mật khẩu mới phải khác mật khẩu cũ!");
+        }
+        try
+        {
+            var username = GetUserName();
+            var user = await _userManager.Users.Include(x => x.Position).FirstOrDefaultAsync(c => c.UserName.Equals(username));
+            var result = await _userManager.ChangePasswordAsync(user, moodel.OldPassword, moodel.NewPassword);
+            if(result.Succeeded)
+            {
+                return Ok("Đổi mật khẩu thành công!");
+            }
+            else
+            {
+
+                return BadRequest(new
+                {
+                    status = BadRequest().StatusCode,
+                    message = "Đổi mật khẩu thất bại!",
+                    result = result.Errors
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            return BadRequest("Đã xảy ra lỗi, vui lòng truy cập lại sau!");
+        }
+
+    }
+
+
+    /*[Authorize(Roles = "Manager,Employee")]
     [HttpPut]
     [Route("/Account/Update")]
     public async Task<IActionResult> Update([FromBody] UserViewModel model)
@@ -81,7 +122,7 @@ public class AccountController : ApiControllerBase
 
         try
         {
-            /*                string fileResult = _fileService.SaveImage(model.Image);*/
+            *//*                string fileResult = _fileService.SaveImage(model.Image);*//*
             var result = await Mediator.Send(new UpdateUserCommand { model = model });
             return Ok("Cập nhật thông tin thành công!");
 
@@ -91,7 +132,7 @@ public class AccountController : ApiControllerBase
             return BadRequest(ex.Message);
         }
 
-    }
+    }*/
 
     [NonAction]
     public string GetJwtFromHeader()

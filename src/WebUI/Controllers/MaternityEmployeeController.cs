@@ -1,5 +1,8 @@
-﻿using mentor_v1.Application.Common.Exceptions;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using mentor_v1.Application.ApplicationUser.Commands.UpdateUser;
+using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.Interfaces;
+using mentor_v1.Application.Common.Models;
 using mentor_v1.Application.Dependent.Commands.DeleteDependentCommand;
 using mentor_v1.Application.MaternityEmployee.Commands.CreateMaternityEmployee;
 using mentor_v1.Application.MaternityEmployee.Commands.DeleteMaternityEmployee;
@@ -97,6 +100,7 @@ public class MaternityEmployeeController : ApiControllerBase
             {
                 createMaternityEmployeeViewModel = createMaternityEmployeeView
             });
+            var result = await Mediator.Send(new UpdateMaterityStatus { id = createMaternityEmployeeView.ApplicationUserId, IsMaternity = true });
             return Ok(new
             {
                 status = Ok().StatusCode,
@@ -108,7 +112,7 @@ public class MaternityEmployeeController : ApiControllerBase
             return BadRequest(new
             {
                 status = BadRequest().StatusCode,
-                message = "ApplicationUserId không xuất hiện."
+                message = "Không tìm thấy nhân viên bạn yêu cầu!"
             });
         }
         catch (Exception ex)
@@ -145,6 +149,7 @@ public class MaternityEmployeeController : ApiControllerBase
             {
                 updateMaternityEmployeeView = updateMaternityEmployeeView
             });
+            
             return Ok(new
             {
                 status = Ok().StatusCode,

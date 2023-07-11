@@ -191,7 +191,7 @@ public class EmployeeController : ApiControllerBase
     [Authorize(Roles = "Manager")]*/
     [HttpPut]
     [Route("/Employee/Update")]
-    public async Task<IActionResult> Update([FromBody] UserViewModel model)
+    public async Task<IActionResult> Update([FromBody] UpdateUserModel model)
     {
         if (!ModelState.IsValid)
         {
@@ -233,6 +233,73 @@ public class EmployeeController : ApiControllerBase
         }
 
     }
+
+    /*
+    [Authorize(Roles = "Manager")]*/
+    [HttpPut]
+    [Route("/Employee/UpdateEmail")]
+    public async Task<IActionResult> UpdateEmail([FromBody] UpdateMailModel model)
+    {
+        if (model.UserId == null||model.NewEmail==null)
+        {
+            return BadRequest("Vui lòng điền đầy đủ các thông tin được yêu cầu!");
+        }
+        
+
+        try
+        {
+            /*                string fileResult = _fileService.SaveImage(model.Image);*/
+            var result = await Mediator.Send(new UpdateEmailCommand { model = model });
+            return Ok("Cập nhật thông tin thành công!");
+
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+
+    }
+
+    [HttpPut]
+    [Route("/Employee/Quit")]
+    public async Task<IActionResult> QuitEmployee(string userId)
+    {
+        if (userId == null)
+        {
+            return BadRequest("Vui lòng điền đầy đủ các thông tin được yêu cầu!");
+        }
+        try
+        {
+            var result = await Mediator.Send(new UpdateUserWorkStatusRequest { id = userId });
+            return Ok("Cập nhật thông tin thôi việc cho nhân viên thành công!");
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+
+    }
+
+    [HttpPut]
+    [Route("/Employee/UpdateMaternity")]
+    public async Task<IActionResult> UpdateMaternity(string userId)
+    {
+        if (userId == null)
+        {
+            return BadRequest("Vui lòng điền đầy đủ các thông tin được yêu cầu!");
+        }
+        try
+        {
+            var result = await Mediator.Send(new UpdateMaterityStatus { id = userId, IsMaternity =false });
+            return Ok("Cập nhật thông tin mang thai cho nhân viên thành công!");
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+
+    }
+
     /*
     [Authorize(Roles = "Manager")]*/
     [HttpGet]

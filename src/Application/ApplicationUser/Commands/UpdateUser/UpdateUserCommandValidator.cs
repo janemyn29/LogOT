@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace mentor_v1.Application.ApplicationUser.Commands.UpdateUser;
-public class UpdateUserCommandValidator: AbstractValidator<UserViewModel>
+public class UpdateUserCommandValidator: AbstractValidator<UpdateUserModel>
 {
     private readonly IApplicationDbContext _context;
     private readonly UserManager<Domain.Identity.ApplicationUser> _userManager;
