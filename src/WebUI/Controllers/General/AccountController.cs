@@ -96,7 +96,7 @@ public class AccountController : ApiControllerBase
                 {
                     status = BadRequest().StatusCode,
                     message = "Đổi mật khẩu thất bại!",
-                    result = result.err
+                    result = err
                 });
             }
         }
