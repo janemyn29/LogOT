@@ -158,7 +158,7 @@ public class EmpController : ApiControllerBase
         var finalList = listAttendance.Where(x => x.Day.Date >= DateTime.Now.Date && x.Day.Date <= DateTime.Now.Date).ToList();
         if(finalList ==null||finalList.Count == 0)
         {
-            return Ok("Hôm nay bạn chứ thực hiện chấm công");
+            return BadRequest("Hôm nay bạn chưa thực hiện chấm công");
         }
         return Ok(finalList);
     }
