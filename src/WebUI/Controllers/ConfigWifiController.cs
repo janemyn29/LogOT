@@ -32,7 +32,7 @@ public class ConfigWifiController : ApiControllerBase
 
         WifiConnect wifiConnect = new WifiConnect();
         wifiConnect.NameWifi = network.NameWifi;
-        wifiConnect.IPv6Adderss = IpWifi.ipString;
+        wifiConnect.IPv6Adderss = IpWifi.ip;
 
         return Ok(new { 
             Status = Ok().StatusCode,
@@ -47,7 +47,7 @@ public class ConfigWifiController : ApiControllerBase
     public string GetIPWifi()
     {
         //lấy là Ktr IP wifi
-        var urlExteranlAPI = string.Format("https://api-bdc.net/data/client-info");
+        var urlExteranlAPI = string.Format("https://ipinfo.io/?token=93ebb93863f6b8");
         WebRequest request = WebRequest.Create(urlExteranlAPI);
         request.Method = "GET";
         HttpWebResponse response = null;
