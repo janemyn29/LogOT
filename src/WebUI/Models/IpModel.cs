@@ -19,13 +19,5 @@ public class IpModel
      public string userAgentRaw { get; set; }
      public List<string> userLanguages { get; set; }*/
 
-    public String ip;
-    public String hostname;
-    public String city;
-    public String region;
-    public String country;
-    public String loc;
-    public String org;
-    public String postal;
-    public String timezone;
+     public String ip { get; set; }
 }

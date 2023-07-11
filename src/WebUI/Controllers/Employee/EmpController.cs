@@ -229,7 +229,7 @@ public class EmpController : ApiControllerBase
     public string GetIPWifi()
     {
         //lấy là Ktr IP wifi
-        var urlExteranlAPI = string.Format("https://ipinfo.io/?token=93ebb93863f6b8");
+        var urlExteranlAPI = string.Format("https://api.ipify.org?format=json");
         WebRequest request = WebRequest.Create(urlExteranlAPI);
         request.Method = "GET";
         HttpWebResponse response = null;
