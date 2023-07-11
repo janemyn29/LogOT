@@ -4,6 +4,7 @@ using mentor_v1.Application.ApplicationUser.Commands.CreateUse;
 using mentor_v1.Application.ApplicationUser.Commands.UpdateUser;
 using mentor_v1.Application.ApplicationUser.Queries.GetUser;
 using mentor_v1.Application.Common.Interfaces;
+using mentor_v1.Application.Common.Models;
 using mentor_v1.Application.Positions.Queries.GetPositionByRelatedObjects;
 using mentor_v1.Domain.Identity;
 using Microsoft.AspNetCore.Authorization;
@@ -53,11 +54,21 @@ public class AccountController : ApiControllerBase
     {
         if (!moodel.NewPassword.Equals(moodel.ConfirmPassword))
         {
-            return BadRequest("Mật khẩu xác nhận không trùng khớp!");
+            return BadRequest(new
+            {
+                status = BadRequest().StatusCode,
+                message = "Đổi mật khẩu thất bại!",
+                result = "Mật khẩu xác nhận không trùng khớp!"
+            });
         }
         if (moodel.NewPassword.Equals(moodel.OldPassword))
         {
-            return BadRequest("Mật khẩu mới phải khác mật khẩu cũ!");
+            return BadRequest(new
+            {
+                status = BadRequest().StatusCode,
+                message = "Đổi mật khẩu thất bại!",
+                result = "Mật khẩu mới phải khác mật khẩu cũ!"
+            });
         }
         try
         {
@@ -75,12 +86,17 @@ public class AccountController : ApiControllerBase
             }
             else
             {
+                List<string> err = new List<string>();
+                foreach (var item in result.Errors)
+                {
+                    err.Add(item.Description);
+                }
 
                 return BadRequest(new
                 {
                     status = BadRequest().StatusCode,
                     message = "Đổi mật khẩu thất bại!",
-                    result = result.Errors
+                    result = result.err
                 });
             }
         }
