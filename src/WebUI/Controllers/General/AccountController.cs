@@ -66,7 +66,12 @@ public class AccountController : ApiControllerBase
             var result = await _userManager.ChangePasswordAsync(user, moodel.OldPassword, moodel.NewPassword);
             if(result.Succeeded)
             {
-                return Ok("Đổi mật khẩu thành công!");
+                return Ok(new
+                {
+                    status = BadRequest().StatusCode,
+                    message = "Đổi mật khẩu thành công!",
+                    result = "Đổi mật khẩu thành công!"
+                });
             }
             else
             {
