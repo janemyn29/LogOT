@@ -15,6 +15,7 @@ public class CreateNotiForRequestsCommand : IRequest<Guid>
     public string ApplicationUserId { get; set; }
     public string Title { get; set; }
     public string Description { get; set; }
+    
 }
 
 public class CreateNotiWithTransactionCommandHandler : IRequestHandler<CreateNotiForRequestsCommand, Guid>
@@ -38,7 +39,8 @@ public class CreateNotiWithTransactionCommandHandler : IRequestHandler<CreateNot
             {
                 Title = request.Title,
                 Description = request.Description,
-                ApplicationUserId = request.ApplicationUserId
+                ApplicationUserId = request.ApplicationUserId,
+                IsRead = false
             };
             // add new category
             _context.Get<Domain.Entities.Notification>().Add(job);

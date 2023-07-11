@@ -5,12 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace mentor_v1.Domain.Enums;
-public enum LevelEnum
+public enum NoteEnum
 {
-    Junior = 1,
-    Middle = 2,
-    Senior = 3,
-    Master=4
-
+    New = 1,
+    Read = 2
 }
-

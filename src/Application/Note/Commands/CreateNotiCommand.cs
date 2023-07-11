@@ -35,7 +35,8 @@ public class CreateNotiCommandHandler : IRequestHandler<CreateNotiCommand, Guid>
         {
             Title = request.Title,
             Description = request.Description,
-            ApplicationUserId = request.ApplicationUserId
+            ApplicationUserId = request.ApplicationUserId,
+            IsRead = false
         };
         // add new category
         _context.Get<Domain.Entities.Notification>().Add(job);

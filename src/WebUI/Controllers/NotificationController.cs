@@ -27,7 +27,7 @@ public class NotificationController : ApiControllerBase
 
     [HttpGet]
     [Authorize(Roles = "Manager,Employee")]
-    public async Task<IActionResult> GetNotificationByUserId(int page)
+    public async Task<IActionResult> GetNotificationByUserId(int page = 1)
     {
         try
         {
@@ -42,6 +42,48 @@ public class NotificationController : ApiControllerBase
             return BadRequest("Không lấy được danh sách thông báo");
         }
     }
+
+    [HttpGet]
+    [Authorize(Roles = "Manager,Employee")]
+    public async Task<IActionResult> IsHaveNotificate()
+    {
+        try
+        {
+            var username = GetUserName();
+            var user = await _userManager.FindByNameAsync(username);
+            var listNoti = await Mediator.Send(new GetIsHaveNotificateRequest() { userId = user.Id});
+            return Ok(listNoti);
+        }
+        catch (Exception)
+        {
+
+            return BadRequest("Không lấy được danh sách thông báo");
+        }
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "Manager,Employee")]
+    public async Task<IActionResult> GetNotificationById(Guid id)
+    {
+        try
+        {
+            var username = GetUserName();
+            var user = await _userManager.FindByNameAsync(username);
+            var listNoti = await Mediator.Send(new GetNotificationById() {  Id= id });
+            if (!listNoti.ApplicationUserId.ToLower().Equals(user.Id.ToLower()))
+            {
+                return BadRequest("Bạn không có quyền truy cập cvaof thông báo này!");
+            }
+            return Ok(listNoti);
+        }
+        catch (Exception ex)
+        {
+
+            return BadRequest(ex.Message);
+        }
+    }
+
+
 
     [NonAction]
     public string GetJwtFromHeader()
