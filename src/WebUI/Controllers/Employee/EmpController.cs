@@ -131,6 +131,66 @@ public class EmpController : ApiControllerBase
 
 
     [HttpGet]
+    [Route("/Emp/AttendanceEmployee/CreateAttendanceForMobileOnly")]
+    public async Task<IActionResult> CreateAttendanceForMobileOnly(/*DateTime tempNow*/ string ip)
+    {
+        //lấy configday xem coi ngày đó có làm ko.
+        //string ip = GetIPWifi();
+        if (ip == null)
+        {
+            return BadRequest("Vui lòng kiểm tra lại kết nối Wifi chấm công để thực hiện chấm công!");
+        }
+        //var IpWifi = JsonConvert.DeserializeObject<IpModel>(ip);
+
+        try
+        {
+            var defaultWIfi = await Mediator.Send(new GetConfigWifiByIpRequest { Ip = ip });
+        }
+        catch (Exception)
+        {
+            return BadRequest("Vui lòng kiểm tra lại kết nối Wifi chấm công để thực hiện chấm công!");
+        }
+        //kết thúc ktr IP wify
+
+        ShiftConfig shift;
+        var now = DateTime.Now;
+        //var now = tempNow;
+
+        //lấy user
+        var username = GetUserName();
+        var user = await _userManager.FindByNameAsync(username);
+        try
+        {
+            string result = null;
+            //test result: Morning (pass: đã test kỹ)
+            //test result: Full (pass: đã test )
+            var annualDay = await Mediator.Send(new GetAnnualByDayRequest { Date = now });
+            if (annualDay.ShiftType == ShiftType.Full)
+            {
+                result = await _attendance.AttendanceFullDay(now, user);
+            }
+            else if (annualDay.ShiftType == ShiftType.Morning)
+            {
+                result = await _attendance.AttendanceMorningOnly(now, user);
+            }
+            else if (annualDay.ShiftType == ShiftType.Afternoon)
+            {
+                result = await _attendance.AttendanceAfternoonOnly(now, user);
+            }
+            else if (annualDay.ShiftType == ShiftType.NotWork)
+            {
+                result = await _attendance.AttendanceNotWork(now, user);
+            }
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+
+    [HttpGet]
     [Route("/Emp/AttendanceEmployee/Filter")]
     public async Task<IActionResult> Filter(DateTime FromDate, DateTime ToDate, int pg = 1)
     {
@@ -907,6 +967,30 @@ public class EmpController : ApiControllerBase
         catch (Exception)
         {
             return BadRequest("Xác nhận trạng thái yêu cầu không thành công");
+        }
+    }
+    #endregion
+
+
+
+    #region getOvertimeLogById
+    [HttpGet]
+    [Route("/Emp/GetPosition")]
+    public async Task<IActionResult> GetPosition()
+    {
+        try
+        {
+            //lấy user từ username ở header
+            var username = GetUserName();
+            var user = await _userManager.FindByNameAsync(username);
+            var role = await _userManager.GetRolesAsync(user);
+            if (role == null) throw new Exception("user chưa có role");
+            var position = await Mediator.Send(new GetPositionByIdRequest() { Id= user.PositionId });
+            return Ok(position);
+        }
+        catch (Exception)
+        {
+            return BadRequest("Không tìm thấy id cần truy vấn");
         }
     }
     #endregion
