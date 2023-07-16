@@ -2,6 +2,7 @@
 using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.Interfaces;
 using mentor_v1.Application.Common.Security;
+using mentor_v1.Application.JobReport.ExportExcelFile;
 using mentor_v1.Application.JobReport.Queries.GetJobReport;
 using Microsoft.AspNetCore.Mvc;
 
@@ -46,7 +47,7 @@ public class JobReportController : ApiControllerBase
     }
     #endregion
 
-    #region GetAllowanceId
+    #region Get job Id
     [HttpGet("{JobReportId}")]
     public async Task<IActionResult> GetJobReportDetailById(Guid JobReportId)
     {
@@ -70,4 +71,9 @@ public class JobReportController : ApiControllerBase
         }
     }
     #endregion
+
+    [HttpGet("{JobReportId}")]
+    public async Task<IActionResult> ExportExcelFile(Guid JobReportId) => File(await Mediator.Send(new ExportExcelFile { Id = JobReportId }),
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "TemplateExchange.xlsx");
 }
