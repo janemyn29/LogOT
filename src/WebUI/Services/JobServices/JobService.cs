@@ -232,7 +232,7 @@ public class JobService : IJobService
         }
         else
         {
-            string title = "Bắt đầu hợp đồng Ngày " + DateTime.Now.AddDays(-1).ToString("dd/MM/yyyy") + " (Job:" + DateTime.Now.ToString("dd/MM/yyyy") + ")";
+            string title = "Bắt đầu hợp đồng Ngày " + DateTime.Now.ToString("dd/MM/yyyy") + " (Job:" + DateTime.Now.ToString("dd/MM/yyyy") + ")";
             var jobId = await _mediator.Send(new CreateJobReportCommand { Title = title, ActionDate = DateTime.Now, Job = "Bắt đầu hợp đồng", ActionType = ActionType.StartContract });
             foreach (var item in listContract)
             {
