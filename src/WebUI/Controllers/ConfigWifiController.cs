@@ -86,7 +86,7 @@ public class ConfigWifiController : ApiControllerBase
 
     #region Create network
     [HttpPost]
-    public async Task<IActionResult> CreateNetwork([FromForm]string name, string ip)
+    public async Task<IActionResult> CreateNetwork(string name, string ip)
     {
         try {
             var network = await Mediator.Send(new CreateConfigWifiCommand { NameWifi = name, WifiIPv4 = ip });
@@ -106,7 +106,7 @@ public class ConfigWifiController : ApiControllerBase
 
     #region Update network
     [HttpPut]
-    public async Task<IActionResult> UpdateNetwork([FromForm]Guid id, string name, string ip)
+    public async Task<IActionResult> UpdateNetwork(Guid id, string name, string ip)
     {
         try {
             var network = await Mediator.Send(new UpdateConfigWifiCommand { Id = id, NameWifi = name, WifiIPv4 = ip });

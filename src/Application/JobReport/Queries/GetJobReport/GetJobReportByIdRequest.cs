@@ -28,8 +28,8 @@ public class GetJobReportByIdRequestHandler : IRequestHandler<GetJobReportByIdRe
     public Task<GetJobReportByIdViewModel> Handle(GetJobReportByIdRequest request, CancellationToken cancellationToken)
     {
         var jobReport = _applicationDbContext.Get<Domain.Entities.JobReport>()
-                            .Include(x => x.ExcelContracts)
-                            .Include(x => x.ExcelEmployeeQuits)
+                            .Include(x => x.ExcelContracts.Where(x => x.IsDeleted == false))
+                            .Include(x => x.ExcelEmployeeQuits.Where(x => x.IsDeleted == false))
                             .Where(x => x.IsDeleted == false && x.Id == request.Id).AsNoTracking().FirstOrDefault();
 
 
