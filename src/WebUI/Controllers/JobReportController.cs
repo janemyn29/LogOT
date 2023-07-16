@@ -1,6 +1,7 @@
 ﻿
 using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.Interfaces;
+using mentor_v1.Application.Common.Security;
 using mentor_v1.Application.JobReport.Queries.GetJobReport;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,6 +9,7 @@ namespace WebUI.Controllers;
 
 [ApiController]
 [Route("[controller]/[action]")]
+[Authorize(Roles ="Manager")]
 public class JobReportController : ApiControllerBase
 {
     private readonly IIdentityService _identityService;
