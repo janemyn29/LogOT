@@ -72,7 +72,7 @@ public class NotificationController : ApiControllerBase
             var listNoti = await Mediator.Send(new GetNotificationById() {  Id= id });
             if (!listNoti.ApplicationUserId.ToLower().Equals(user.Id.ToLower()))
             {
-                return BadRequest("Bạn không có quyền truy cập cvaof thông báo này!");
+                return BadRequest("Bạn không có quyền truy cập vào thông báo này!");
             }
             return Ok(listNoti);
         }

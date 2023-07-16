@@ -10,7 +10,7 @@ public class CreateMaternityEmployeeViewModel : IMapFrom<Domain.Entities.Materni
 {
     public string ApplicationUserId { get; set; }
     public string Image { get; set; }
-    public DateTime BirthDay { get; set; }
+    public DateTime? BirthDay { get; set; }
     public int AcceptanceType { get; set; }
-    public string DenyReason { get; set; }
+    public string? DenyReason { get; set; }
 }
