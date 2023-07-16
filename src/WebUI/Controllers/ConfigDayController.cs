@@ -1,4 +1,7 @@
 ﻿using System.Collections.Generic;
+using mentor_v1.Application.AnnualWorkingDays.Commands.Update;
+using mentor_v1.Application.AnnualWorkingDays.Queries.GetByRelatedObject;
+using mentor_v1.Application.AnnualWorkingDays.Queries.GetList;
 using mentor_v1.Application.ConfigDays.Commands.UpdateConfigDay;
 using mentor_v1.Application.ConfigDays.Queries.GetConfigDay;
 using mentor_v1.Application.DefaultConfig.Commands;
@@ -35,6 +38,21 @@ public class ConfigDayController : ApiControllerBase
         {
             //nếu cập nhật thì xóa hết các annual sau ngày sau ngày sửa. thêm thông báo thêm lại annual.
             await Mediator.Send(new UpdateConfidDayCommand { Normal = config.Normal, Holiday = config.Holiday, Saturday = config.Saturday, Sunday = config.Sunday });
+
+            //đổi lại annual 
+            var listAnnual = await Mediator.Send(new GetListAnnualFromCurrent { });
+            if(listAnnual != null && listAnnual.Count>0) {
+                foreach (var item in listAnnual)
+                {
+                    bool check = false;
+                    if(item.TypeDate == mentor_v1.Domain.Enums.TypeDate.Holiday)
+                    {
+                        check = true;
+                    }
+                    await Mediator.Send(new UpdateAnnualCommand() { Day = item.Day, Id = item.Id, IsHoliday = check});
+                }
+            }
+            
             return Ok("Cập nhật cấu hình ca làm việc thành công!");
 
         }

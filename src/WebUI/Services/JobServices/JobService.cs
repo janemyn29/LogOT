@@ -6,11 +6,20 @@ using MediatR;
 using mentor_v1.Application.AnnualWorkingDays.Commands;
 using mentor_v1.Application.ApplicationUser.Commands.UpdateUser;
 using mentor_v1.Application.Common.Models;
+using mentor_v1.Application.DefaultConfig.Queries.Get;
 using mentor_v1.Application.EmployeeContract.Commands.UpdateEmpContract;
+using mentor_v1.Application.EmployeeContract.Queries.GetEmpContractByRelativedObject;
 using mentor_v1.Application.ExcelContract.Commands.Create;
 using mentor_v1.Application.ExcelEmployeeQuit.Commands;
+using mentor_v1.Application.Exchange.Queries;
+using mentor_v1.Application.InsuranceConfig.Queries;
 using mentor_v1.Application.JobReport.Commands.Create;
 using mentor_v1.Application.Note.Commands;
+using mentor_v1.Application.Payday.Commands;
+using mentor_v1.Application.Payday.Queries;
+using mentor_v1.Application.RegionalMinimumWage.Queries;
+using mentor_v1.Application.ShiftConfig.Queries;
+using mentor_v1.Application.TaxIncome.Queries;
 using mentor_v1.Domain.Entities;
 using mentor_v1.Domain.Enums;
 using mentor_v1.Domain.Identity;
@@ -18,6 +27,7 @@ using mentor_v1.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using WebUI.Services.PayslipServices;
 
 namespace WebUI.Services.JobServices;
 
@@ -26,12 +36,15 @@ public class JobService : IJobService
     private readonly ApplicationDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IMediator _mediator;
+    private readonly IPayslipService _payslipService;
 
-    public JobService(ApplicationDbContext context,UserManager<ApplicationUser> userManager,IMediator mediator)
+    public JobService(ApplicationDbContext context,UserManager<ApplicationUser> userManager,IMediator mediator, IPayslipService payslipService)
     {
         _context = context;
         _userManager = userManager;
         _mediator = mediator;
+        _payslipService = payslipService;
+
     }
 
     public async Task<int> FillEmptyWorkDay()
@@ -260,6 +273,83 @@ public class JobService : IJobService
             return 200;
         }
     }
+
+
+    public async Task<int> ScheduleCaculateSalary()
+    {
+
+        var now = DateTime.Now;
+        //var now = DateTime.Parse("2023-07-01");
+        var listUser = await _userManager.Users.Include(c => c.Position).Where(x => x.WorkStatus == mentor_v1.Domain.Enums.WorkStatus.StillWork).ToListAsync();
+        var defaultConfig = await _mediator.Send(new GetDefaultConfigRequest { });
+        var tax = await _mediator.Send(new GetListTaxIncomeRequest { });
+        var exchange = await _mediator.Send(new GetListExchangeRequest { });
+        var regionWage = await _mediator.Send(new GetRegionalWageByRegionTypeNoVm { RegionType = defaultConfig.CompanyRegionType });
+        var shiftConfig = await _mediator.Send(new GetListShiftRequest { });
+        var insuranceConfig = await _mediator.Send(new GetInsuranceConfigRequest { });
+        int payday = 1;
+        if (now.Day != payday)
+        {
+            throw new Exception ("Tính lương chỉ có thể thực hiện vào ngày 1 hàng tháng!");
+        }
+
+        var listPayday = await _mediator.Send(new GetListPaydayRequest { });
+        var lastPayday = listPayday.OrderByDescending(x => x.PaymentDay).FirstOrDefault();
+        if (lastPayday != null)
+        {
+            if (now.Date <= lastPayday.PaymentDay.Date)
+            {
+                throw new Exception("Ngày tính lương không thể trùng với ngày trả lương lần trước hoặc ngày bắt đầu hợp đồng");
+            }
+        }
+
+        var listManager = await _userManager.GetUsersInRoleAsync("Manager");
+
+        foreach (var item in listUser)
+        {
+            var Manager = listManager.Where(x => x.Id == item.Id).FirstOrDefault();
+            if (Manager == null)
+            {
+                var contract = await _mediator.Send(new GetContractByUserRequest { UserId = item.Id });
+                //hd dang pending 
+                try
+                {
+                    if (contract != null)
+                    {
+                        var finalContract = contract.Where(x => x.Status == EmployeeContractStatus.Pending).FirstOrDefault();
+                        if (finalContract != null)
+                        {
+                            var total = await _payslipService.GrossToNetPending(item, defaultConfig, tax, exchange, regionWage, insuranceConfig, now, shiftConfig, finalContract);
+                        }
+
+                        //đã hết hạn trong tháng trước//tính lại lương => ....
+                        var ExpriedContract = contract.Where(x => x.Status == EmployeeContractStatus.Expeires
+                        && x.EndDate.Value.Month == now.AddMonths(-1).Month && x.EndDate.Value.Year == now.AddMonths(-1).Year
+                        && x.EndDate.Value.Day <= now.AddDays(-1).Day).FirstOrDefault();
+                        if (ExpriedContract != null)
+                        {
+                            var total = await _payslipService.GrossToNetExperid(item, defaultConfig, tax, exchange, regionWage, insuranceConfig, now, shiftConfig, ExpriedContract);
+                        }
+
+                    }
+                }
+                catch (Exception)
+                {
+                }
+            }
+            await _mediator.Send(new CreateNotiCommand
+            {
+                ApplicationUserId = item.Id,
+                Title = "Hoàn thành tính lương tháng " + now.AddDays(-1).Month + "/" + now.AddDays(-1).Year,
+                Description = "Lương tháng " + now.AddDays(-1).Month + "/" + now.AddDays(-1).Year + " của nhân viên đã được tính xong.Vui lòng truy cập vào bảng lương để xem chi tiết! "
+            });
+
+        }
+        await _mediator.Send(new CreatePaydayCommand { PaymentDay = now });
+        return 200;
+    }
+
+
 
 
 }
