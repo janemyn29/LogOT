@@ -154,9 +154,9 @@ public class AuthController : ApiControllerBase
     {
         try
         {
-            if (userId == null || code == null || model.NewPassword == null || model.ConfirmPassword == null)
+            if (userId == null || code == null )
             {
-                return BadRequest("Vui lòng điền đẩy đủ thông tin được yêu cầu !");
+                return BadRequest("Không thể đặt lại mật khẩu. Vui lòng sử dụng link đã được gửi tới trong mail của bạn!");
             }
             if (!model.NewPassword.Equals(model.ConfirmPassword))
             {
@@ -186,7 +186,7 @@ public class AuthController : ApiControllerBase
             else
             {
                 // Đặt lại mật khẩu không thành công
-                return BadRequest("Không thể đặt lại mật khẩu.");
+                return BadRequest("Không thể đặt lại mật khẩu. Vui lòng sử dụng link đã được gửi tới trong mail của bạn");
             }
         }
         catch (Exception e)
