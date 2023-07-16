@@ -109,7 +109,6 @@ public class PayslipService : IPayslipService
 
         var listAttendance = await _mediator.Send(new GetListAttendanceByUserNoVm { UserId = user.Id });
         var finalList = listAttendance.Where(x => x.Day.Date >= lastPay.Date && x.Day.Date <= yesterday.Date).ToList();
-
         foreach (var item in listAnnualDay)
         {
             var morningAttendance = finalList.Where(x => x.Day.Date == item.Day.Date && x.ShiftEnum == ShiftEnum.Morning).FirstOrDefault();
@@ -206,6 +205,10 @@ public class PayslipService : IPayslipService
         {
             leaveDeduction = 0;
         }
+        if(finalHour == 0)
+        {
+            salaryTax = 0;
+        }
         //tính bảo hiểm:
         BHXH_Emp_Amount = Math.Round((salaryTax * insuranceConfig.BHXH_Emp / 100));
         BHYT_Emp_Amount = Math.Round((salaryTax * insuranceConfig.BHYT_Emp / 100));
@@ -238,6 +241,10 @@ public class PayslipService : IPayslipService
         // thu nhập chịu thuế = thu nhập trước thuế - giảm trừ gia cảnh bản thân và giảm trừ người phụ thuộc
         var TNCT = (double)TNTT - PersonalDeduction - DependanceDeduction;
         if (TNCT < 0)
+        {
+            TNCT = 0;
+        }
+        if (finalHour == 0)
         {
             TNCT = 0;
         }

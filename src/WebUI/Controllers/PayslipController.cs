@@ -36,12 +36,12 @@ public class PayslipController : ApiControllerBase
         _userManager = userManager;
         _payslipService = payslipService;
     }
-    [HttpGet]
+    [HttpPost]
     [Route("/Payslip/Create")]
     public async Task<IActionResult> Index()
     {
-        //var now = DateTime.Now;
-        var now = DateTime.Parse("2023-07-01");
+        var now = DateTime.Now;
+        //var now = DateTime.Parse("2023-07-01");
         var listUser = await _userManager.Users.Include(c => c.Position).Where(x => x.WorkStatus == mentor_v1.Domain.Enums.WorkStatus.StillWork).ToListAsync();
         var defaultConfig = await Mediator.Send(new GetDefaultConfigRequest { });
         var tax = await Mediator.Send(new GetListTaxIncomeRequest { });

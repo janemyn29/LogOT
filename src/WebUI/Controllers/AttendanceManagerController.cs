@@ -62,7 +62,7 @@ public class AttendanceManagerController : ApiControllerBase
         var listUser = await _userManager.GetUsersInRoleAsync("Employee");
         foreach (var item in listUser)
         {
-            if(item.UserName == "string")
+            if(item.UserName == "string123")
             {
                 for (int i = 0; i < distance; i++)
                 {
