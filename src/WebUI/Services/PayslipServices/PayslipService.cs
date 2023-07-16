@@ -324,7 +324,7 @@ public class PayslipService : IPayslipService
             }
         }
         /*        double OTWage = Math.Round(OTHour * salaryPerHour );*/
-        double TNST = TNCT - TotalTaxIncome;
+        double TNST = TNTT - TotalTaxIncome;
         double OTwage = Math.Round(CofieOT * salaryPerHour);
         double netSalary = (double)(TNTT - TotalTaxIncome + totalAllowance + totalDepartmentAllowance + OTwage);
 
