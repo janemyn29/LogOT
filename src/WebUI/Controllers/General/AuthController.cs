@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Text;
+using System.Text.Encodings.Web;
 using DocumentFormat.OpenXml.CustomXmlSchemaReferences;
 using DocumentFormat.OpenXml.EMMA;
 using DocumentFormat.OpenXml.Spreadsheet;
@@ -105,7 +106,7 @@ public class AuthController : ApiControllerBase
                     IsEssential = true,
                     Expires = null
                 };
-                Response.Cookies.Append("Auth", result.Token, options);
+                Response.Cookies.Append("AuthHangfire", result.Token, options);
 
                 return Ok(result);
             }
@@ -149,15 +150,15 @@ public class AuthController : ApiControllerBase
 
     [HttpPost]
     [Route("/ResetPassword")]
-    public async Task<IActionResult> ResetPassword(string userId, string code, string newPassword, string confirmPassword)
+    public async Task<IActionResult> ResetPassword(string userId, string code,[FromBody] ResetPassModel model)
     {
         try
         {
-            if (userId == null || code == null || newPassword == null || confirmPassword == null)
+            if (userId == null || code == null || model.NewPassword == null || model.ConfirmPassword == null)
             {
                 return BadRequest("Vui lòng điền đẩy đủ thông tin được yêu cầu !");
             }
-            if (!newPassword.Equals(confirmPassword))
+            if (!model.NewPassword.Equals(model.ConfirmPassword))
             {
                 return BadRequest("Mật khẩu với và mật khẩu xác nhận không khớp !");
             }
@@ -171,10 +172,11 @@ public class AuthController : ApiControllerBase
 
             code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
 
+            
             // Gửi email chứa liên kết để đặt lại mật khẩu
             //var callbackUrl = Url.Action("ResetPassword", "Auth", new { token = code }, Request.Scheme);
 
-            var result = await _userManager.ResetPasswordAsync(user, code, newPassword);
+            var result = await _userManager.ResetPasswordAsync(user, code, model.NewPassword);
 
             if (result.Succeeded)
             {
@@ -207,13 +209,34 @@ public class AuthController : ApiControllerBase
             {
                 return BadRequest("Không tìm thấy địa chỉ emal");
             }
+            //lấy host để redirect về
+            var referer = Request.Headers["Referer"].ToString();
+            string schema;
+            string host;
+
+            string callbackUrl = "";
 
             var code = await _userManager.GeneratePasswordResetTokenAsync(user);
             code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-            // Gửi email chứa liên kết để đặt lại mật khẩu
-            string callbackUrl =/* schema + "://" + host +*/ Url.Action("ResetPassword", "Auth", new { userId = user.Id, code = code }, Request.Scheme);
+            if (Uri.TryCreate(referer, UriKind.Absolute, out var uri))
+            {
+                schema = uri.Scheme; // Lấy schema (http hoặc https) của frontend
+                host = uri.Host; // Lấy host của frontend
 
-            return Ok(callbackUrl);
+
+
+                callbackUrl = schema + "://" + host + Url.Action("ResetPassword", "Auth", new { userId = user.Id, code = code }, Request.Scheme);
+            }
+            if (callbackUrl.Equals(""))
+            {
+                callbackUrl = Request.Scheme + "://" + Request.Host + Url.Action("ConfirmEmail", "Auth", new { userId = user.Id, code = code });
+            }
+
+            string body = "<style>\r\n    body {\r\n        font-family: Arial, sans-serif;\r\n        line-height: 1.5;\r\n        \r\n    }\r\n\r\n    .container {\r\n        max-width: 600px;\r\n         margin: 0 auto;\r\n        padding: 20px;\r\n       \r\n    }\r\n\r\n    h1 {\r\n        color: #333;\r\n        \r\n    }\r\n\r\n    p {\r\n         margin-bottom: 20px;\r\n       \r\n    }\r\n\r\n     .button {\r\n        display: inline-block;\r\n        background-color: #007bff;\r\n        color: #fff;\r\n         padding: 10px 20px;\r\n        text-decoration: none;\r\n         border-radius: 5px;\r\n        \r\n    }\r\n\r\n</style>\r\n <div class=\"container\">\r\n    <h1>Xác nhận yêu cầu đổi mật khẩu truy cập vào Website của công ty TechGenius</h1>\r\n    <p>Bạn đã yêu cầu đổi mật khẩu. Vui lòng nhấp vào liên kết bên dưới để xác nhận yêu cầu:</p> " + $"<a  href='{HtmlEncoder.Default.Encode(callbackUrl)}'>Link đổi mật khẩu</a>" + " <p>Vui lòng lưu ý rằng\r\n        đường dẫn xác nhận sẽ chỉ có hiệu lực trong vòng 30 phút. Sau thời gian đó, đường dẫn sẽ hết hiệu lực và bạn sẽ\r\n        cần yêu cầu xác nhận lại.</p>\\r\\n <p>Nếu có bất kỳ thay đổi hoặc sự nhầm lẫn nào liên quan đến địa chỉ email của\r\n        công ty, xin vui lòng thông báo cho chúng tôi ngay lập tức để chúng tôi có thể cập nhật thông tin đúng cho công\r\n        ty.</p>"
+            SendMail mail = new SendMail();
+            var temp = mail.SendEmailNoBccAsync(user.Email, "Email đổi mật khẩu Từ Công ty TechGenius", body);
+
+            return Ok("Thông báo về việc gửi link đổi mật khẩu đã được gửi thành công đến địa chỉ email của bạn. Vui lòng kiểm tra hộp thư đến (inbox) của bạn để tìm thư chứa link đổi mật khẩu.");
         }
         catch (ArgumentNullException e)
         {
