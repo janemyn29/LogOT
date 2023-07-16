@@ -1,10 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using mentor_v1.Application.ApplicationUser.Queries;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers;
-public class DashboardController : Controller
+public class DashboardController : ApiControllerBase
 {
-    public IActionResult Index()
+    [HttpGet]
+
+    public async Task<IActionResult> Index()
     {
-        return View();
+        var list = await Mediator.Send(new GetDashboardRequest { });
+        return Ok(list);
     }
 }

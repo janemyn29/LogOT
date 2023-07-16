@@ -33,22 +33,6 @@ public class UpdateAnnualCommandHandler : IRequestHandler<UpdateAnnualCommand>
         {
             throw new NotFoundException("Không tìm thấy ngày mà bạn yêu cầu!");
         }
-        var existDay = _context.Get<Domain.Entities.AnnualWorkingDay>().Where(x => x.Day.Date == request.Day.Date && x.IsDeleted == false).FirstOrDefault();
-
-        if (existDay != null)
-        {
-            throw new NotFoundException("Ngày "+ request.Day.ToString("dd/MM/yyyy")+" đã tồn tại!");
-        }
-        var existedDay = _context.AnnualWorkingDays.Where(x => x.IsDeleted == false && x.Day.Date == request.Day.Date).FirstOrDefault();
-        if (existedDay != null)
-        {
-            throw new InvalidDataException("Ngày " + request.Day.ToString("dd/MM/yyyy") + " đã tồn tại!");
-        }
-        else if (DateTime.Now.Date > request.Day.Date)
-        {
-            throw new InvalidDataException("Ngày được thêm vào phải lớn hơn hoặc nhỏ hơn ngày hiện tại! ");
-
-        }
         try
         {
             TypeDate typeDate;
@@ -62,14 +46,12 @@ public class UpdateAnnualCommandHandler : IRequestHandler<UpdateAnnualCommand>
                 current.CoefficientId = coeId;
                     current.TypeDate = typeDate;
                     current.ShiftType = shiftType;
-                current.Day = request.Day;
             }
             else if (request.Day.DayOfWeek == DayOfWeek.Sunday)
             {
                 shiftType = _context.ConfigDays.FirstOrDefault().Sunday;
                 typeDate = TypeDate.Sunday;
                 coeId = _context.Coefficients.Where(x => x.TypeDate == typeDate).FirstOrDefault().Id;
-                current.Day = request.Day;
                 current.CoefficientId = coeId;
                 current.TypeDate = typeDate;
                 current.ShiftType = shiftType;
@@ -80,7 +62,6 @@ public class UpdateAnnualCommandHandler : IRequestHandler<UpdateAnnualCommand>
                 shiftType = _context.ConfigDays.FirstOrDefault().Holiday;
                 typeDate = TypeDate.Holiday;
                 coeId = _context.Coefficients.Where(x => x.TypeDate == typeDate).FirstOrDefault().Id;
-                current.Day = request.Day;
                 current.CoefficientId = coeId;
                 current.TypeDate = typeDate;
                 current.ShiftType = shiftType;
@@ -89,7 +70,6 @@ public class UpdateAnnualCommandHandler : IRequestHandler<UpdateAnnualCommand>
                 shiftType = _context.ConfigDays.FirstOrDefault().Normal;
                 typeDate = TypeDate.Normal;
                 coeId = _context.Coefficients.Where(x => x.TypeDate == typeDate).FirstOrDefault().Id;
-                current.Day = request.Day;
                 current.CoefficientId = coeId;
                 current.TypeDate = typeDate;
                 current.ShiftType = shiftType;
