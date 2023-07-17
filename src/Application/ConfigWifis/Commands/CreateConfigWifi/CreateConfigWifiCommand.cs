@@ -20,7 +20,7 @@ public class CreateConfigWifiCommandHandler : IRequestHandler<CreateConfigWifiCo
     public async Task<Unit> Handle(CreateConfigWifiCommand request, CancellationToken cancellationToken)
     {
 
-        var check = _context.Get<Domain.Entities.ConfigWifi>().Where(x => x.WifiIpv4.Equals(request.WifiIPv4)).FirstOrDefault();
+        var check = _context.Get<Domain.Entities.ConfigWifi>().Where(x => x.WifiIpv4.Equals(request.WifiIPv4) && x.IsDeleted == false).FirstOrDefault();
 
         if(check != null)
             throw new Exception("WifiIPv4: " + request.WifiIPv4 + " đã xuất hiện.");

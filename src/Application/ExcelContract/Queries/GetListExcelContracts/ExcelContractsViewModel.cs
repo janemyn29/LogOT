@@ -15,7 +15,7 @@ public class ExcelContractsViewModel : IMapFrom<Domain.Entities.ExcelContract>
     public DateTime EndDate { get;set; }
     public string EmployeeName { get; set; }
     public string ContractStatus { get; set; }
-    public int Action { get; set; }
+    public string Action { get; set; }
     public DateTime ActionDate { get; set; }
     public string Job { get; set; }
 
