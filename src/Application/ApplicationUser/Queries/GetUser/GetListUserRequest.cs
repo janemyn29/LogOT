@@ -37,11 +37,12 @@ public class GetListUserRequestHandler : IRequestHandler<GetListUserRequest, Pag
 
     public async Task<PagingAppUser<Domain.Identity.ApplicationUser>> Handle(GetListUserRequest request, CancellationToken cancellationToken)
     {
-        var ListApplicationUser = _userManage.Users.AsNoTracking().ToList();
+        var ListApplicationUser = await _userManage.GetUsersInRoleAsync("Employee");
+        var list = ListApplicationUser.OrderBy(x => x.Fullname).ToList();
 
         // Paginate data
         var page = await PagingAppUser<Domain.Identity.ApplicationUser>
-            .CreateAsync(ListApplicationUser, request.Page, request.Size);
+            .CreateAsync(list, request.Page, request.Size);
 /*        foreach (var item in page.Items)
         {
             if (item.Image != null)

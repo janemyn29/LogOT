@@ -1,8 +1,10 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
 using AutoMapper;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using mentor_v1.Application.ApplicationUser.Commands.CreateUse;
 using mentor_v1.Application.ApplicationUser.Commands.UpdateUser;
+using mentor_v1.Application.ApplicationUser.Queries;
 using mentor_v1.Application.ApplicationUser.Queries.GetUser;
 using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.Interfaces;
@@ -13,6 +15,7 @@ using mentor_v1.Application.EmployeeContract.Commands.DeleteEmpContract;
 using mentor_v1.Application.Positions.Queries.GetPositionByRelatedObjects;
 using mentor_v1.Domain.Entities;
 using mentor_v1.Domain.Identity;
+using mentorv1.Infrastructure.Persistence.Migrations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -80,8 +83,80 @@ public class EmployeeController : ApiControllerBase
         }*/
         return Ok(listEmployee);
     }
-    /*
-        [Authorize(Roles = "Manager")]*/
+
+    [HttpPost]
+    [Route("/CreateManagerAccount")]
+    public async Task<IActionResult> CreateManagerAccount([FromBody] ManagerMOdel newManager)
+    {
+
+        try
+        {
+            if(newManager.BirthDay.Date.AddYears(18).Date > DateTime.Now.Date) {
+                return BadRequest("Phải lớn hơn 18 tuổi!");
+                    }
+            var administrator = new ApplicationUser { UserName = newManager.Username, Email = newManager.Email, Fullname = newManager.Fullname, Image = newManager.Image, Address = newManager.Address, IdentityNumber = "0", BirthDay = newManager.BirthDay, BankAccountNumber = "0", BankAccountName = "0", BankName = "0", GenderType =newManager.GenderType, PositionId = newManager.PositionId, IsMaternity = false };
+
+            if (_userManager.Users.All(u => u.UserName != administrator.UserName))
+            {
+               var result =  await _userManager.CreateAsync(administrator, "Manager1!");
+                
+                if(result.Succeeded)
+                {
+                    await _userManager.AddToRolesAsync(administrator, new[] { "Manager" });
+                    return Ok("Tạo tài khoản quản lý thành công!");
+
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            else
+            {
+                return BadRequest("Tên đăng nhập này đã tồn lại!");
+            }
+
+            
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+
+    }
+
+    /*    [Authorize(Roles = "Manager")]*/
+    [HttpGet]  // lấy danh sách employee
+    [Route("/GetListManagerAccount")]
+
+    public async Task<IActionResult> GetListManagerAccount(int pg = 1)
+    {
+        var ListApplicationUser = await _userManager.GetUsersInRoleAsync("Manager");
+        var list = ListApplicationUser.OrderBy(x => x.Fullname).ToList();
+
+        // Paginate data
+        var page = await PagingAppUser<ApplicationUser>
+            .CreateAsync(list, pg, 20);
+        return Ok(page);
+    }
+
+
+    [HttpPut]
+    [Route("/Employee/LockAccount")]
+    public async Task<IActionResult> LockAccount(string userId)
+    {
+        try
+        {
+            var result = await Mediator.Send(new UpdateLockoutAccount() { id = userId });
+            return Ok("Khóa tài khoản thành công!");
+        }
+        catch (Exception)
+        {
+            return BadRequest("Khóa tài khoản thất bại!");
+        }
+    }
+
+
     [HttpPost]
     [Route("/Employee/Create")]
     public async Task<IActionResult> Create([FromBody] EmployeeModel newEmp )
