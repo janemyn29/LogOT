@@ -209,7 +209,7 @@ public class AuthController : ApiControllerBase
                 return BadRequest("Không tìm thấy địa chỉ emal");
             }
             //lấy host để redirect về
-            var referer = Request.Headers["Referer"].ToString();
+            var referer = Request.Headers["Reference"].ToString();
             string schema;
             string host;
 
