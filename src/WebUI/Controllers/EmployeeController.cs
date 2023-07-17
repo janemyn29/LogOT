@@ -150,9 +150,24 @@ public class EmployeeController : ApiControllerBase
             var result = await Mediator.Send(new UpdateLockoutAccount() { id = userId });
             return Ok("Khóa tài khoản thành công!");
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             return BadRequest("Khóa tài khoản thất bại!");
+        }
+    }
+
+    [HttpPut]
+    [Route("/Employee/UnlockAccount")]
+    public async Task<IActionResult> UnlockAccount(string userId)
+    {
+        try
+        {
+            var result = await Mediator.Send(new UpdateUnlockAccount() { id = userId });
+            return Ok("Mở khóa tài khoản thành công!");
+        }
+        catch (Exception ex)
+        {
+            return BadRequest("Mở khóa tài khoản thất bại!");
         }
     }
 

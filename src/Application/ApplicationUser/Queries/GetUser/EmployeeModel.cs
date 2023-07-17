@@ -22,10 +22,7 @@ public class EmployeeModel
         public bool IsMaternity { get; set; } = false;
         public string Image { get; set; }
         public string PhoneNumber { get; set; }
-
-    public string Role { get; set; }
-
-        // 
+         public string Role { get; set; } = "Employee"; 
         public string ContractCode { get; set; }
         public string? File { get; set; }
         public DateTime? StartDate { get; set; }
