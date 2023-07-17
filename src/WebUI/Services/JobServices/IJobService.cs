@@ -10,4 +10,5 @@ public interface IJobService
     Task<int> NoticeEmptyWorkday();
     Task<int> FillEmptyWorkDay();
     Task<int> NoticeFillAnnualWorkingDay();
+    Task<int> ScheduleCaculateSalary();
 }

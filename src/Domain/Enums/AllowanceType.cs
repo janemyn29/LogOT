@@ -12,4 +12,7 @@ public enum AllowanceType
 
     // Đi lại
     Travel_Allowance=2,
+    Fuel_Allowance =3,
+    Housing_Allowance =4,
+    Phone_Allowance = 5,
 }

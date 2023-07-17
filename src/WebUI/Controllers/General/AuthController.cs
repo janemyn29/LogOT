@@ -197,13 +197,12 @@ public class AuthController : ApiControllerBase
 
     }
 
-    [HttpGet]
+    [HttpPost]
     [Route("/ForgotPassword")]
     public async Task<IActionResult> ForgotPassword(string email)
     {
         try
         {
-            if (email == null) throw new ArgumentNullException("email");
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
@@ -237,10 +236,6 @@ public class AuthController : ApiControllerBase
             var temp = mail.SendEmailNoBccAsync(user.Email, "Email đổi mật khẩu Từ Công ty TechGenius", body);
 
             return Ok("Thông báo về việc gửi link đổi mật khẩu đã được gửi thành công đến địa chỉ email của bạn. Vui lòng kiểm tra hộp thư đến (inbox) của bạn để tìm thư chứa link đổi mật khẩu.");
-        }
-        catch (ArgumentNullException e)
-        {
-            return BadRequest("lỗi: " + e.Message);
         }
         catch (Exception e)
         {

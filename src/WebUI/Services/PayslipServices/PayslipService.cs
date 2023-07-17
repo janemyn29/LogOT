@@ -324,7 +324,7 @@ public class PayslipService : IPayslipService
             }
         }
         /*        double OTWage = Math.Round(OTHour * salaryPerHour );*/
-        double TNST = TNCT - TotalTaxIncome;
+        double TNST = TNTT - TotalTaxIncome;
         double OTwage = Math.Round(CofieOT * salaryPerHour);
         double netSalary = (double)(TNTT - TotalTaxIncome + totalAllowance + totalDepartmentAllowance + OTwage);
 
@@ -333,7 +333,7 @@ public class PayslipService : IPayslipService
         BHYT_Comp_Amount = Math.Round((salaryTax * insuranceConfig.BHYT_Comp / 100));
         BHTN_Comp_Amount = Math.Round((salaryTax * insuranceConfig.BHTN_Comp / 100));
 
-        var totalBH_Comp = BHXH_Comp_Amount + BHYT_Comp_Amount + BHTN_Comp_Amount;
+        var totalBH_Comp = BHXH_Comp_Amount + BHYT_Comp_Amount + BHTN_Comp_Amount+ basicSalary;
 
         PayslipViewModel payslip = new PayslipViewModel();
         payslip.EmployeeContractId = contract.Id;

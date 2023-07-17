@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
 using Hangfire;
+using HangfireBasicAuthenticationFilter;
 using mentor_v1.Application.Common.Models;
 using mentor_v1.Domain.Identity;
 using mentor_v1.Infrastructure;
@@ -10,11 +11,13 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Serilog;
 using WebUI;
+using WebUI.Helper;
 using WebUI.Services;
 using WebUI.Services.FileManager;
 using WebUI.Services.Format;
@@ -154,7 +157,17 @@ app.UseCookiePolicy(new CookiePolicyOptions
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseHangfireDashboard();
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
+{
+    DashboardTitle = "TechGenius's HRManagement Dashboard",
+    Authorization = new[] { 
+    new HangfireCustomBasicAuthenticationFilter()
+    {
+        Pass = "Manager1!",
+        User= "Manager@localhost"
+    }
+    }
+});
 app.MapDefaultControllerRoute();
 app.MapControllerRoute(
     name: "area",

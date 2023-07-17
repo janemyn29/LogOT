@@ -52,22 +52,25 @@ public class AccountController : ApiControllerBase
     [Route("/Account/ChangePassword")]
     public async Task<IActionResult> ChangePassword([FromBody] ChangePassModel moodel)
     {
+        List<string> errs = new List<string>();
         if (!moodel.NewPassword.Equals(moodel.ConfirmPassword))
         {
+            errs.Add("Mật khẩu xác nhận không trùng khớp!");
             return BadRequest(new
             {
                 status = BadRequest().StatusCode,
                 message = "Đổi mật khẩu thất bại!",
-                result = "Mật khẩu xác nhận không trùng khớp!"
+                result = errs
             });
         }
         if (moodel.NewPassword.Equals(moodel.OldPassword))
         {
+            errs.Add("Mật khẩu mới phải khác mật khẩu cũ!");
             return BadRequest(new
             {
                 status = BadRequest().StatusCode,
                 message = "Đổi mật khẩu thất bại!",
-                result = "Mật khẩu mới phải khác mật khẩu cũ!"
+                result = errs
             });
         }
         try
@@ -79,7 +82,7 @@ public class AccountController : ApiControllerBase
             {
                 return Ok(new
                 {
-                    status = BadRequest().StatusCode,
+                    status = Ok().StatusCode,
                     message = "Đổi mật khẩu thành công!",
                     result = "Đổi mật khẩu thành công!"
                 });

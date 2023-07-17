@@ -70,4 +70,14 @@ public class RunScheduleController : ApiControllerBase
         //await _jobService.FillEmptyWorkDay();
         return Ok();
     }
+
+    [HttpGet]
+    [Route("/ScheduleCaculateSalary")]
+    public async Task<IActionResult> ScheduleCaculateSalary()
+    {
+        RecurringJob.RemoveIfExists("ScheduleCaculateSalary");
+        RecurringJob.AddOrUpdate("ScheduleCaculateSalary", () => _jobService.ScheduleCaculateSalary(), "0 1 1 * *", TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
+        //await _jobService.FillEmptyWorkDay();
+        return Ok();
+    }
 }
