@@ -28,7 +28,7 @@ public class GetPaySlipRequetsHandler : IRequestHandler<GetPaySlipRequets, Domai
     public Task<Domain.Entities.PaySlip> Handle(GetPaySlipRequets request, CancellationToken cancellationToken)
     {
         //get Attendance by ?
-        var item = _applicationDbContext.Get<Domain.Entities.PaySlip>().Include(x => x.EmployeeContract.ApplicationUser).Include(x=>x.DetailTaxes).Where(x => x.IsDeleted == false && x.Id== request.Id).AsNoTracking().FirstOrDefault();
+        var item = _applicationDbContext.Get<Domain.Entities.PaySlip>().Include(x => x.EmployeeContract.ApplicationUser).Include(x=>x.DetailTaxes.OrderBy(x=>x.Muc_chiu_thue_From)).Where(x => x.IsDeleted == false && x.Id== request.Id).AsNoTracking().FirstOrDefault();
         return Task.FromResult(item);
     }
 }

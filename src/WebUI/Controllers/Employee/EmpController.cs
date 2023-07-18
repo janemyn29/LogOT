@@ -84,7 +84,7 @@ public class EmpController : ApiControllerBase
 
         try
         {
-            var defaultWIfi = await Mediator.Send(new GetConfigWifiByIpRequest { Ip = IpWifi.ip });
+            var defaultWIfi = await Mediator.Send(new GetConfigWifiByIpRequest { Ip = IpWifi.ipString });
         }
         catch (Exception)
         {
@@ -289,7 +289,7 @@ public class EmpController : ApiControllerBase
     public string GetIPWifi()
     {
         //lấy là Ktr IP wifi
-        var urlExteranlAPI = string.Format("https://api.ipify.org?format=json");
+        var urlExteranlAPI = string.Format("https://api-bdc.net/data/client-info");
         WebRequest request = WebRequest.Create(urlExteranlAPI);
         request.Method = "GET";
         HttpWebResponse response = null;
