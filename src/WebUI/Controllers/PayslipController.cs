@@ -106,8 +106,6 @@ public class PayslipController : ApiControllerBase
                         }
                         catch (Exception )
                         {
-
-                            throw  ;
                         }
                         
 
