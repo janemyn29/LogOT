@@ -64,14 +64,24 @@ public class GetDashboardRequestHandler : IRequestHandler<GetDashboardRequest, L
         model.Add(totalSalaryModel);
 
 
+        int Month = DateTime.Now.Month-1;
+        if(Month == 0)
+        {
+            Month = 12;
+        }
+
+        int Year = DateTime.Now.Year - 1;
+        
+
+
         //tổng lương đã trả tháng trước:
-        var totalSalaryMonth = await _context.Get<Domain.Entities.PaySlip>().Where(x => x.IsDeleted == false && x.PaydayCal.AddDays(-1).Date.Month == DateTime.Now.Month && x.PaydayCal.AddDays(-1).Year == DateTime.Now.Year).SumAsync(x => x.FinalSalary);
+        var totalSalaryMonth = await _context.Get<Domain.Entities.PaySlip>().Where(x => x.IsDeleted == false && x.ToTime.Date.Month == Month && x.ToTime.Year == Year).SumAsync(x => x.FinalSalary);
         Dashboard totalSalaryMonthModel = new Dashboard("Tổng số lương tháng trước", Format(totalSalaryMonth.Value) + "VNĐ");
         model.Add(totalSalaryMonthModel);
 
         //tổng bảo hiểm tháng
         double InsMOnth = 0;
-        var totalBHMonth = await _context.Get<Domain.Entities.PaySlip>().Where(x => x.IsDeleted == false && x.PaydayCal.AddDays(-1).Date.Month == DateTime.Now.Month && x.PaydayCal.AddDays(-1).Year == DateTime.Now.Year).ToListAsync();
+        var totalBHMonth = await _context.Get<Domain.Entities.PaySlip>().Where(x => x.IsDeleted == false && x.PaydayCal.AddDays(-1).Date.Month == Month && x.PaydayCal.AddDays(-1).Year == Year).ToListAsync();
         if(totalBHMonth!=null&& totalBHMonth.Count > 0)
         {
             foreach (var item in totalBHMonth)
@@ -89,11 +99,42 @@ public class GetDashboardRequestHandler : IRequestHandler<GetDashboardRequest, L
         {
             foreach (var item in totalBH)
             {
-                Ins = item.TotalInsuranceComp + item.TotalInsuranceEmp;
+                Ins = Ins+ item.BHTN_Comp_Amount+ item.BHXH_Comp_Amount+ item.BHYT_Comp_Amount + item.TotalInsuranceEmp;
             }
         }
         Dashboard totalBHModel = new Dashboard("Tổng bảo hiểm đã nộp", Format(Ins) + "VNĐ");
         model.Add(totalBHModel);
+
+
+
+
+        //tổng Thuế tháng
+        double taxMonth = 0;
+        var totalTaxMonth = await _context.Get<Domain.Entities.PaySlip>().Where(x => x.IsDeleted == false && x.PaydayCal.AddDays(-1).Date.Month == Month && x.PaydayCal.AddDays(-1).Year == Year).ToListAsync();
+        if (totalTaxMonth != null && totalTaxMonth.Count > 0)
+        {
+            foreach (var item in totalTaxMonth)
+            {
+                taxMonth = taxMonth + item.TotalTaxIncome;
+            }
+        }
+        Dashboard finaltaxMonth = new Dashboard("Tổng Thuế thu nhập tháng trước", Format(taxMonth) + "VNĐ");
+        model.Add(finaltaxMonth);
+
+        //tổng bảo hiểm
+        double Tax = 0;
+        var totalTax = await _context.Get<Domain.Entities.PaySlip>().Where(x => x.IsDeleted == false).ToListAsync();
+        if (totalTax != null && totalTax.Count > 0)
+        {
+            foreach (var item in totalTax)
+            {
+                Tax = Tax +item.TotalTaxIncome;
+            }
+        }
+        Dashboard totalTaxIncome = new Dashboard("Tổng bảo hiểm đã nộp", Format(Tax) + "VNĐ");
+        model.Add(totalTaxIncome);
+
+
 
         return model;
     }

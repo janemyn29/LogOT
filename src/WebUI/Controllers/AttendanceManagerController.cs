@@ -54,7 +54,7 @@ public class AttendanceManagerController : ApiControllerBase
 
     [HttpGet]
     [Route("/Attendance/CreateSeries")]
-    public async Task<IActionResult> CreateSeries(DateTime FromDate, DateTime ToDate)
+    public async Task<IActionResult> CreateSeries(DateTime FromDate, DateTime ToDate, string email)
     {
         var distanceDay = ToDate - FromDate;
         int distance = distanceDay.Days;
@@ -62,7 +62,7 @@ public class AttendanceManagerController : ApiControllerBase
         var listUser = await _userManager.GetUsersInRoleAsync("Employee");
         foreach (var item in listUser)
         {
-            if(item.WorkStatus == mentor_v1.Domain.Enums.WorkStatus.StillWork && !item.Email.Equals("ngocpb010101@gmail.com") && !item.Email.Equals("tramysy@gmail.com"))
+            if(item.WorkStatus == mentor_v1.Domain.Enums.WorkStatus.StillWork && item.Email.Equals(email))
             {
                 for (int i = 0; i < distance; i++)
                 {
