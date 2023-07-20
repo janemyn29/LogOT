@@ -65,16 +65,19 @@ public class GetDashboardRequestHandler : IRequestHandler<GetDashboardRequest, L
 
 
         int Month = DateTime.Now.Month-1;
-        if(Month == 0)
+        int Year = DateTime.Now.Year;
+
+        if (Month == 0)
         {
+            Year = Year - 1;
             Month = 12;
         }
 
-        int Year = DateTime.Now.Year - 1;
-        
+
 
 
         //tổng lương đã trả tháng trước:
+        var abc = _context.Get<Domain.Entities.PaySlip>().Where(x => x.IsDeleted == false && x.ToTime.Date.Month == Month && x.ToTime.Year == Year).ToList();
         var totalSalaryMonth = await _context.Get<Domain.Entities.PaySlip>().Where(x => x.IsDeleted == false && x.ToTime.Date.Month == Month && x.ToTime.Year == Year).SumAsync(x => x.FinalSalary);
         Dashboard totalSalaryMonthModel = new Dashboard("Tổng số lương tháng trước", Format(totalSalaryMonth.Value) + "VNĐ");
         model.Add(totalSalaryMonthModel);
@@ -131,7 +134,7 @@ public class GetDashboardRequestHandler : IRequestHandler<GetDashboardRequest, L
                 Tax = Tax +item.TotalTaxIncome;
             }
         }
-        Dashboard totalTaxIncome = new Dashboard("Tổng bảo hiểm đã nộp", Format(Tax) + "VNĐ");
+        Dashboard totalTaxIncome = new Dashboard("Tổng Thuế thu nhập", Format(Tax) + "VNĐ");
         model.Add(totalTaxIncome);
 
 
