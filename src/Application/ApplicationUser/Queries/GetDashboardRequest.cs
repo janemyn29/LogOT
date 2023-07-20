@@ -77,7 +77,6 @@ public class GetDashboardRequestHandler : IRequestHandler<GetDashboardRequest, L
 
 
         //tổng lương đã trả tháng trước:
-        var abc = _context.Get<Domain.Entities.PaySlip>().Where(x => x.IsDeleted == false && x.ToTime.Date.Month == Month && x.ToTime.Year == Year).ToList();
         var totalSalaryMonth = await _context.Get<Domain.Entities.PaySlip>().Where(x => x.IsDeleted == false && x.ToTime.Date.Month == Month && x.ToTime.Year == Year).SumAsync(x => x.FinalSalary);
         Dashboard totalSalaryMonthModel = new Dashboard("Tổng số lương tháng trước", Format(totalSalaryMonth.Value) + "VNĐ");
         model.Add(totalSalaryMonthModel);
@@ -89,7 +88,7 @@ public class GetDashboardRequestHandler : IRequestHandler<GetDashboardRequest, L
         {
             foreach (var item in totalBHMonth)
             {
-                InsMOnth = InsMOnth + item.TotalInsuranceComp + item.TotalInsuranceEmp;
+                InsMOnth = InsMOnth + item.BHTN_Comp_Amount + item.BHXH_Comp_Amount + item.BHYT_Comp_Amount + item.TotalInsuranceEmp;
             }
         }
         Dashboard totalBHMonthModel = new Dashboard("Tổng bảo hiểm tháng trước", Format(InsMOnth) + "VNĐ");
