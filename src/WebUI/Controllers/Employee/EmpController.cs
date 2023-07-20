@@ -40,6 +40,7 @@ using mentor_v1.Application.LeaveLog.Commands.DeleteLeaveLog;
 using mentor_v1.Application.OvertimeLog.Queries.GetOvertimeLogByRelativeObject;
 using mentor_v1.Application.OvertimeLog.Commands.UpdateOvertimeLog;
 using mentor_v1.Application.Note.Commands;
+using mentor_v1.Application.Degree.Commands.CreateDegree;
 
 namespace WebUI.Controllers.Employee;
 [Authorize(Roles = "Employee")]
@@ -490,6 +491,46 @@ public class EmpController : ApiControllerBase
             {
                 status = BadRequest().StatusCode,
                 message = ex.Message
+            });
+        }
+    }
+    #endregion
+
+    #region Create
+    [HttpPost]
+    public async Task<IActionResult> CreateDegree(CreateDegreeViewModel createDegreeViewModel)
+    {
+        var validator = new CreateDegreeCommadValidator(_context);
+        var valResult = await validator.ValidateAsync(createDegreeViewModel);
+
+        if (valResult.Errors.Count != 0)
+        {
+            List<string> errors = new List<string>();
+            foreach (var error in valResult.Errors)
+            {
+                var item = error.ErrorMessage; errors.Add(item);
+            }
+            return BadRequest(errors);
+        }
+
+        try
+        {
+            var create = await Mediator.Send(new CreateDegreeCommand
+            {
+                createDegreeViewModel = createDegreeViewModel
+            });
+            return Ok(new
+            {
+                status = Ok().StatusCode,
+                message = "Tạo thành công."
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new
+            {
+                status = BadRequest().StatusCode,
+                message = "Tạo thất bại."
             });
         }
     }

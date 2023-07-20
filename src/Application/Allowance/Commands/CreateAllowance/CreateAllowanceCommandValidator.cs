@@ -19,7 +19,7 @@ public class CreateAllowanceCommandValidator : AbstractValidator<CreateAllowance
 
         RuleFor(v => v.AllowanceType)
             .NotNull().WithMessage("Loại phụ cấp không được để trống.").GreaterThan(0).WithMessage("Loại phụ cấp phải lớn hơn 0")
-            .LessThan(3).WithMessage("Loại phụ cấp phải bé hơn 3.");
+            .LessThan(5).WithMessage("Loại phụ cấp phải bé hơn 5.");
 
         RuleFor(v => v.Amount).NotNull()
             .WithMessage("Tiền không được để trống.").GreaterThan(-1).WithMessage("Tiền phải lớn hơn hoặc bằng 0.");
