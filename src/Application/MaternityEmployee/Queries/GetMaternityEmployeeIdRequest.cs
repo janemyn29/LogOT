@@ -27,7 +27,7 @@ public class GetMaternityEmployeeIdRequestHandler : IRequestHandler<GetMaternity
 
     public Task<GetMaternityEmployeeViewModel> Handle(GetMaternityEmployeeIdRequest request, CancellationToken cancellationToken)
     {
-        var maternity = _applicationDbContext.Get<Domain.Entities.MaternityEmployee>().Where(x => x.Id.Equals(request.Id) && x.IsDeleted == false).AsNoTracking().FirstOrDefault();
+        var maternity = _applicationDbContext.Get<Domain.Entities.MaternityEmployee>().Include(x=>x.ApplicationUser).Where(x => x.Id.Equals(request.Id) && x.IsDeleted == false).AsNoTracking().FirstOrDefault();
         if (maternity == null) throw new NotFoundException("Không tìm thấy ID: " + request.Id);
         var map = _mapper.Map<GetMaternityEmployeeViewModel>(maternity);
         return Task.FromResult(map);

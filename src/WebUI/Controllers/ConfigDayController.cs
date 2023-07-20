@@ -8,6 +8,7 @@ using mentor_v1.Application.DefaultConfig.Commands;
 using mentor_v1.Application.DefaultConfig.Queries.Get;
 using mentor_v1.Application.Exchange.Commands.UpdateExchange;
 using mentor_v1.Application.Exchange.ExportExcelFileCommands;
+using mentor_v1.Application.Exchange.Queries;
 using mentor_v1.Application.RegionalMinimumWage.Commands;
 using mentor_v1.Application.RegionalMinimumWage.Queries;
 using mentor_v1.Application.TaxIncome.Commands.CreateTaxIncome;
@@ -135,6 +136,21 @@ public class ConfigDayController : ApiControllerBase
         try
         {
             var item = await Mediator.Send(new GetListTaxIncomeRequest { });
+            return Ok(item);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+
+    }
+    [HttpGet]
+    [Route("/Config/Exchange")]
+    public async Task<IActionResult> ConfigExchange()
+    {
+        try
+        {
+            var item = await Mediator.Send(new GetListExchangeRequest { });
             return Ok(item);
         }
         catch (Exception ex)

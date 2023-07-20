@@ -62,6 +62,8 @@ public class AttendanceManagerController : ApiControllerBase
         var listUser = await _userManager.GetUsersInRoleAsync("Employee");
         foreach (var item in listUser)
         {
+            if(item.WorkStatus == mentor_v1.Domain.Enums.WorkStatus.StillWork && !item.Email.Equals("ngocpb010101@gmail.com") && !item.Email.Equals("tramysy@gmail.com"))
+            {
                 for (int i = 0; i < distance; i++)
                 {
 
@@ -92,6 +94,8 @@ public class AttendanceManagerController : ApiControllerBase
                     tempDate = tempDate.AddDays(1);
                 }
             }
+                
+        }
 
         return Ok();
     }
