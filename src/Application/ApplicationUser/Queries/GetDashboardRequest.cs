@@ -54,7 +54,7 @@ public class GetDashboardRequestHandler : IRequestHandler<GetDashboardRequest, L
 
         //tổng hợp đồng:
         var totalContract = await _context.Get<Domain.Entities.EmployeeContract>().Where(x => x.IsDeleted == false && x.Status == Domain.Enums.EmployeeContractStatus.Pending).CountAsync();
-        Dashboard totalContractModel = new Dashboard("Tổng số hợp đòng đang diễn ra", totalDepartment.ToString());
+        Dashboard totalContractModel = new Dashboard("Tổng số hợp đồng đang diễn ra", totalDepartment.ToString());
         model.Add(totalContractModel);
 
 

@@ -43,9 +43,6 @@ public class CreateJobReportCommandHandler : IRequestHandler<CreateJobReportComm
             };
             // add new category
             _context.Get<Domain.Entities.JobReport>().Add(job);
-
-            // commit change to database
-            // because the function is async so we await it
             await _context.SaveChangesAsync(cancellationToken);
         
         return job.Id;

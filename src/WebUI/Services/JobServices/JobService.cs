@@ -27,6 +27,8 @@ using mentor_v1.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
+using WebUI.Models;
 using WebUI.Services.PayslipServices;
 
 namespace WebUI.Services.JobServices;
@@ -38,7 +40,7 @@ public class JobService : IJobService
     private readonly IMediator _mediator;
     private readonly IPayslipService _payslipService;
 
-    public JobService(ApplicationDbContext context,UserManager<ApplicationUser> userManager,IMediator mediator, IPayslipService payslipService)
+    public JobService(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IMediator mediator, IPayslipService payslipService)
     {
         _context = context;
         _userManager = userManager;
@@ -50,7 +52,7 @@ public class JobService : IJobService
     public async Task<int> FillEmptyWorkDay()
     {
         var now = DateTime.Now;
-        var workday = await _context.Get<AnnualWorkingDay>().Where(x => x.Day.Date == now.Date && x.IsDeleted==false).FirstOrDefaultAsync();
+        var workday = await _context.Get<AnnualWorkingDay>().Where(x => x.Day.Date == now.Date && x.IsDeleted == false).FirstOrDefaultAsync();
         if (workday == null)
         {
             await _mediator.Send(new CreateNormalDayCommand { Day = now.Date });
@@ -64,7 +66,7 @@ public class JobService : IJobService
             .Where(x => x.WorkStatus == WorkStatus.StillWork
             && x.EmployeeContracts.Any(c => c.IsDeleted == false
             && c.Status == EmployeeContractStatus.Pending && c.EndDate.Value.Date == DateTime.Now.Date.AddDays(5))).ToListAsync();
-        
+
         if (listUser == null || listUser.Count <= 0)
         {
             return 404;
@@ -81,7 +83,7 @@ public class JobService : IJobService
                 {
                     ApplicationUserId = item.Id,
                     Title = "Thông báo về việc hợp đồng của bạn sắp hết hạn!",
-                    Description = "Hiện hợp đồng " +contract.ContractCode + " sắp hết hạn. Nếu bạn vẫn tiếp tục làm việc sau khi hợp đồng kết thúc thì vui lòng liên hệ với Quản lý để ký thêm hợp đồng mới!"
+                    Description = "Hiện hợp đồng " + contract.ContractCode + " sắp hết hạn. Nếu bạn vẫn tiếp tục làm việc sau khi hợp đồng kết thúc thì vui lòng liên hệ với Quản lý để ký thêm hợp đồng mới!"
                 });
 
                 var excel = await _mediator.Send(new CreateExcelContractCommand
@@ -95,16 +97,16 @@ public class JobService : IJobService
                     Action = ActionType.NoticeExperiodContract,
                     ActionDate = DateTime.Now,
                     ContractStatus = contract.Status.ToString()
-                }) ;
+                });
             }
             foreach (var temp in listManager)
             {
                 var tempNote = await _mediator.Send(new CreateNotiCommand
                 {
                     ApplicationUserId = temp.Id,
-                    Title = "Thông báo về việc hợp đồng của "+listUser.Count+" nhân viên sắp hết hạn!",
-                    Description = "Hiện hợp đồng của "+listUser.Count
-                    +" nhân viên sắp hết hạn. Vui lòng truy cập vào Mục tự động và liên hệ với với các nhân viên đó để thảo luận về hợp đồng!"
+                    Title = "Thông báo về việc hợp đồng của " + listUser.Count + " nhân viên sắp hết hạn!",
+                    Description = "Hiện hợp đồng của " + listUser.Count
+                    + " nhân viên sắp hết hạn. Vui lòng truy cập vào Mục tự động và liên hệ với với các nhân viên đó để thảo luận về hợp đồng!"
                 });
             }
             return listUser.Count;
@@ -115,8 +117,8 @@ public class JobService : IJobService
     public async Task<int> NoticeEmptyWorkday()
     {
         var now = DateTime.Now;
-        var workday= await _context.Get<AnnualWorkingDay>().Where(x=> x.Day.Date == now.Date.AddDays(1)).FirstOrDefaultAsync();
-        if(workday == null)
+        var workday = await _context.Get<AnnualWorkingDay>().Where(x => x.Day.Date == now.Date.AddDays(1)).FirstOrDefaultAsync();
+        if (workday == null)
         {
             string title = "Thiếu cấu hình ngày làm việc cho ngày " + now.AddDays(1).ToString("dd/MM/yyyy");
             string des = "Vui lòng bổ sung cấu hình ngày làm việc cho ngày " + now.AddDays(1).ToString("dd/MM/yyyy") + " để việc chấm công và tính lương được thực hiện chính xác nhất!";
@@ -132,15 +134,15 @@ public class JobService : IJobService
     public async Task<int> NoticeFillAnnualWorkingDay()
     {
         var nextMonth = DateTime.Now.AddMonths(1);
-            string title = "Thông báo thêm bổ sung cấu hình ngày làm việc cho tháng " + nextMonth.ToString("MM/yyyy");
-            string des = "Vui lòng bổ sung bổ sung cấu hình ngày làm việc cho tháng " + nextMonth.ToString("MM/yyyy") + " để việc chấm công và tính lương được thực hiện chính xác nhất!";
-            var listManager = await _userManager.GetUsersInRoleAsync("Manager");
-            foreach (var item in listManager)
-            {
-                await _mediator.Send(new CreateNotiCommand { ApplicationUserId = item.Id, Title = title, Description = des });
-            }
+        string title = "Thông báo thêm bổ sung cấu hình ngày làm việc cho tháng " + nextMonth.ToString("MM/yyyy");
+        string des = "Vui lòng bổ sung bổ sung cấu hình ngày làm việc cho tháng " + nextMonth.ToString("MM/yyyy") + " để việc chấm công và tính lương được thực hiện chính xác nhất!";
+        var listManager = await _userManager.GetUsersInRoleAsync("Manager");
+        foreach (var item in listManager)
+        {
+            await _mediator.Send(new CreateNotiCommand { ApplicationUserId = item.Id, Title = title, Description = des });
+        }
         return 200;
-        
+
     }
 
     /*    public async Task<int> NoticeContractExpire()
@@ -154,22 +156,22 @@ public class JobService : IJobService
 
     public async Task<int> ScheduleCheckEndContract()
     {
+        
         var listContract = await _context.Get<EmployeeContract>()
-            .Include(x=>x.ApplicationUser).ThenInclude(x=>x.EmployeeContracts)
-            .Where(x=> x.EndDate.Value.Date == DateTime.Now.AddDays(-1).Date
-            && x.IsDeleted == false && x.ContractType == mentor_v1.Domain.Enums.ContractType.FixedTerm
-            && x.Status != mentor_v1.Domain.Enums.EmployeeContractStatus.Expeires).ToListAsync();
-        if(listContract == null|| listContract.Count<=0)
+            .Include(x => x.ApplicationUser).ThenInclude(x => x.EmployeeContracts)
+            .ToListAsync();
+        var list = listContract.Where(x => x.IsDeleted == false && x.ContractType == ContractType.FixedTerm && x.Status != EmployeeContractStatus.Expeires && x.EndDate.Value.Date == DateTime.Now.AddDays(-1).Date).ToList();
+        if (list == null || list.Count <= 0)
         {
             return 404;
         }
         else
         {
-            Guid nullGuid = new Guid("00000000-0000-0000-0000-000000000000");
+            List<string> tempListUser = new List<string>();
             bool check = false;
             string title = "Kết thúc hợp đồng Ngày " + DateTime.Now.AddDays(-1).ToString("dd/MM/yyyy") + " (Job:" + DateTime.Now.ToString("dd/MM/yyyy") + ")";
             var jobId = await _mediator.Send(new CreateJobReportCommand { Title = title, ActionDate = DateTime.Now, Job = "Kết thúc hợp đồng", ActionType = ActionType.ExperiodContract });
-            foreach (var item in listContract)
+            foreach (var item in list)
             {
                 await _mediator.Send(new UpdateEmpContractStatusCommand { ContractCode = item.ContractCode, Status = mentor_v1.Domain.Enums.EmployeeContractStatus.Expeires });
                 await _mediator.Send(new CreateExcelContractCommand
@@ -183,38 +185,47 @@ public class JobService : IJobService
                     ContractStatus = EmployeeContractStatus.Expeires.ToString(),
                     Action = ActionType.ExperiodContract,
                     ActionDate = DateTime.Now,
-                }) ;
+                });
 
-                if(!item.ApplicationUser.EmployeeContracts.Any(x=>x.Status == EmployeeContractStatus.Waiting && x.StartDate.Value.Date == DateTime.Now.Date))
+                if (!item.ApplicationUser.EmployeeContracts.Any(x => x.Status == EmployeeContractStatus.Waiting && x.StartDate.Value.Date == DateTime.Now.Date))
                 {
-                    if (nullGuid.ToString().ToLower().Equals("00000000-0000-0000-0000-000000000000"))
-                    {
-                        check = true;
-                        string tempTitle = "Thôi việc nhân viên Ngày " + DateTime.Now.AddDays(-1).ToString("dd/MM/yyyy") + " (Job:" + DateTime.Now.ToString("dd/MM/yyyy") + ")";
-                        nullGuid = await _mediator.Send(new CreateJobReportCommand { Title = tempTitle, Job = "Thôi việc Nhân Viên", ActionType = ActionType.EmployeeTermination, ActionDate = DateTime.Now });
-                    }
+                    check = true;
+                    
+                    tempListUser.Add(item.ApplicationUser.Id.ToLower());
                     await _mediator.Send(new UpdateUserWorkStatusRequest { id = item.ApplicationUserId });
-
-                    await _mediator.Send(new CreateExcelEmployeeQuitCommand
-                    {
-                        Username = item.ApplicationUser.UserName,
-                        FullName = item.ApplicationUser.Fullname,
-                        Identity = item.ApplicationUser.IdentityNumber,
-                        Email = item.ApplicationUser.Email,
-                        JobReportId = nullGuid,
-                        ActionDate = DateTime.Now,
-                        ActionType = ActionType.EmployeeTermination,
-                        WorkStatus = WorkStatus.Quit
-
-                    });
-
 
                 }
             }
+            Guid nullGuid;
+            if (check == true)
+            {
+                string tempTitle = "Thôi việc nhân viên Ngày " + DateTime.Now.AddDays(-1).ToString("dd/MM/yyyy") + " (Job:" + DateTime.Now.ToString("dd/MM/yyyy") + ")";
+                nullGuid =  _mediator.Send(new CreateJobReportCommand { Title = tempTitle, Job = "Thôi việc Nhân Viên", ActionType = ActionType.EmployeeTermination, ActionDate = DateTime.Now }).Result;
+          
+                foreach (var item in list)
+                {
+                    if(tempListUser.Contains(item.ApplicationUser.Id.ToLower()))
+                    {
+                        var temp = _mediator.Send(new CreateExcelEmployeeQuitCommand
+                        {
+                            Username = item.ApplicationUser.UserName,
+                            FullName = item.ApplicationUser.Fullname,
+                            Identity = item.ApplicationUser.IdentityNumber,
+                            Email = item.ApplicationUser.Email,
+                            JobReportId = nullGuid,
+                            Phone = item.ApplicationUser.PhoneNumber,
+                            ActionDate = DateTime.Now,
+                            ActionType = ActionType.EmployeeTermination,
+                            WorkStatus = WorkStatus.Quit
 
+                        }).Result;
+                    }
+                    
+                }
+            }
 
             var manager = await _userManager.GetUsersInRoleAsync("Manager");
-
+            
 
             foreach (var item in manager)
             {
@@ -236,10 +247,9 @@ public class JobService : IJobService
 
         var listContract = await _context.Get<EmployeeContract>()
             .Include(x => x.ApplicationUser)
-            .Where(x => x.StartDate.Value.Date == DateTime.Now.Date
-            && x.IsDeleted == false 
-            && x.Status == mentor_v1.Domain.Enums.EmployeeContractStatus.Waiting && x.ApplicationUser.WorkStatus == WorkStatus.StillWork).ToListAsync();
-        if (listContract == null || listContract.Count <= 0)
+            .ToListAsync();
+        var tempList = listContract.Where(x=>x.ApplicationUser.WorkStatus == WorkStatus.StillWork && x.StartDate.Value == DateTime.Now.Date && x.Status == EmployeeContractStatus.Waiting).ToList();
+        if (tempList == null || tempList.Count <= 0)
         {
             return 404;
         }
@@ -247,7 +257,7 @@ public class JobService : IJobService
         {
             string title = "Bắt đầu hợp đồng Ngày " + DateTime.Now.ToString("dd/MM/yyyy") + " (Job:" + DateTime.Now.ToString("dd/MM/yyyy") + ")";
             var jobId = await _mediator.Send(new CreateJobReportCommand { Title = title, ActionDate = DateTime.Now, Job = "Bắt đầu hợp đồng", ActionType = ActionType.StartContract });
-            foreach (var item in listContract)
+            foreach (var item in tempList)
             {
                 DateTime date = DateTime.Now;
                 if (item.EndDate.Value == null)
@@ -299,7 +309,7 @@ public class JobService : IJobService
         int payday = 1;
         if (now.Day != payday)
         {
-            throw new Exception ("Tính lương chỉ có thể thực hiện vào ngày 1 hàng tháng!");
+            throw new Exception("Tính lương chỉ có thể thực hiện vào ngày 1 hàng tháng!");
         }
 
         var listPayday = await _mediator.Send(new GetListPaydayRequest { });

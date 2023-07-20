@@ -26,6 +26,7 @@ public class RunScheduleController : ApiControllerBase
     [Route("/ScheduleCheckEndContract")]
     public async Task<IActionResult> ScheduleCheckEndContract()
     {
+        //await _jobService.ScheduleCheckEndContract();
         RecurringJob.RemoveIfExists("ExperiedContract");
         RecurringJob.AddOrUpdate("ExperiedContract", () => _jobService.ScheduleCheckEndContract(), "0 6 * * *", TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
         return Ok();
