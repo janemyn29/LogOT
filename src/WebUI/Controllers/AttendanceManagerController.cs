@@ -62,8 +62,6 @@ public class AttendanceManagerController : ApiControllerBase
         var listUser = await _userManager.GetUsersInRoleAsync("Employee");
         foreach (var item in listUser)
         {
-            if(item.UserName == "string123")
-            {
                 for (int i = 0; i < distance; i++)
                 {
 
@@ -94,9 +92,7 @@ public class AttendanceManagerController : ApiControllerBase
                     tempDate = tempDate.AddDays(1);
                 }
             }
-            
 
-        }
         return Ok();
     }
     

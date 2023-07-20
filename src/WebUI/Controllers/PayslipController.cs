@@ -40,8 +40,8 @@ public class PayslipController : ApiControllerBase
     [Route("/Payslip/Create")]
     public async Task<IActionResult> Index()
     {
-        var now = DateTime.Now;
-        //var now = DateTime.Parse("2023-07-01");
+        //var now = DateTime.Now;
+        var now = DateTime.Parse("2023-07-01");
         var listUser = await _userManager.Users.Include(c => c.Position).Where(x => x.WorkStatus == mentor_v1.Domain.Enums.WorkStatus.StillWork).ToListAsync();
         var defaultConfig = await Mediator.Send(new GetDefaultConfigRequest { });
         var tax = await Mediator.Send(new GetListTaxIncomeRequest { });
@@ -66,6 +66,8 @@ public class PayslipController : ApiControllerBase
         }
 
         var listManager = await _userManager.GetUsersInRoleAsync("Manager");
+        string title = "Hoàn thành tính lương tháng " + now.AddDays(-1).Month + "/" + now.AddDays(-1).Year;
+        string des = "Lương tháng " + now.AddDays(-1).Month + "/" + now.AddDays(-1).Year + " của nhân viên đã được tính xong.Vui lòng truy cập vào bảng lương để xem chi tiết! ";
 
         foreach (var item in listUser)
         {
@@ -78,7 +80,9 @@ public class PayslipController : ApiControllerBase
                 {
                     if (contract != null)
                     {
-                        var finalContract = contract.Where(x => x.Status == EmployeeContractStatus.Pending).FirstOrDefault();
+                        try
+                        {
+                            var finalContract = contract.Where(x => x.Status == EmployeeContractStatus.Pending).FirstOrDefault();
                         if (finalContract != null)
                         {
                             var total = await _payslipService.GrossToNetPending(item, defaultConfig, tax, exchange, regionWage, insuranceConfig, now, shiftConfig, finalContract);
@@ -92,6 +96,20 @@ public class PayslipController : ApiControllerBase
                         {
                             var total = await _payslipService.GrossToNetExperid(item, defaultConfig, tax, exchange, regionWage, insuranceConfig, now, shiftConfig, ExpriedContract);
                         }
+                        
+                            await Mediator.Send(new CreateNotiCommand
+                            {
+                                ApplicationUserId = item.Id,
+                                Title = title,
+                                Description = des
+                            });
+                        }
+                        catch (Exception )
+                        {
+
+                            throw  ;
+                        }
+                        
 
                     }
                 }
@@ -99,12 +117,7 @@ public class PayslipController : ApiControllerBase
                 {
                 }
             }
-            await Mediator.Send(new CreateNotiCommand
-            {
-                ApplicationUserId = item.Id,
-                Title = "Hoàn thành tính lương tháng " + now.AddDays(-1).Month + "/" + now.AddDays(-1).Year,
-                Description = "Lương tháng " + now.AddDays(-1).Month + "/" + now.AddDays(-1).Year + " của nhân viên đã được tính xong.Vui lòng truy cập vào bảng lương để xem chi tiết! "
-            });
+            
 
         }
         await Mediator.Send(new CreatePaydayCommand { PaymentDay = now });

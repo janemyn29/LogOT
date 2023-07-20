@@ -10,6 +10,7 @@ using mentor_v1.Application.Payslip.Commands.Create;
 using mentor_v1.Application.Payslip.Queries;
 using mentor_v1.Application.Payslip.Queries.GetList;
 using mentor_v1.Application.ShiftConfig.Queries;
+using mentor_v1.Application.Subsidize.Queries.GetSubsidizeWithRelativeObject;
 using mentor_v1.Domain.Entities;
 using mentor_v1.Domain.Enums;
 using mentor_v1.Domain.Identity;
@@ -320,7 +321,15 @@ public class PayslipService : IPayslipService
         {
             foreach (var item in departmentAllowance)
             {
-                totalDepartmentAllowance = totalDepartmentAllowance + item.Subsidize.Amount;
+                try
+                {
+                    var subsidize = await _mediator.Send(new GetSubsidizeByIdRequest { Id = item.SubsidizeId });
+                    totalDepartmentAllowance = totalDepartmentAllowance + subsidize.Amount;
+                }
+                catch (Exception)
+                {
+                }
+                
             }
         }
         /*        double OTWage = Math.Round(OTHour * salaryPerHour );*/

@@ -197,7 +197,7 @@ public class JobService : IJobService
 
                     await _mediator.Send(new CreateExcelEmployeeQuitCommand
                     {
-                        Username = item.ApplicationUser.Fullname,
+                        Username = item.ApplicationUser.UserName,
                         FullName = item.ApplicationUser.Fullname,
                         Identity = item.ApplicationUser.IdentityNumber,
                         Email = item.ApplicationUser.Email,
@@ -249,6 +249,15 @@ public class JobService : IJobService
             var jobId = await _mediator.Send(new CreateJobReportCommand { Title = title, ActionDate = DateTime.Now, Job = "Bắt đầu hợp đồng", ActionType = ActionType.StartContract });
             foreach (var item in listContract)
             {
+                DateTime date = DateTime.Now;
+                if (item.EndDate.Value == null)
+                {
+                    date = DateTime.Now;
+                }
+                else
+                {
+                    date = item.EndDate.Value;
+                }
                 await _mediator.Send(new UpdateEmpContractStatusCommand { ContractCode = item.ContractCode, Status = mentor_v1.Domain.Enums.EmployeeContractStatus.Pending });
                 await _mediator.Send(new CreateExcelContractCommand
                 {

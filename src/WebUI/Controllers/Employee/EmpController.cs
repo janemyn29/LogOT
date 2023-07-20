@@ -469,7 +469,7 @@ public class EmpController : ApiControllerBase
     #region Get List dependance
     [HttpGet]
     [Route("/Emp/ListDependent")]
-    public async Task<IActionResult> GetListDependent(int page)
+    public async Task<IActionResult> GetListDependent(int page = 1)
     {
         try
         {
