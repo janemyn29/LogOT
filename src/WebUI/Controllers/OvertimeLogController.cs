@@ -36,7 +36,7 @@ public class OvertimeLogController : ApiControllerBase
 
     #region [getListForManager]
     [Authorize(Roles = "Manager")]
-    [HttpGet]
+    [HttpGet("{pg}")]
     public async Task<IActionResult> GetOvertimeLog(int pg)
     {
         try
@@ -54,7 +54,7 @@ public class OvertimeLogController : ApiControllerBase
 
     #region [GetOvertimeLogFilterByStatus]
     [Authorize(Roles = "Manager")]
-    [HttpGet]
+    [HttpGet("Filter")]
     public async Task<IActionResult> GetOvertimeLogFilterByStatus(LogStatus logStatus)
     {
         try
@@ -70,9 +70,9 @@ public class OvertimeLogController : ApiControllerBase
     }
     #endregion
 
-    #region [getListForEmployee]
+/*    #region [getListForEmployee]
     [Authorize(Roles = "Employee")]
-    [HttpGet]
+    [HttpGet("FilterByEmployeeId")]
     public async Task<IActionResult> GetOvertimeLogByEmployeeId(int pg)
     {
         try
@@ -91,7 +91,7 @@ public class OvertimeLogController : ApiControllerBase
             return BadRequest("Không thể lấy danh sách tăng ca");
         }
     }
-    #endregion
+    #endregion*/
 
     #region getOvertimeLogById
     [Authorize(Roles = "Manager")]

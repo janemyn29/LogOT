@@ -33,16 +33,14 @@ public class PositionController : ApiControllerBase
     {
         _userManager = userManager;
     }
-    [HttpGet]
-    [Route("/Position")] 
+    [HttpGet("{pg}")]
     public async Task<IActionResult> Index(int pg = 1)
     {
         var listPosition = await Mediator.Send(new GetListPositionRequest { Page = pg, Size = 20 });
         return Ok(listPosition);
     }
 
-    [HttpGet]
-    [Route("/Position/GetByUser")]
+    [HttpGet("GetByUser")]
     public async Task<IActionResult> GetByUser(string Username)
     {
         try
@@ -67,7 +65,6 @@ public class PositionController : ApiControllerBase
 
 
     [HttpPost]
-    [Route("/Position/Create")]
     public async Task<IActionResult> Create(CreatePositionCommand model)
     {
         var validator = new CreatePositionCommandValidator(_context, _userManager);
@@ -116,7 +113,6 @@ public class PositionController : ApiControllerBase
 
 
     [HttpPut]
-    [Route("/Position/Update")]
     public async Task<IActionResult> Update(UpdatePositionCommand model)
     {
         var validator = new UpdatePositionCommandValidator(_context, _userManager);
@@ -163,8 +159,7 @@ public class PositionController : ApiControllerBase
     }
 
 
-    [HttpDelete]
-    [Route("/Position/Delete")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
         try
@@ -179,8 +174,7 @@ public class PositionController : ApiControllerBase
     }
 
 
-    [HttpGet]
-    [Route("/Position/GetListUser")]
+    [HttpGet("{id}/GetListUser/{pg}")]
     public async Task<IActionResult> GetListUser(Guid id, int pg= 1)
     {
         try

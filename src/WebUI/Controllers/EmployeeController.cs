@@ -38,7 +38,7 @@ public class EmployeeController : ApiControllerBase
     private readonly IMapper _mapper;
     private readonly IContracService _contract;
 
-    public EmployeeController(IWebHostEnvironment ev, IFileService fileService, UserManager<ApplicationUser> userManager, IIdentityService identityService, IApplicationDbContext context, IMapper mapper,IContracService  contracService)
+    public EmployeeController(IWebHostEnvironment ev, IFileService fileService, UserManager<ApplicationUser> userManager, IIdentityService identityService, IApplicationDbContext context, IMapper mapper, IContracService contracService)
     {
         _userManager = userManager;
         _identityService = identityService;
@@ -53,8 +53,7 @@ public class EmployeeController : ApiControllerBase
 
 
     /*    [Authorize(Roles = "Manager")]*/
-    [HttpGet]  // lấy danh sách employee
-    [Route("/Employee")]
+    [HttpGet("{pg}")]  // lấy danh sách employee
 
     public async Task<IActionResult> Index(int pg = 1)
     {
@@ -84,8 +83,7 @@ public class EmployeeController : ApiControllerBase
         return Ok(listEmployee);
     }
 
-    [HttpPost]
-    [Route("/CreateManagerAccount")]
+    [HttpPost("CreateManager")]
     public async Task<IActionResult> CreateManagerAccount([FromBody] ManagerMOdel newManager)
     {
 
@@ -126,8 +124,7 @@ public class EmployeeController : ApiControllerBase
     }
 
     /*    [Authorize(Roles = "Manager")]*/
-    [HttpGet]  // lấy danh sách employee
-    [Route("/GetListManagerAccount")]
+    [HttpGet("GetListManagerAccount/{pg}")] 
 
     public async Task<IActionResult> GetListManagerAccount(int pg = 1)
     {
@@ -172,8 +169,8 @@ public class EmployeeController : ApiControllerBase
     }
 
 
-    [HttpPost]
-    [Route("/Employee/Create")]
+    [HttpPost("CreateEmployee")]
+
     public async Task<IActionResult> Create([FromBody] EmployeeModel newEmp )
     {
         Guid contractIid = Guid.NewGuid();

@@ -36,7 +36,7 @@ public class LeaveLogController : ApiControllerBase
 
     #region [getListForManager]
     [Authorize(Roles = "Manager")]
-    [HttpGet]
+    [HttpGet("{page}")]
     public async Task<IActionResult> GetLeaveLog(int page)
     {
         try

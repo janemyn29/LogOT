@@ -34,8 +34,7 @@ public class ExperienceController : ApiControllerBase
     }
 
     //get list department
-    [HttpGet]
-    [Route("/Experience")]
+    [HttpGet("{pg}")]
     public async Task<IActionResult> index(int pg = 1)
     {
         var listExperience = await Mediator.Send(new GetListExperienceRequest { Page = 1, Size = 20 });
@@ -43,7 +42,6 @@ public class ExperienceController : ApiControllerBase
     }
 
     [HttpPost]
-    [Route("/Experience/Create")]
     public async Task<IActionResult> Create(CreateExperienceCommand model)
     {
         var validator = new CreateExperienceCommandValidator(_context);
@@ -81,7 +79,6 @@ public class ExperienceController : ApiControllerBase
     }
 
     [HttpPut]
-    [Route("/Experience/Update")]
     public async Task<IActionResult> Update(UpdateExperienceCommand model)
     {
         var validator = new UpdateExperienceCommandValidator(_context);
@@ -129,7 +126,6 @@ public class ExperienceController : ApiControllerBase
     }
 
     [HttpDelete]
-    [Route("/Experience/Delete")]
     public async Task<IActionResult> Delete(Guid id)
     {
         try
@@ -143,8 +139,7 @@ public class ExperienceController : ApiControllerBase
         }
     }
 
-    [HttpGet]
-    [Route("/Experience/GetListByUser")]
+    [HttpGet("GetListByUser")]
     public async Task<IActionResult> GetByUser(string id)
     {
         try

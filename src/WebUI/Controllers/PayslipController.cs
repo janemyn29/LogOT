@@ -37,7 +37,6 @@ public class PayslipController : ApiControllerBase
         _payslipService = payslipService;
     }
     [HttpPost]
-    [Route("/Payslip/Create")]
     public async Task<IActionResult> Index()
     {
         var now = DateTime.Now;
@@ -122,8 +121,7 @@ public class PayslipController : ApiControllerBase
         return Ok("Đã hoàn thành tính lương cho nhân viên!");
     }
 
-    [HttpGet]
-    [Route("/Payslip/GetListPayslip")]
+    [HttpGet("{pg}")]
 
     public async Task<IActionResult> GetListPayslip(int pg=1)
     {
@@ -131,8 +129,7 @@ public class PayslipController : ApiControllerBase
         return Ok(list);
     }
 
-    [HttpGet]
-    [Route("/Payslip/GetListPayslipByUserOrMonthOrBoth")]
+    [HttpGet("Filter")]
 
     public async Task<IActionResult> GetListPayslipByUserOrMonthOrBoth(string? userId, int? month, int? year)
     {
@@ -169,8 +166,7 @@ public class PayslipController : ApiControllerBase
     }
 
 
-    [HttpGet]
-    [Route("/Payslip/GetDetailPayslip")]
+    [HttpGet("{id}")]
 
     public async Task<IActionResult> GetDetailPayslip(Guid id)
     {

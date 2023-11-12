@@ -25,7 +25,7 @@ public class NotificationController : ApiControllerBase
         _configuration = configuration;
     }
 
-    [HttpGet]
+    [HttpGet("{pg}")]
     [Authorize(Roles = "Manager,Employee")]
     public async Task<IActionResult> GetNotificationByUserId(int page = 1)
     {
@@ -61,7 +61,7 @@ public class NotificationController : ApiControllerBase
         }
     }
 
-    [HttpGet]
+    [HttpGet("{id}")]
     [Authorize(Roles = "Manager,Employee")]
     public async Task<IActionResult> GetNotificationById(Guid id)
     {

@@ -48,12 +48,12 @@ public class JobReportController : ApiControllerBase
     #endregion
 
     #region Get job Id
-    [HttpGet("{JobReportId}")]
-    public async Task<IActionResult> GetJobReportDetailById(Guid JobReportId)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetJobReportDetailById(Guid id)
     {
         try
         {
-            var jobID = await Mediator.Send(new GetJobReportByIdRequest { Id = JobReportId });
+            var jobID = await Mediator.Send(new GetJobReportByIdRequest { Id = id });
             return Ok(new
             {
                 Status = Ok().StatusCode,
@@ -72,8 +72,8 @@ public class JobReportController : ApiControllerBase
     }
     #endregion
 
-    [HttpGet("{JobReportId}")]
-    public async Task<IActionResult> ExportExcelFile(Guid JobReportId) => File(await Mediator.Send(new ExportExcelFile { Id = JobReportId }),
+    [HttpGet("Export/{id}")]
+    public async Task<IActionResult> ExportExcelFile(Guid id) => File(await Mediator.Send(new ExportExcelFile { Id = id }),
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             "TemplateExchange.xlsx");
 }

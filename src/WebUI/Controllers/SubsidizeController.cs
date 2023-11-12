@@ -32,8 +32,8 @@ public class SubsidizeController : ApiControllerBase
     }
 
     //get list Subsidize
-    [HttpGet]
-    [Route("/Subsidize")]
+    [HttpGet("{pg}")]
+    
     public async Task<IActionResult> index(int pg = 1)
     {
         var listSubsidize = await Mediator.Send(new GetListSubsidizeRequest { Page = 1, Size = 20 });
@@ -41,7 +41,7 @@ public class SubsidizeController : ApiControllerBase
     }
 
     [HttpPost]
-    [Route("/Subsidize/Create")]
+    
     public async Task<IActionResult> Create(CreateSubsidizeCommand model)
     {
         var validator = new CreateSubsidizeCommandValidator(_context);
@@ -70,7 +70,6 @@ public class SubsidizeController : ApiControllerBase
     }
 
     [HttpPut]
-    [Route("/Subsidize/Update")]
     public async Task<IActionResult> Update(UpdateSubsidizeCommand model)
     {
         var validator = new UpdateSubsidizeCommandValidator(_context);
@@ -107,8 +106,7 @@ public class SubsidizeController : ApiControllerBase
         }
     }
 
-    [HttpDelete]
-    [Route("/Subsidize/Delete")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
         try
@@ -130,8 +128,7 @@ public class SubsidizeController : ApiControllerBase
     }
 
 
-    [HttpGet]
-    [Route("/Subsidize/GetByUser")]
+    [HttpGet("GetByUser")]
     public async Task<IActionResult> GetByUser(string Username)
     {
         try
