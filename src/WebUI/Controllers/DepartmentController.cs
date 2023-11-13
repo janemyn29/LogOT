@@ -37,9 +37,8 @@ public class DepartmentController : ApiControllerBase
     }
 
     //get list department
-    [Authorize(Roles ="Manager")]
-    [HttpGet]
-    [Route("/Department")]
+    [Authorize(Roles = "Manager")]
+    [HttpGet("{pg}")]
     public async Task<IActionResult> index(int pg = 1)
     {
         var listDepartment = await Mediator.Send(new GetListDepartmentRequest { Page = 1, Size = 20 });
@@ -48,7 +47,6 @@ public class DepartmentController : ApiControllerBase
 
     [Authorize(Roles = "Manager")]
     [HttpPost]
-    [Route("/Department/Create")]
     public async Task<IActionResult> Create(CreateDepartmentCommand model)
     {
         var validator = new CreateDepartmentCommandValidator(_context);
@@ -59,7 +57,7 @@ public class DepartmentController : ApiControllerBase
             List<string> errors = new List<string>();
             foreach (var error in valResult.Errors)
             {
-                var item = error.ErrorMessage; 
+                var item = error.ErrorMessage;
                 errors.Add(item);
             }
             return BadRequest(errors);
@@ -78,7 +76,6 @@ public class DepartmentController : ApiControllerBase
 
     [Authorize(Roles = "Manager")]
     [HttpPut]
-    [Route("/Department/Update")]
     public async Task<IActionResult> Update(UpdateDepartmentCommand model)
     {
         var validator = new UpdateDepartmentCommandValidator(_context);
@@ -100,7 +97,7 @@ public class DepartmentController : ApiControllerBase
             try
             {
 
-                var departmentUpdate = await Mediator.Send(new UpdateDepartmentCommand { Id = model.Id, Name = model.Name, Description = model.Description});
+                var departmentUpdate = await Mediator.Send(new UpdateDepartmentCommand { Id = model.Id, Name = model.Name, Description = model.Description });
                 return Ok("Cập nhật phòng ban thành công!");
             }
             catch (Exception ex)
@@ -116,8 +113,7 @@ public class DepartmentController : ApiControllerBase
     }
 
     [Authorize(Roles = "Manager")]
-    [HttpDelete]
-    [Route("/Department/Delete")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
         try
@@ -133,7 +129,6 @@ public class DepartmentController : ApiControllerBase
 
     [Authorize(Roles = "Manager")]
     [HttpGet]
-    [Route("/Department/GetByUser")]
     public async Task<IActionResult> GetByUser(string Username)
     {
         try

@@ -19,7 +19,6 @@ public class AnnualWorkingDayController : ApiControllerBase
     }
 
     [HttpGet]
-    [Route("/Annual")]
     //[Authorize(Policy = "Manager")]
     public async Task<IActionResult> Index(int pg = 1)
     {
@@ -29,8 +28,7 @@ public class AnnualWorkingDayController : ApiControllerBase
     }
 
 
-    [HttpPost]
-    [Route("/Annual/ImportExcel")]
+    [HttpPost("ImportExcel")]
 
     [Authorize(Roles = "Manager")]
     public async Task<IActionResult> CreateEx(IFormFile file)
@@ -67,7 +65,6 @@ public class AnnualWorkingDayController : ApiControllerBase
 
 
     [HttpPost]
-    [Route("/Annual/Create")]
 
     [Authorize(Roles = "Manager")]
     public async Task<IActionResult> Create(CreateAnnualCommand model)
@@ -84,7 +81,6 @@ public class AnnualWorkingDayController : ApiControllerBase
         
     }
     [HttpPut]
-    [Route("/Annual/Update")]
 
     [Authorize(Roles = "Manager")]
     public async Task<IActionResult> Update(UpdateAnnualCommand model)
@@ -101,8 +97,7 @@ public class AnnualWorkingDayController : ApiControllerBase
 
     }
 
-    [HttpDelete]
-    [Route("/Annual/Delete")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
         try
@@ -117,8 +112,7 @@ public class AnnualWorkingDayController : ApiControllerBase
     }
 
 
-    [HttpGet]
-    [Route("/Annual/GetByMonth")]
+    [HttpGet("GetByMonth")]
 
     [Authorize(Policy = "Manager,Employee")]
     public async Task<IActionResult> GetByMonth( int Month, int Year)

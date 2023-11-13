@@ -11,7 +11,6 @@ namespace WebUI.Controllers;
 public class CoefficientController :ApiControllerBase
 {
     [HttpGet]
-    [Route("/Coefficient")]
     public async Task< IActionResult> Index()
     {
         var list = await Mediator.Send(new GetListCoefficientRequest { Page = 1, Size = 4 });
@@ -19,8 +18,7 @@ public class CoefficientController :ApiControllerBase
         return Ok(list);
     }
 
-    [HttpPost]
-    [Route("/Coefficient/Update")]
+    [HttpPut]
     public async Task<IActionResult> Update([FromBody] UpdateCoefficientCommand model)
     {
         try

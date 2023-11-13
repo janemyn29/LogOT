@@ -30,8 +30,7 @@ public class DepartmentAllowanceController : ApiControllerBase
 
     //get list DepartmentAllowance
     [Authorize(Roles = "Manager")]
-    [HttpGet]
-    [Route("/DepartmentAllowance")]
+    [HttpGet("{pg}")]
     public async Task<IActionResult> index(int pg = 1)
     {
         var listDepartmentAllowance = await Mediator.Send(new GetListDepartmentAllowanceRequest { Page = 1, Size = 20 });
@@ -40,7 +39,6 @@ public class DepartmentAllowanceController : ApiControllerBase
 
     [Authorize(Roles = "Manager")]
     [HttpPost]
-    [Route("/DepartmentAllowance/Create")]
     public async Task<IActionResult> Create(CreateDepartmentAllowanceCommand model)
     {
         var validator = new CreateDepartmentAllowanceCommandValidator(_context);
@@ -69,8 +67,7 @@ public class DepartmentAllowanceController : ApiControllerBase
     }
 
     [Authorize(Roles = "Manager")]
-    [HttpDelete]
-    [Route("/DepartmentAllowance/Delete")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
         try
@@ -86,7 +83,6 @@ public class DepartmentAllowanceController : ApiControllerBase
 
     [Authorize(Roles = "Manager")]
     [HttpPut]
-    [Route("/DepartmentAllowance/Update")]
     public async Task<IActionResult> Update(UpdateDepartmentAllowanceCommand model)
     {
         var validator = new UpdateDepartmentAllowanceCommandValidator(_context);

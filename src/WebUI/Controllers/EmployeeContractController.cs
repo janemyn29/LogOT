@@ -32,7 +32,7 @@ public class EmployeeContractController : ApiControllerBase
     private readonly IFormatMoney _format;
     private readonly IContracService _contractService;
 
-    public EmployeeContractController(IApplicationDbContext context, IFileService fileService, UserManager<ApplicationUser> userManager, IFormatMoney format,IContracService contracService)
+    public EmployeeContractController(IApplicationDbContext context, IFileService fileService, UserManager<ApplicationUser> userManager, IFormatMoney format, IContracService contracService)
     {
         _context = context;
         _fileService = fileService;
@@ -41,7 +41,7 @@ public class EmployeeContractController : ApiControllerBase
         _contractService = contracService;
     }
     /*    [Authorize (Roles ="Manager")]*/
-    [HttpGet]
+    [HttpGet("{pg}")]
     public async Task<IActionResult> GetList(int pg = 1)
     {
         var listContract = await Mediator.Send(new GetListEmpContractRequest { Page = 1, Size = 20 });
@@ -49,7 +49,7 @@ public class EmployeeContractController : ApiControllerBase
     }
 
     /*    [Authorize (Roles ="Manager")]*/
-    [HttpGet]
+    [HttpGet("{code}")]
     public async Task<IActionResult> GetByContractCode(string code)
     {
         try

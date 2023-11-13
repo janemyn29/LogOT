@@ -24,15 +24,13 @@ namespace WebUI.Controllers;
 public class ConfigDayController : ApiControllerBase
 {
     [HttpGet]
-    [Route("/Config/WorkDay")]
     public async Task<IActionResult> Index()
     {
         var list = await Mediator.Send(new GetListConfigDayRequest { Page = 1, Size = 10 });
         return Ok(list.Items.FirstOrDefault());
     }
 
-    [HttpPost]
-    [Route("/Config/WorkDay/Update")]
+    [HttpPut]
     public async Task<IActionResult> Update([FromBody] UpdateConfidDayCommand  config)
     {
         try
@@ -64,8 +62,7 @@ public class ConfigDayController : ApiControllerBase
         }
     }
 
-    [HttpGet]
-    [Route("/Config/Default")]
+    [HttpGet("Default")]
     public async Task<IActionResult> ConfigDefault()
     {
         try
@@ -80,8 +77,7 @@ public class ConfigDayController : ApiControllerBase
         
     }
 
-    [HttpPut]
-    [Route("/Config/Default/Update")]
+    [HttpPut("Default")]
     public async Task<IActionResult> UpdateDefault([FromBody] UpdateDefaultConfigCommand model)
     {
         try
@@ -96,8 +92,7 @@ public class ConfigDayController : ApiControllerBase
         
     }
 
-    [HttpGet]
-    [Route("/Config/RegionalMinimumWage")]
+    [HttpGet("RegionalMinimumWage")]
     public async Task<IActionResult> ConfigWage()
     {
         try
@@ -112,8 +107,7 @@ public class ConfigDayController : ApiControllerBase
 
     }
 
-    [HttpPut]
-    [Route("/Config/RegionalMinimumWage/Update")]
+    [HttpPut("RegionalMinimumWage")]
     public async Task<IActionResult> UpdateWage([FromBody] UpdateWageCommand model)
     {
         try
@@ -129,8 +123,7 @@ public class ConfigDayController : ApiControllerBase
     }
 
 
-    [HttpGet]
-    [Route("/Config/TaxIncome")]
+    [HttpGet("TaxIncome")]
     public async Task<IActionResult> ConfigTaxIncome()
     {
         try
@@ -144,8 +137,7 @@ public class ConfigDayController : ApiControllerBase
         }
 
     }
-    [HttpGet]
-    [Route("/Config/Exchange")]
+    [HttpGet("Exchange")]
     public async Task<IActionResult> ConfigExchange()
     {
         try
@@ -178,8 +170,7 @@ public class ConfigDayController : ApiControllerBase
 
     #region Update TaxIncome
 
-    [HttpPut]
-    [Route("/Config/UpdateTaxIncome")]
+    [HttpPut("TaxIncome")]
     public async Task<IActionResult> UpdateTaxIncome(IFormFile file)
     {
         // Kiểm tra kiểu tệp tin
@@ -210,8 +201,7 @@ public class ConfigDayController : ApiControllerBase
     #endregion
 
     #region Update Exchange
-    [HttpPut]
-    [Route("/Config/UpdateExchange")]
+    [HttpPut("Exchange")]
     public async Task<IActionResult> UpdateExchange(IFormFile file)
     {
         // Kiểm tra kiểu tệp tin
@@ -243,14 +233,12 @@ public class ConfigDayController : ApiControllerBase
 
     #region Export Excel File
 
-    [HttpGet]
-    [Route("/Config/ExportExcelFileExchange")]
+    [HttpGet("ExportExcelFileExchange")]
     public async Task<IActionResult> ExportExcelFileExchange() => File(await Mediator.Send(new ExportExcelFileExchange { }),
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             "TemplateExchange.xlsx");
 
-    [HttpGet]
-    [Route("/Config/ExportExcelFileTaxIncome")]
+    [HttpGet("ExportExcelFileTaxIncome")]
     public async Task<IActionResult> ExportExcelFileTaxIncome() => File(await Mediator.Send(new ExportExcelFileTaxIncome { }),
            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
            "TemplateTaxIncome.xlsx");

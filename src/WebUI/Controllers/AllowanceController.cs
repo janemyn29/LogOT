@@ -25,8 +25,7 @@ public class AllowanceController : ApiControllerBase
 
     #region Get List Allowance
     [Authorize(Roles = "Manager")]
-    [HttpGet]
-    [Route("/Allowance/GetAll")]
+    [HttpGet("{page}")]
     public async Task<IActionResult> GetAllListAllowance(int page = 1)
     {
         try
@@ -50,7 +49,7 @@ public class AllowanceController : ApiControllerBase
     }
     #endregion
 
-    #region Get List Allowance
+/*    #region Get List Allowance
     [Authorize(Roles = "Manager")]
     [HttpGet("{page}")]
     public async Task<IActionResult> GetListAllowance(int page)
@@ -75,7 +74,7 @@ public class AllowanceController : ApiControllerBase
         }
     }
     #endregion
-
+*/
     #region GetAllowanceId
     [Authorize(Roles = "Manager,Employee")]
     [HttpGet("{id}")]

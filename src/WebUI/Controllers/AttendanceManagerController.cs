@@ -38,7 +38,6 @@ public class AttendanceManagerController : ApiControllerBase
     /*[Authorize (Roles ="Manager") ]*/
     //get list department
     [HttpGet]
-    [Route("/Attendance")]
     public async Task<IActionResult> index(int pg = 1)
     {
         var listAttendance = await Mediator.Send(new GetListAttendanceRequest { Page = pg, Size = 20 });
@@ -52,7 +51,7 @@ public class AttendanceManagerController : ApiControllerBase
     //Get list Attendance of current User
     //Get list Attendance from day to day of current User
 
-    [HttpGet]
+/*    [HttpGet]
     [Route("/Attendance/CreateSeries")]
     public async Task<IActionResult> CreateSeries(DateTime FromDate, DateTime ToDate, string email)
     {
@@ -98,7 +97,7 @@ public class AttendanceManagerController : ApiControllerBase
         }
 
         return Ok();
-    }
+    }*/
     
     
 

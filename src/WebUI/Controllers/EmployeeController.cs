@@ -277,7 +277,6 @@ public class EmployeeController : ApiControllerBase
     /*
     [Authorize(Roles = "Manager")]*/
     [HttpPut]
-    [Route("/Employee/Update")]
     public async Task<IActionResult> Update([FromBody] UpdateUserModel model)
     {
         if (!ModelState.IsValid)
