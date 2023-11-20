@@ -84,7 +84,7 @@ public class PayslipService : IPayslipService
                 salaryTax = (double)basicSalary;
             }
         }
-        DateTime lastPay = now.AddMonths(-1); //này bắt đầu tisng lương = lastPay + 1 ngày;
+        DateTime lastPay = now.AddMonths(-1); //ngày bắt đầu tisng lương = lastPay + 1 ngày;
         var listPayday = await _mediator.Send(new GetListPaydayRequest { });
         var lastPayday = listPayday.OrderByDescending(x => x.PaymentDay).FirstOrDefault();
         if (lastPayday != null)

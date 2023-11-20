@@ -71,7 +71,7 @@ public class EmpController : ApiControllerBase
         return Ok(listAttendance);
     }
 
-    [HttpGet]
+    [HttpPost]
     [Route("/Emp/AttendanceEmployee/Create")]
     public async Task<IActionResult> Create(/*DateTime tempNow*/)
     {
@@ -91,7 +91,7 @@ public class EmpController : ApiControllerBase
         {
             return BadRequest("Vui lòng kiểm tra lại kết nối Wifi chấm công để thực hiện chấm công!");
         }
-        //kết thúc ktr IP wify
+        //kết thúc ktr IP wifi
 
         ShiftConfig shift;
         var now = DateTime.Now;
@@ -129,6 +129,9 @@ public class EmpController : ApiControllerBase
             return BadRequest(ex.Message);
         }
     }
+
+
+
 
 
     [HttpGet]
