@@ -15,6 +15,7 @@ using mentor_v1.Application.Positions.Commands.DeletePosition;
 using mentor_v1.Application.Positions.Commands.UpdatePosition;
 using mentor_v1.Application.Positions.Queries.GetPositionByRelatedObjects;
 using mentor_v1.Domain.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -36,6 +37,7 @@ public class DepartmentController : ApiControllerBase
     }
 
     //get list department
+    [Authorize(Roles ="Manager")]
     [HttpGet]
     [Route("/Department")]
     public async Task<IActionResult> index(int pg = 1)
@@ -44,6 +46,7 @@ public class DepartmentController : ApiControllerBase
         return Ok(listDepartment);
     }
 
+    [Authorize(Roles = "Manager")]
     [HttpPost]
     [Route("/Department/Create")]
     public async Task<IActionResult> Create(CreateDepartmentCommand model)
@@ -73,6 +76,7 @@ public class DepartmentController : ApiControllerBase
         }
     }
 
+    [Authorize(Roles = "Manager")]
     [HttpPut]
     [Route("/Department/Update")]
     public async Task<IActionResult> Update(UpdateDepartmentCommand model)
@@ -111,6 +115,7 @@ public class DepartmentController : ApiControllerBase
         }
     }
 
+    [Authorize(Roles = "Manager")]
     [HttpDelete]
     [Route("/Department/Delete")]
     public async Task<IActionResult> Delete(Guid id)
@@ -126,6 +131,7 @@ public class DepartmentController : ApiControllerBase
         }
     }
 
+    [Authorize(Roles = "Manager")]
     [HttpGet]
     [Route("/Department/GetByUser")]
     public async Task<IActionResult> GetByUser(string Username)

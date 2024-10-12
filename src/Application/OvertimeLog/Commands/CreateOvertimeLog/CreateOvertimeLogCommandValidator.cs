@@ -23,7 +23,8 @@ public class CreateOvertimeLogCommandValidator : AbstractValidator<CreateOvertim
         //    .MaximumLength(20).WithMessage("Id không vượt quá 20 kí tự.");
         //.MustAsync(BeUniqueName).WithMessage("Tên cấp độ đã tồn tại.");
         RuleFor(v => v.Hours)
-            .NotEmpty().WithMessage("Miêu tả không thể để trống.")
+            .NotEmpty().WithMessage("Hãy nhập số giờ tăng ca.")
+            .GreaterThan(0).WithMessage("Thời gian tăng ca không thể là số âm")
             .LessThanOrEqualTo(24).WithMessage("Thời gian tăng ca không thể vượt quá 24h");
         /*RuleFor(v => v.CancelReason)
             .MaximumLength(1000).WithMessage("Lí do từ chối không thể vượt quá 1000 ký tự");*/

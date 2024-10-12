@@ -17,8 +17,11 @@ using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.PagingUser;
 using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
 using mentor_v1.Application.Common.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebUI.Controllers;
+[Authorize(Roles = "Manager")]
+
 public class PositionController : ApiControllerBase
 
 {

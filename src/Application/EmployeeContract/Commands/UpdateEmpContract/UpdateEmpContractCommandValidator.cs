@@ -21,11 +21,8 @@ public class UpdateEmpContractCommandValidator : AbstractValidator<UpdateEmpCont
             .MaximumLength(70).WithMessage("Mã hợp đồng không được quá 70 ký tự.");
         // Add validation for request
         RuleFor(v => v.StartDate)
-            .NotEmpty().WithMessage("Ngày bắt đầu không được để trống.").LessThan(v => v.EndDate).WithMessage("Ngày bắt đầu không thể lớn hơn ngày kết thúc!");
-        ;
-        // Add validation for request
-        RuleFor(v => v.EndDate.Value.ToString())
-            .NotEmpty().WithMessage("Ngày kết thúc không được để trống.");
+           .NotEmpty().WithMessage("Ngày bắt đầu không được để trống.").GreaterThan(DateTime.Now).WithMessage("Ngày bắt đầu không thể trùng hoặc nhỏ hơn ngày hiện tại!");
+
         // Add validation for request
         RuleFor(v => v.File)
             .NotEmpty().WithMessage("File hợp đồng không thể để trống!");

@@ -28,7 +28,6 @@ public class GetListAttendanceRequestHandler : IRequestHandler<GetListAttendance
         _applicationDbContext = applicationDbContext;
         _mapper = mapper;
     }
-
     public Task<PaginatedList<AttendanceViewModel>> Handle(GetListAttendanceRequest request, CancellationToken cancellationToken)
     {
 

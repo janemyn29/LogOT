@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace mentor_v1.Application.ApplicationUser.Commands.UpdateUser;
-public class UpdateUserCommandValidator: AbstractValidator<UserViewModel>
+public class UpdateUserCommandValidator: AbstractValidator<UpdateUserModel>
 {
     private readonly IApplicationDbContext _context;
     private readonly UserManager<Domain.Identity.ApplicationUser> _userManager;
@@ -49,5 +49,8 @@ public class UpdateUserCommandValidator: AbstractValidator<UserViewModel>
         RuleFor(v => v.BankAccountName)
             .NotEmpty().WithMessage("Tên tài khoản ngân hàng không được để trống.")
             .MaximumLength(70).WithMessage("Tên tài khoản ngân hàng không được quá 70 ký tự.");
+        RuleFor(v => v.PhoneNumber)
+           .NotEmpty().WithMessage("Số điện thoại không được để trống.")
+           .MaximumLength(10).WithMessage("Số điện thoại không được quá 10 ký tự.");
     }
 }

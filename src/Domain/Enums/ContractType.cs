@@ -7,6 +7,6 @@ using System.Threading.Tasks;
 namespace mentor_v1.Domain.Enums;
 public enum ContractType
 {
-    Indefinite = 1,
-    Outdefinite = 2,
+    FixedTerm = 1,
+    OpenEnded = 2,
 }

@@ -52,8 +52,12 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
 
     public DbSet<ConfigWifi> ConfigWifis => Set<ConfigWifi>();
     public DbSet<Notification> Notifications => Set<Notification>();
-
-
+    public DbSet<ShiftConfig> ShiftConfigs => Set<ShiftConfig>();
+    public DbSet<JobReport> JobReports => Set<JobReport>();
+    public DbSet<ExcelContract> ExcelContracts => Set<ExcelContract>();
+    public DbSet<ExcelEmployeeQuit> ExcelEmployeeQuits => Set<ExcelEmployeeQuit>();
+    public DbSet<InsuranceConfig> InsuranceConfigs => Set<InsuranceConfig>();
+    public DbSet<DetailTax> DetailTaxs => Set<DetailTax>();
 
 
     protected override void OnModelCreating(ModelBuilder builder)
@@ -493,6 +497,61 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
             IsDeleted = false
         }
        );
+
+
+        //SHIFT
+        builder.Entity<ShiftConfig>()
+           .HasData(
+           new ShiftConfig
+           {
+               Id = Guid.Parse("8caed193-c40e-448b-bdab-cd7cd4f24844"),
+               StartTime = DateTime.Parse("08:00:00"),
+               EndTime = DateTime.Parse("12:00:00"),
+               ShiftEnum = ShiftEnum.Morning,
+               Created = DateTime.Parse("1/1/2023"),
+               CreatedBy = "Test",
+               LastModified = DateTime.Parse("1/1/2023"),
+               LastModifiedBy = "Test",
+               IsDeleted = false
+           }
+       ) ;
+
+        builder.Entity<ShiftConfig>()
+           .HasData(
+           new ShiftConfig
+           {
+               Id = Guid.Parse("25482772-d7ac-473b-9548-9ef38dfb1be1"),
+               StartTime = DateTime.Parse("13:30:00"),
+               EndTime = DateTime.Parse("17:30:00"),
+               ShiftEnum = ShiftEnum.Afternoon,
+               Created = DateTime.Parse("1/1/2023"),
+               CreatedBy = "Test",
+               LastModified = DateTime.Parse("1/1/2023"),
+               LastModifiedBy = "Test",
+               IsDeleted = false
+           }
+       );
+
+      
+        builder.Entity<InsuranceConfig>()
+            .HasData(
+            new InsuranceConfig
+            {
+                Id = Guid.Parse("38f2c77a-b5da-484b-a836-3befc8fb9b89"),
+                BHXH_Emp = 8,
+                BHYT_Emp= 1.5,
+                BHTN_Emp = 1,
+                BHXH_Comp = 17.5,
+                BHYT_Comp = 3,
+                BHTN_Comp=0,
+                BHCD_Comp=2,
+                Created = DateTime.Parse("1/1/2023"),
+                CreatedBy = "Test",
+                LastModified = DateTime.Parse("1/1/2023"),
+                LastModifiedBy = "Test",
+                IsDeleted = false
+            }
+        );
         base.OnModelCreating(builder);
     }
 

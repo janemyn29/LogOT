@@ -32,6 +32,7 @@ public class CreateCreateDependentCommandhandler : IRequestHandler<CreateDepende
     public async Task<Guid> Handle(CreateDependentCommand request, CancellationToken cancellationToken)
     {
         var dependent = _mapper.Map<Domain.Entities.Dependent>(request.createDependentViewModel);
+        dependent.AcceptanceType = Domain.Enums.AcceptanceType.Request;
         if (await _userManager.Users.Where(x => x.Id.Equals(request.createDependentViewModel.ApplicationUserId)).AsNoTracking().FirstOrDefaultAsync() == null)
             throw new ArgumentNullException();
 

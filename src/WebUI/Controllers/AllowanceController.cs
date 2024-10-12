@@ -6,6 +6,7 @@ using mentor_v1.Application.Allowance.Queries.GetAllowance;
 using mentor_v1.Application.ApplicationAllowance.Commands.UpdateAllowance;
 using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers;
@@ -23,6 +24,34 @@ public class AllowanceController : ApiControllerBase
     }
 
     #region Get List Allowance
+    [Authorize(Roles = "Manager")]
+    [HttpGet]
+    [Route("/Allowance/GetAll")]
+    public async Task<IActionResult> GetAllListAllowance(int page = 1)
+    {
+        try
+        {
+            var listAllowance = await Mediator.Send(new GetAllowanceRequest { Page = page, Size = 10 });
+            return Ok(new
+            {
+                Status = Ok().StatusCode,
+                Message = "Lấy danh sách thành công.",
+                Result = listAllowance
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new
+            {
+                status = BadRequest().StatusCode,
+                message = ex.Message
+            });
+        }
+    }
+    #endregion
+
+    #region Get List Allowance
+    [Authorize(Roles = "Manager")]
     [HttpGet("{page}")]
     public async Task<IActionResult> GetListAllowance(int page)
     {
@@ -48,6 +77,7 @@ public class AllowanceController : ApiControllerBase
     #endregion
 
     #region GetAllowanceId
+    [Authorize(Roles = "Manager,Employee")]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetAllowanceId(Guid id)
     {
@@ -73,6 +103,7 @@ public class AllowanceController : ApiControllerBase
     #endregion
 
     #region Create Allowance
+    [Authorize(Roles = "Manager")]
     [HttpPost]
     public async Task<IActionResult> CreateAllowance(CreateAllowanceViewModel createAllowanceViewModel)
     {
@@ -117,6 +148,7 @@ public class AllowanceController : ApiControllerBase
     #endregion
 
     #region Update Allowance
+    [Authorize(Roles = "Manager")]
     [HttpPut]
     public async Task<IActionResult> UpdateAllowance(UpdateAllowanceViewModel updateAllowanceViewModel)
     {
@@ -165,6 +197,7 @@ public class AllowanceController : ApiControllerBase
     #endregion
 
     #region Delete Allowance
+    [Authorize(Roles = "Manager")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAllowance(Guid id)
     {

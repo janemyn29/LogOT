@@ -10,6 +10,7 @@ using mentor_v1.Application.DepartmentAllowance.Commands.UpdateDepartmentAllowan
 using mentor_v1.Application.DepartmentAllowance.Queries.GetDepartmentAllowance;
 using mentor_v1.Application.DepartmentAllowance.Queries.GetDepartmentAllowanceWithRelativeObject;
 using mentor_v1.Domain.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,6 +29,7 @@ public class DepartmentAllowanceController : ApiControllerBase
     }
 
     //get list DepartmentAllowance
+    [Authorize(Roles = "Manager")]
     [HttpGet]
     [Route("/DepartmentAllowance")]
     public async Task<IActionResult> index(int pg = 1)
@@ -36,6 +38,7 @@ public class DepartmentAllowanceController : ApiControllerBase
         return Ok(listDepartmentAllowance);
     }
 
+    [Authorize(Roles = "Manager")]
     [HttpPost]
     [Route("/DepartmentAllowance/Create")]
     public async Task<IActionResult> Create(CreateDepartmentAllowanceCommand model)
@@ -65,6 +68,7 @@ public class DepartmentAllowanceController : ApiControllerBase
         }
     }
 
+    [Authorize(Roles = "Manager")]
     [HttpDelete]
     [Route("/DepartmentAllowance/Delete")]
     public async Task<IActionResult> Delete(Guid id)
@@ -80,6 +84,7 @@ public class DepartmentAllowanceController : ApiControllerBase
         }
     }
 
+    [Authorize(Roles = "Manager")]
     [HttpPut]
     [Route("/DepartmentAllowance/Update")]
     public async Task<IActionResult> Update(UpdateDepartmentAllowanceCommand model)

@@ -15,12 +15,8 @@ public class CreateMaternityEmployeeValidator : AbstractValidator<CreateMaternit
 
         RuleFor(x => x.Image).NotEmpty().WithMessage("Hình ảnh không được để trống");
 
-        RuleFor(v => v.BirthDay).NotEmpty().WithMessage("Ngày sinh không được để trống.");
-
-        RuleFor(v => v.AcceptanceType).NotNull().WithMessage("Loại chập nhận không được để trống.").
-            GreaterThan(0).WithMessage("Loại chập nhận phải lớn hơn 0").LessThan(4)
-            .WithMessage("Loại chập nhận phải bé hơn 4.");
-
-        RuleFor(x => x.DenyReason).NotEmpty().WithMessage("Lý do từ chối không được để trống");
+        RuleFor(v => v.AcceptanceType).NotNull().WithMessage("Loại chấp nhận không được để trống.").
+            GreaterThan(0).WithMessage("Loại chấp nhận phải lớn hơn 0").LessThan(4)
+            .WithMessage("Loại chấp nhận phải bé hơn 4.");
     }
 }

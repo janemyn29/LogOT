@@ -1,16 +1,22 @@
-﻿using mentor_v1.Application.Common.Exceptions;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using mentor_v1.Application.ApplicationUser.Commands.UpdateUser;
+using mentor_v1.Application.Common.Exceptions;
 using mentor_v1.Application.Common.Interfaces;
+using mentor_v1.Application.Common.Models;
 using mentor_v1.Application.Dependent.Commands.DeleteDependentCommand;
 using mentor_v1.Application.MaternityEmployee.Commands.CreateMaternityEmployee;
 using mentor_v1.Application.MaternityEmployee.Commands.DeleteMaternityEmployee;
 using mentor_v1.Application.MaternityEmployee.Commands.UpdateMaternityEmployee;
 using mentor_v1.Application.MaternityEmployee.Queries;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers;
 
 [ApiController]
 [Route("[controller]/[action]")]
+[Authorize(Roles = "Manager")]
+
 public class MaternityEmployeeController : ApiControllerBase
 {
     private readonly IIdentityService _identityService;
@@ -75,6 +81,7 @@ public class MaternityEmployeeController : ApiControllerBase
     #region Create
     [HttpPost]
     public async Task<IActionResult> CreateMaternityEmployee(CreateMaternityEmployeeViewModel createMaternityEmployeeView)
+
     {
         var validator = new CreateMaternityEmployeeValidator();
         var valResult = await validator.ValidateAsync(createMaternityEmployeeView);
@@ -94,6 +101,7 @@ public class MaternityEmployeeController : ApiControllerBase
             {
                 createMaternityEmployeeViewModel = createMaternityEmployeeView
             });
+            var result = await Mediator.Send(new UpdateMaterityStatus { id = createMaternityEmployeeView.ApplicationUserId, IsMaternity = true });
             return Ok(new
             {
                 status = Ok().StatusCode,
@@ -105,7 +113,7 @@ public class MaternityEmployeeController : ApiControllerBase
             return BadRequest(new
             {
                 status = BadRequest().StatusCode,
-                message = "ApplicationUserId không xuất hiện."
+                message = "Không tìm thấy nhân viên bạn yêu cầu!"
             });
         }
         catch (Exception ex)
@@ -142,6 +150,7 @@ public class MaternityEmployeeController : ApiControllerBase
             {
                 updateMaternityEmployeeView = updateMaternityEmployeeView
             });
+            
             return Ok(new
             {
                 status = Ok().StatusCode,

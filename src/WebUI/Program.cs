@@ -1,6 +1,8 @@
 using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
+using Hangfire;
+using HangfireBasicAuthenticationFilter;
 using mentor_v1.Application.Common.Models;
 using mentor_v1.Domain.Identity;
 using mentor_v1.Infrastructure;
@@ -9,15 +11,20 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Serilog;
 using WebUI;
+using WebUI.Helper;
 using WebUI.Services;
 using WebUI.Services.FileManager;
 using WebUI.Services.Format;
 using WebUI.Services.MomoServices;
+using WebUI.Services.PayslipServices;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 //builder.Environment.EnvironmentName = "Staging"; //for branch develop
@@ -39,6 +46,7 @@ builder.Services.AddCors(options =>
                                               )
                                                 .AllowAnyHeader()
                                                 .AllowAnyMethod();
+                          
                       });
 });
 
@@ -58,10 +66,13 @@ builder.Services.Configure<GoogleCaptchaConfig>(builder.Configuration.GetSection
 builder.Services.Configure<MomoServices>(builder.Configuration.GetSection("MomoServices"));
 builder.Services.AddTransient<IFileService, FileService>();
 builder.Services.AddTransient<IFormatMoney, FormatMoney>();
+builder.Services.AddTransient<IPayslipService, PayslipService>();
+
 
 builder.Services.AddTransient(typeof(GoogleCaptchaService));
 builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
    opt.TokenLifespan = TimeSpan.FromMinutes(30));
+builder.Services.AddHangfireServer();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -147,6 +158,17 @@ app.UseCookiePolicy(new CookiePolicyOptions
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
+{
+    DashboardTitle = "TechGenius's HRManagement Dashboard",
+    Authorization = new[] { 
+    new HangfireCustomBasicAuthenticationFilter()
+    {
+        Pass = "Manager1!",
+        User= "Manager@localhost"
+    }
+    }
+});
 app.MapDefaultControllerRoute();
 app.MapControllerRoute(
     name: "area",

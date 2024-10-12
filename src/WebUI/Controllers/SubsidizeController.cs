@@ -13,8 +13,11 @@ using mentor_v1.Application.Positions.Queries.GetPositionByRelatedObjects;
 using WebUI.Models;
 using Namotion.Reflection;
 using Google.Apis.Util;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebUI.Controllers;
+
+[Authorize(Roles = "Manager")]
 
 public class SubsidizeController : ApiControllerBase
 {
@@ -144,8 +147,7 @@ public class SubsidizeController : ApiControllerBase
             model.Position = position;
             model.User = user;
             var departmentAllowance = await Mediator.Send(new GetDepartmentAllowanceByDepartmentIdRequest { Id = model.Position.DepartmentId });
-            var subsidize = await Mediator.Send(new GetSubsidizeByIdRequest { Id = Guid.Parse(departmentAllowance.SubsidizeId) });
-            return Ok(subsidize);
+            return Ok(departmentAllowance);
         }
         catch (Exception)
         {

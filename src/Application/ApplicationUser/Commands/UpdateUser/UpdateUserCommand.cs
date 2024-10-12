@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Identity;
 namespace mentor_v1.Application.ApplicationUser.Commands.UpdateUser;
 public record UpdateUserCommand : IRequest
 {
-    public UserViewModel model { get; set; }
+    public UpdateUserModel model { get; set; }
 }
 
 public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand>
@@ -49,8 +49,8 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand>
         CurrentUser.BankAccountNumber = request.model.BankAccountNumber;
         CurrentUser.BankAccountName = request.model.BankAccountName;
         CurrentUser.BankName = request.model.BankName;
-        CurrentUser.IsMaternity = request.model.IsMaternity;
         CurrentUser.Image= request.model.Image;
+        CurrentUser.PhoneNumber = request.model.PhoneNumber;
         await _context.SaveChangesAsync(cancellationToken);
         return Unit.Value;
     }

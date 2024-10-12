@@ -8,5 +8,6 @@ namespace mentor_v1.Domain.Enums;
 public enum EmployeeContractStatus
 {
     Expeires = 1,
-    Pending = 2
+    Pending = 2,
+    Waiting = 3
 }

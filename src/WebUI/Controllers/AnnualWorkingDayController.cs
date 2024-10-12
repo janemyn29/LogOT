@@ -3,6 +3,7 @@ using mentor_v1.Application.AnnualWorkingDays.Commands.Delete;
 using mentor_v1.Application.AnnualWorkingDays.Commands.Update;
 using mentor_v1.Application.AnnualWorkingDays.Queries.GetByRelatedObject;
 using mentor_v1.Application.AnnualWorkingDays.Queries.GetList;
+using mentor_v1.Application.Department.Commands.DeleteDepartment;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebUI.Services.FileManager;
@@ -22,7 +23,7 @@ public class AnnualWorkingDayController : ApiControllerBase
     //[Authorize(Policy = "Manager")]
     public async Task<IActionResult> Index(int pg = 1)
     {
-        var list = await Mediator.Send(new GetListAnnualRequest { Page = pg, Size = 40 });
+        var list = await Mediator.Send(new GetListAnnualRequest { Page = pg, Size = 50 });
         return Ok(list);
         
     }
@@ -31,7 +32,7 @@ public class AnnualWorkingDayController : ApiControllerBase
     [HttpPost]
     [Route("/Annual/ImportExcel")]
 
-    //[Authorize(Policy = "Manager")]
+    [Authorize(Roles = "Manager")]
     public async Task<IActionResult> CreateEx(IFormFile file)
     {
         if (file != null && file.Length > 0)
@@ -68,7 +69,7 @@ public class AnnualWorkingDayController : ApiControllerBase
     [HttpPost]
     [Route("/Annual/Create")]
 
-    //[Authorize(Policy = "Manager")]
+    [Authorize(Roles = "Manager")]
     public async Task<IActionResult> Create(CreateAnnualCommand model)
     { 
             try
@@ -85,7 +86,7 @@ public class AnnualWorkingDayController : ApiControllerBase
     [HttpPut]
     [Route("/Annual/Update")]
 
-    //[Authorize(Policy = "Manager")]
+    [Authorize(Roles = "Manager")]
     public async Task<IActionResult> Update(UpdateAnnualCommand model)
     {
         try
@@ -102,27 +103,25 @@ public class AnnualWorkingDayController : ApiControllerBase
 
     [HttpDelete]
     [Route("/Annual/Delete")]
-
-    //[Authorize(Policy = "Manager")]
-    public async Task<IActionResult> Delete([FromForm]Guid id)
+    public async Task<IActionResult> Delete(Guid id)
     {
         try
         {
-            await Mediator.Send(new DeleteAnnualCommand { Id = id });
+            var result = await Mediator.Send(new DeleteAnnualCommand { Id = id });
             return Ok("Xóa thành công");
         }
         catch (Exception ex)
         {
             return BadRequest(ex.Message);
         }
-
     }
+
 
     [HttpGet]
     [Route("/Annual/GetByMonth")]
 
-    //[Authorize(Policy = "Manager")]
-    public async Task<IActionResult> GetByMonth([FromBody] int Month, int Year)
+    [Authorize(Policy = "Manager,Employee")]
+    public async Task<IActionResult> GetByMonth( int Month, int Year)
     {
         try
         {

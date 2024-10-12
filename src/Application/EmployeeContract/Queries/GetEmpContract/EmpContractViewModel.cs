@@ -28,4 +28,5 @@ public class EmpContractViewModel : IMapFrom<Domain.Entities.EmployeeContract>
     public bool isPersonalTaxDeduction { get; set; }
     public string InsuranceType { get; set; }
     public double? InsuranceAmount { get; set; }
+    public virtual Domain.Identity.ApplicationUser ApplicationUser { get; set; }
 }

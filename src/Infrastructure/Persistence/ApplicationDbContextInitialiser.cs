@@ -86,16 +86,5 @@ public class ApplicationDbContextInitialiser
             }
         }
 
-
-        var staff = new ApplicationUser { UserName = "staff@localhost", Email = "staff@localhost", Fullname = "Satff", Image = "(null)", Address = "no", IdentityNumber = "0", BirthDay = DateTime.Parse("2000-01-01"), BankAccountNumber = "0", BankAccountName = "0", BankName = "0", GenderType = Domain.Enums.GenderType.Women, PositionId = Guid.Parse("2949e5bc-18c4-457b-b828-86d31c53b168"), IsMaternity = false };
-
-        if (_userManager.Users.All(u => u.UserName != staff.UserName))
-        {
-            await _userManager.CreateAsync(staff, "StaffAccount1!");
-            if (!string.IsNullOrWhiteSpace(staffRole.Name))
-            {
-                await _userManager.AddToRolesAsync(staff, new[] { staffRole.Name });
-            }
-        }
     }
 }
